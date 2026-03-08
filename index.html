@@ -990,6 +990,7 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 </div>
 <div class="overlay" id="modal" onclick="ocl(event)"><div class="sheet"><div class="handle"></div><div id="mc"></div></div></div>
 
+<script>
 const FB_CFG={apiKey:"AIzaSyCsGjhymEzDf9XJyPvxvkbFbE7eURbo774",authDomain:"family-app-3393e.firebaseapp.com",projectId:"family-app-3393e",storageBucket:"family-app-3393e.firebasestorage.app",messagingSenderId:"708808816187",appId:"1:708808816187:web:fc119f5e93eb1957418e1e"};
 let ROOM='';  // set dynamically after room selection
 const ADMIN_EMAIL='b.sho.isshiki'+'@'+'gmail.com';
@@ -1005,7 +1006,10 @@ let notifs={trash:false,sched:false,return:false,task:false,med:false},notifHist
 let calMode='month',calY,calM,calWeek,calDay,calFilter=[],profEmoji='🧑',editPE='',lastDate='';
 const p2=n=>String(n).padStart(2,'0');
 function tday(){const d=new Date();return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());}
-function gm(u){return members.find(x=>x.uid===u)||{name:'?',emoji:'👤',color:'#999',uid:''};}
+function gm(uid){
+  const m=members.find(x=>x.uid===uid);
+  return m||{uid:uid||'',name:'?',emoji:'👤',color:'#999'};
+}
 function isMe(u){return currentUser&&u===currentUser.uid;}
 function canEdit(o){return currentUser&&o===currentUser.uid;}
 function nid(){return Date.now()+'-'+Math.random().toString(36).slice(2,6);}
@@ -1035,7 +1039,7 @@ function init(){
       ld.classList.add('hide');
       document.getElementById('login-screen').classList.remove('hide');
     }
-  },3000);
+  },5000);
 }
 function signInGoogle(){
   ldtxt('ログイン中...');
@@ -1278,22 +1282,33 @@ async function saveProfile(){
   }catch(e){alert('保存失敗: '+e.message);document.getElementById('loading').classList.add('hide');document.getElementById('profile-screen').classList.remove('hide');}
 }
 function boot(){
-  ldtxt('データ読み込み中...');curM=currentUser.uid;
-  const now=new Date();calY=now.getFullYear();calM=now.getMonth();
-  calWeek=new Date(now);calWeek.setDate(now.getDate()-now.getDay());
-  calDay=new Date(now);lastDate=tday();
-  updateDD();
-  setInterval(()=>{const t=tday();if(t!==lastDate){lastDate=t;updateDD();renderTrash();}},60000);
-  syncMealTpl().then(()=>renderMeal());listenAll();renderTrash();renderFamStatus();renderMealTime();checkTutorial();schedChecks();renderNotifToggles();renderBath();renderHomeSummary();
-  // Unregister all old service workers to prevent caching issues
-  if('serviceWorker'in navigator){
-    navigator.serviceWorker.getRegistrations().then(regs=>{
-      regs.forEach(r=>r.unregister());
-    });
+  try{
+    ldtxt('データ読み込み中...');curM=currentUser.uid;
+    const now=new Date();calY=now.getFullYear();calM=now.getMonth();
+    calWeek=new Date(now);calWeek.setDate(now.getDate()-now.getDay());
+    calDay=new Date(now);lastDate=tday();
+    updateDD();
+    setInterval(()=>{const t=tday();if(t!==lastDate){lastDate=t;updateDD();renderTrash();}},60000);
+    syncMealTpl().then(()=>renderMeal()).catch(()=>{});
+    listenAll();
+    try{renderTrash();}catch(e){}
+    try{renderFamStatus();}catch(e){}
+    try{renderMealTime();}catch(e){}
+    try{renderNotifToggles();}catch(e){}
+    try{renderBath();}catch(e){}
+    try{renderHomeSummary();}catch(e){}
+    checkTutorial();schedChecks();
+    const mb=document.getElementById('myBtn');if(mb)mb.textContent=myProfile.emoji;
+    if(isAdmin)loadFbCount();
+  }catch(e){
+    console.error('boot error',e);
+  }finally{
+    // 必ずloading を消す
+    setTimeout(()=>{
+      const ld=document.getElementById('loading');
+      if(ld)ld.classList.add('hide');
+    },800);
   }
-  const mb=document.getElementById('myBtn');if(mb)mb.textContent=myProfile.emoji;
-  setTimeout(()=>document.getElementById('loading').classList.add('hide'),600);
-  if(isAdmin)loadFbCount();
 }
 function loadFbCount(){
   db.collection('iedash').doc(ROOM).collection('feedbacks').get().then(s=>{
@@ -1364,7 +1379,15 @@ function togBath(key){
   addAct('🛁 お風呂「'+label+'」'+(data[today][key]?'チェック':'解除'));
 }
 function listenAll(){
-  db.collection('iedash').doc(ROOM).collection('members').onSnapshot(s=>{members=s.docs.map(d=>d.data());renderTabs();renderSG();renderSUPage();renderFamStatus();renderTodayFamGrid();renderMemberPanels();},console.error);
+  db.collection('iedash').doc(ROOM).collection('members').onSnapshot(s=>{
+    members=s.docs.map(d=>d.data());
+    try{renderTabs();}catch(e){}
+    try{renderSG();}catch(e){}
+    try{renderSUPage();}catch(e){}
+    try{renderFamStatus();}catch(e){}
+    try{renderTodayFamGrid();}catch(e){}
+    try{renderMemberPanels();}catch(e){}
+  },e=>{console.error('members snap error',e);});
   db.collection('iedash').doc(ROOM).collection('status').onSnapshot(s=>{state.status={};state.mood={};s.docs.forEach(d=>{const v=d.data();state.status[d.id]={home:v.home??false,ret:v.ret||''};if(v.mood)state.mood[d.id]=v.mood;});renderSG();renderSUPage();renderFamStatus();renderTodayFamGrid();},console.error);
   db.collection('iedash').doc(ROOM).collection('schedules').onSnapshot(s=>{state.schedules=s.docs.map(d=>({id:d.id,...d.data()}));renderSch();if(document.getElementById('pg-calendar').classList.contains('active'))renderCal();},console.error);
   db.collection('iedash').doc(ROOM).collection('shopping').onSnapshot(s=>{state.shopping=s.docs.map(d=>({id:d.id,...d.data()}));renderShop();renderHomeSummary();},console.error);
@@ -2957,8 +2980,6 @@ function showGcalComingSoon(){
   h+='<div style="font-size:13px;color:var(--t2);line-height:1.7">GoogleカレンダーやiCalとの連携機能を<br>準備しています。もうしばらくお待ちください。</div></div>';
   h+='<button class="btn btn-ghost btn-full" onclick="closeModal()">閉じる</button>';
   mc.innerHTML=h;openOv();
-}
-Ov();
 }
 </script>
 <!-- ══ チュートリアル ══ -->
