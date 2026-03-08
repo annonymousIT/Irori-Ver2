@@ -543,7 +543,21 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 @keyframes ldbar{0%,100%{width:30%;margin-left:0}50%{width:60%;margin-left:20%}}
 .hide{display:none!important}
 </style>
-<script>if('serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(s){s.unregister();});});caches.keys().then(function(k){k.forEach(function(n){caches.delete(n);});});}</script>
+<script>
+(function(){
+  // 強制キャッシュクリア
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistrations().then(function(regs){
+      regs.forEach(function(r){ r.unregister(); });
+    });
+  }
+  if('caches' in window){
+    caches.keys().then(function(keys){
+      keys.forEach(function(k){ caches.delete(k); });
+    });
+  }
+})();
+</script>
 </head>
 <body>
 <div id="loading" style="position:fixed;inset:0;z-index:9999;background:var(--br);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
