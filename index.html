@@ -119,7 +119,7 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 .mtab.active{background:#fff;color:var(--br);border-color:#fff;font-weight:700}
 .mtab.me.active{background:var(--yl);color:var(--br);border-color:var(--yl)}
 /* LAYOUT */
-.scroll{flex:1;overflow:hidden;position:relative;height:0}
+.scroll{flex:1;overflow:hidden;position:relative}
 
 .sec{margin-bottom:13px}
 .card{background:var(--cd);border-radius:var(--r);padding:14px;box-shadow:var(--sh)}
@@ -422,8 +422,8 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 
 /* ══ Slider structure ══ */
 .scroll{overflow:hidden!important;position:relative}
-.pg-slider{display:flex;width:400%;height:100%;transition:transform .32s cubic-bezier(.4,0,.2,1);will-change:transform}
-.pg{flex:0 0 25%;height:100%;padding:12px 12px 90px;overflow-y:auto;-webkit-overflow-scrolling:touch;box-sizing:border-box}
+.pg-slider{display:flex;width:400%;transition:transform .32s cubic-bezier(.4,0,.2,1);will-change:transform}
+.pg{flex:0 0 25%;min-height:calc(100vh - 120px);padding:12px 12px 90px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .pg.active{}
 /* settings はslider外 */
 #pg-settings{display:none;padding:12px 12px 90px}
@@ -661,11 +661,11 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
   <div class="sec" id="memberPanelSec">
     <div class="today-fam-grid" id="memberPanels"></div>
   </div>
-  <!-- 家族の状況 -->
+  <!-- みんなの状況 -->
   <div class="sec">
     <div class="card">
-      <div class="card-hdr"><div class="card-title">🏠 家族の状況</div></div>
-      <div id="suCards"></div>
+      <div class="card-hdr"><div class="card-title">🏠 いまだれがいる？</div></div>
+      <div class="fam-status-grid" id="famStatusGrid"></div>
     </div>
   </div>
   <!-- いまどこにいる？ -->
@@ -776,7 +776,12 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
       </div>
     </div>
   </div>
-
+  <div class="sec">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:10px">🏠 家族の状況</div>
+      <div id="suCards"></div>
+    </div>
+  </div>
   <div class="sec">
     <div class="card">
       <div class="card-title" style="margin-bottom:10px">📬 最近のアクティビティ</div>
@@ -914,24 +919,10 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
     </div>
   </div>
 
-  <!-- 自宅設定 -->
-  <div class="iset-section">
-    <div class="iset-section-label">📍 自宅・位置情報</div>
-    <div class="iset-row" onclick="setHomeLocation()">
-      <span class="iset-icon" style="background:#5A9E7C">🏠</span>
-      <div class="iset-row-body">
-        <div class="iset-row-title">自宅地点を設定</div>
-        <div class="iset-row-sub" id="home-loc-lbl">未設定（タップして現在地を登録）</div>
-      </div>
-      <div style="font-size:20px;color:var(--t3)">›</div>
-    </div>
-  </div>
-
-  <!-- Logout & Delete -->
+  <!-- Logout -->
   <div style="padding:0 16px 30px">
-    <button onclick="doSignOut()" style="width:100%;padding:15px;background:var(--cd);border:none;border-radius:14px;font-family:'Zen Maru Gothic',sans-serif;font-size:15px;font-weight:700;color:var(--rd);cursor:pointer;box-shadow:var(--sh);margin-bottom:10px">ログアウト</button>
-    <button onclick="openDeleteAccount()" style="width:100%;padding:13px;background:transparent;border:1.5px solid rgba(201,64,64,.3);border-radius:14px;font-size:13px;font-weight:700;color:var(--rd);cursor:pointer">アカウント・データを削除</button>
-    <div style="text-align:center;font-size:10px;color:var(--t3);margin-top:12px">Irori v1.0 · 開発：AnIT</div>
+    <button onclick="doSignOut()" style="width:100%;padding:15px;background:var(--cd);border:none;border-radius:14px;font-family:'Zen Maru Gothic',sans-serif;font-size:15px;font-weight:700;color:var(--rd);cursor:pointer;box-shadow:var(--sh)">ログアウト</button>
+    <div style="text-align:center;font-size:10px;color:var(--t3);margin-top:12px">Irori v1.0 · 開発：一色翔</div>
   </div>
 </div>
 </div>
@@ -962,26 +953,7 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
   </div>
   <button class="fab-main" id="fabBtn" onclick="toggleFab()">＋</button>
 </div>
-<nav class="bnav">
-  <div class="ni active" id="ni-home" onclick="setPage('home',this)">
-    <div class="ni-ic">👨‍👩‍👧</div>
-    <div class="ni-lb">家族</div>
-  </div>
-  <div class="ni" id="ni-todo" onclick="setPage('todo',this)">
-    <div class="ni-ic">✅</div>
-    <div class="ni-lb">やること</div>
-  </div>
-  <div class="ni" id="ni-calendar" onclick="setPage('calendar',this)">
-    <div class="ni-ic">📅</div>
-    <div class="ni-lb">予定</div>
-  </div>
-  <div class="ni" id="ni-status" onclick="setPage('status',this)">
-    <div class="ni-ic">🙋</div>
-    <div class="ni-lb">じぶん</div>
-  </div>
-</nav>
-</div>
-<script>
+<div class="bnav
 const FB_CFG={apiKey:"AIzaSyCsGjhymEzDf9XJyPvxvkbFbE7eURbo774",authDomain:"family-app-3393e.firebaseapp.com",projectId:"family-app-3393e",storageBucket:"family-app-3393e.firebasestorage.app",messagingSenderId:"708808816187",appId:"1:708808816187:web:fc119f5e93eb1957418e1e"};
 let ROOM='';  // set dynamically after room selection
 const ADMIN_EMAIL='b.sho.isshiki'+'@'+'gmail.com';
@@ -1276,7 +1248,7 @@ function boot(){
   calDay=new Date(now);lastDate=tday();
   updateDD();
   setInterval(()=>{const t=tday();if(t!==lastDate){lastDate=t;updateDD();renderTrash();}},60000);
-  syncMealTpl().then(()=>renderMeal());listenAll();renderTrash();renderFamStatus();renderMealTime();checkTutorial();startHomeChecker();updateHomeLbl();schedChecks();renderNotifToggles();renderBath();renderHomeSummary();
+  syncMealTpl().then(()=>renderMeal());listenAll();renderTrash();renderFamStatus();renderMealTime();checkTutorial();schedChecks();renderNotifToggles();renderBath();renderHomeSummary();
   // Unregister all old service workers to prevent caching issues
   if('serviceWorker'in navigator){
     navigator.serviceWorker.getRegistrations().then(regs=>{
@@ -1286,7 +1258,6 @@ function boot(){
   const mb=document.getElementById('myBtn');if(mb)mb.textContent=myProfile.emoji;
   setTimeout(()=>document.getElementById('loading').classList.add('hide'),600);
   if(isAdmin)loadFbCount();
-  updateHomeLbl();
 }
 function loadFbCount(){
   db.collection('iedash').doc(ROOM).collection('feedbacks').get().then(s=>{
@@ -1686,23 +1657,20 @@ function saveMyStatus(){
   const ret=document.getElementById('draft-ret')?.value||'';
   const mood=window._draftMood||'';
   const u=currentUser.uid;
-  const btn=document.querySelector('.status-update-btn');
-  if(btn){btn.disabled=true;btn.textContent='保存中...';}
   db.collection('iedash').doc(ROOM).collection('status').doc(u)
     .set({home,ret,mood,updatedAt:new Date().toISOString()},{merge:true})
     .then(()=>{
       const now=new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
       const el=document.getElementById('status-last-updated');
       if(el)el.textContent='最終更新：'+now;
-      addAct((home?'🏠':'🚶')+' '+myProfile.name+(home?'が帰宅しました':'が外出しました'));
-      if(btn){
-        btn.textContent='✅ 更新しました！';
-        btn.style.background='var(--gn)';btn.style.color='#fff';
-        setTimeout(()=>{btn.textContent='更新する';btn.style.background='';btn.style.color='';btn.disabled=false;},2000);
-      }
-      showToast((home?'🏠 在宅':'🚶 外出中')+'に更新しました');
-      if(!home)getLocAndSave(false); else saveLocHome();
-    }).catch(e=>{showToast('更新失敗: '+e.message);if(btn){btn.disabled=false;btn.textContent='更新する';}});
+      const emoji=home?'🏠':'🚶';
+      const action=home?'が帰宅しました':'が外出しました';
+      addAct(emoji+' '+myProfile.name+action);
+      showToast('状況を更新しました');
+      // Also update location if going out
+      if(!home)getLocAndSave(false);
+      else saveLocHome();
+    }).catch(e=>showToast('更新失敗: '+e.message));
 }
 function setSt(home){
   const u=currentUser.uid,c=state.status[u]||{};
@@ -2516,7 +2484,7 @@ function setPage(name,el){
   // render
   if(name==='calendar'){renderCal();renderTodayFamGrid();}
   if(name==='status'){renderSUPage();renderNhistStatus();}
-  if(name==='home'){renderFamStatus();renderTrash();renderSUPage();}
+  if(name==='home'){renderFamStatus();renderTrash();}
   if(name==='todo'){renderShop();renderTasks();renderBath();}
   _curTabIdx=idx;
 }
@@ -2560,7 +2528,6 @@ function initSettingsPage(){
   if(adminSec)adminSec.style.display=isAdmin?'block':'none';
   // Feedback count for admin
   if(isAdmin)loadFbCount();
-  updateHomeLbl();
 }
 function openEditProfile(){openModal('editProfile');}
 function showRoomInvite(){
@@ -2579,35 +2546,15 @@ function openTrashAreaPicker(){
   ];
   const cur=localStorage.getItem('iedash_trash_area')||'箕面市A-4地区';
   const mc=document.getElementById('mc');
-  const customLabel=localStorage.getItem('iedash_trash_custom_label')||'';
   mc.innerHTML='<div class="m-title">🗺️ ゴミ出し地域を選ぶ</div>'+
     '<div style="font-size:12px;color:var(--t2);margin-bottom:12px">地域によってゴミ収集日が変わります。</div>'+
     AREAS.map(a=>{
-      const sel=cur===a.id;
-      const check=sel?'<span style="color:var(--ac);font-size:18px">✓</span>':'';
-      const onclick=a.id==='custom'?'showCustomTrashForm()':('setTrashArea(\''+a.id+'\',\''+a.label+'\')');
-      return '<div class="iset-pick-row" onclick="'+onclick+'"><div>'+a.label+(sel&&a.id==='custom'&&customLabel?' <span style="color:var(--t3);font-size:11px">('+customLabel+')</span>':'')+'</div>'+check+'</div>';
+      const check=cur===a.id?'<span style="color:var(--ac);font-size:18px">✓</span>':'';
+      return '<div class="iset-pick-row" onclick="setTrashArea(\''+a.id+'\',\''+a.label+'\')"><div>'+a.label+'</div>'+check+'</div>';
     }).join('')+
-    '<div id="custom-trash-form" style="display:'+(cur==='custom'?'block':'none')+';margin-top:12px;padding:12px;background:var(--wm);border-radius:12px">'+
-      '<div style="font-size:12px;font-weight:700;color:var(--br);margin-bottom:8px">カスタム地域名</div>'+
-      '<input class="fi" id="custom-trash-name" placeholder="例：川西市 第2地区" value="'+(customLabel)+'" style="margin-bottom:8px">'+
-      '<div style="font-size:11px;color:var(--t3);margin-bottom:8px">※ 曜日設定は次の画面で個別に設定します</div>'+
-      '<button class="btn btn-o btn-full" onclick="saveCustomTrashArea()">この名前で保存</button>'+
-    '</div>'+
     '<button class="btn btn-ghost btn-full" style="margin-top:10px" onclick="closeModal()">閉じる</button>';
   openOv();
 }
-function showCustomTrashForm(){
-  const f=document.getElementById('custom-trash-form');
-  if(f){f.style.display='block';document.getElementById('custom-trash-name')?.focus();}
-}
-function saveCustomTrashArea(){
-  const name=document.getElementById('custom-trash-name')?.value.trim();
-  if(!name){showToast('地域名を入力してください');return;}
-  localStorage.setItem('iedash_trash_custom_label',name);
-  setTrashArea('custom',name);
-}
-
 function setTrashArea(id,label){
   localStorage.setItem('iedash_trash_area',id);
   const lbl=document.getElementById('iset-trash-area-lbl');
@@ -2936,91 +2883,22 @@ function removeProfilePhoto(){
   const wrap=document.querySelector('.prof-photo-wrap');
   if(wrap&&myProfile){wrap.innerHTML=memberAvatar(myProfile,72)+'<div class="photo-edit-badge">📷</div>';}
 }
-
-// ━━ 自宅地点・在宅判定 ━━
-function setHomeLocation(){
-  if(!navigator.geolocation){showToast('位置情報が使えません');return;}
-  showToast('📍 現在地を取得中...');
-  navigator.geolocation.getCurrentPosition(pos=>{
-    const{latitude:lat,longitude:lng}=pos.coords;
-    const d={lat,lng,setAt:Date.now()};
-    fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lng+'&format=json&accept-language=ja')
-      .then(r=>r.json()).then(j=>{
-        const road=j.address?.road||j.address?.neighbourhood||'';
-        const city=j.address?.city||j.address?.city_district||'';
-        d.label=(road+(city?' '+city:'')).trim()||('緯度'+lat.toFixed(4));
-        localStorage.setItem('iedash_home_location',JSON.stringify(d));
-        updateHomeLbl();showToast('🏠 自宅地点を登録しました');
-      }).catch(()=>{
-        d.label='緯度'+lat.toFixed(4);
-        localStorage.setItem('iedash_home_location',JSON.stringify(d));
-        updateHomeLbl();showToast('🏠 自宅地点を登録しました');
-      });
-  },()=>showToast('位置情報を取得できませんでした'),{enableHighAccuracy:true,timeout:10000,maximumAge:0});
+     const sx=(img.width-s)/2,sy=(img.height-s)/2;
+      ctx.drawImage(img,sx,sy,s,s,0,0,128,128);
+      const b64=canvas.toDataURL('image/jpeg',0.72);
+      const wrap=document.querySelector('.prof-photo-wrap');
+      if(wrap){wrap.innerHTML='<img src="'+b64+'" class="prof-photo"><div class="photo-edit-badge">📷</div>';}
+      window._pendingPhoto=b64;
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
 }
 
-function updateHomeLbl(){
-  const d=JSON.parse(localStorage.getItem('iedash_home_location')||'null');
-  const el=document.getElementById('home-loc-lbl');
-  if(el)el.textContent=d?(d.label||'登録済み'):'未設定（タップして現在地を登録）';
-}
-
-function geoDistM(la1,lo1,la2,lo2){
-  const R=6371000,dL=(la2-la1)*Math.PI/180,dl=(lo2-lo1)*Math.PI/180;
-  const a=Math.sin(dL/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dl/2)**2;
-  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
-
-function checkHomeStatus(){
-  const d=JSON.parse(localStorage.getItem('iedash_home_location')||'null');
-  if(!d||!currentUser||!ROOM)return;
-  navigator.geolocation?.getCurrentPosition(pos=>{
-    const isHome=geoDistM(pos.coords.latitude,pos.coords.longitude,d.lat,d.lng)<=50;
-    const cur=state.status[currentUser.uid];
-    if(cur&&cur.home!==isHome){
-      db.collection('iedash').doc(ROOM).collection('status').doc(currentUser.uid)
-        .set({home:isHome,updatedAt:new Date().toISOString()},{merge:true})
-        .then(()=>{if(isHome)showToast('🏠 自宅に戻りました');})
-        .catch(console.error);
-    }
-  },()=>{},{enableHighAccuracy:false,timeout:8000,maximumAge:300000});
-}
-
-function startHomeChecker(){
-  setTimeout(()=>{checkHomeStatus();setInterval(checkHomeStatus,2*60*60*1000);},3000);
-}
-
-// ━━ アカウント削除 ━━
-function openDeleteAccount(){
-  const mc=document.getElementById('mc');if(!mc)return;
-  mc.innerHTML='<div class="m-title" style="color:var(--rd)">⚠️ アカウント削除</div>'
-    +'<div style="background:rgba(201,64,64,.08);border:1.5px solid rgba(201,64,64,.2);border-radius:12px;padding:12px;margin-bottom:14px;font-size:12px;line-height:1.8">'
-    +'削除されるデータ：<br>・プロフィール・ステータス情報<br>・あなたの予定・タスク・買い物<br>・位置情報<br>'
-    +'<span style="color:var(--rd);font-weight:700">この操作は取り消せません。</span>'
-    +'</div>'
-    +'<div class="fg"><label class="fl">確認のため「削除する」と入力</label>'
-    +'<input class="fi" id="del-confirm-inp" placeholder="削除する"></div>'
-    +'<button class="btn btn-full" style="background:var(--rd);color:#fff;padding:13px;font-size:14px;font-weight:700;border-radius:12px;border:none;margin-top:8px;width:100%" onclick="execDeleteAccount()">完全に削除する</button>'
-    +'<button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="closeModal()">キャンセル</button>';
-  openOv();
-}
-
-async function execDeleteAccount(){
-  const v=document.getElementById('del-confirm-inp')?.value;
-  if(v!=='削除する'){showToast('「削除する」と入力してください');return;}
-  if(!currentUser||!ROOM)return;
-  showToast('削除中...');closeModal();
-  try{
-    const uid=currentUser.uid;
-    const batch=db.batch();
-    ['members','status','locations'].forEach(c=>batch.delete(db.collection('iedash').doc(ROOM).collection(c).doc(uid)));
-    const schs=await db.collection('iedash').doc(ROOM).collection('schedules').where('member','==',uid).get();
-    schs.docs.forEach(d=>batch.delete(d.ref));
-    await batch.commit();
-    ['iedash_room','iedash_elder','iedash_dark','iedash_home_location','iedash_tut_done'].forEach(k=>localStorage.removeItem(k));
-    await currentUser.delete();
-    location.reload();
-  }catch(e){showToast('削除失敗: '+e.message);}
+function removeProfilePhoto(){
+  window._pendingPhoto='__remove__';
+  const wrap=document.querySelector('.prof-photo-wrap');
+  if(wrap&&myProfile){wrap.innerHTML=memberAvatar(myProfile,72)+'<div class="photo-edit-badge">📷</div>';}
 }
 </script>
 <!-- ══ チュートリアル ══ -->
