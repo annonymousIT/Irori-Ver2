@@ -1710,7 +1710,43 @@ function draftMood(e){
   window._draftMood=window._draftMood===e?'':e;
   document.querySelectorAll('.mood-btn2').forEach(b=>b.classList.toggle('on',b.id==='mood-'+e&&window._draftMood===e));
 }
-function saveMyStatus(){const home=window._draftHome??true;const ret=(document.getElementById('draft-ret')||{}).value||'';const mood=window._draftMood||'';const u=currentUser.uid;const btn=document.getElementById('status-save-btn');if(btn){btn.disabled=true;btn.textContent='保存中...';}db.collection('iedash').doc(ROOM).collection('status').doc(u).set({home,ret,mood,updatedAt:new Date().toISOString()},{merge:true}).then(()=>{const emoji=home?'🏠':'🚶';const action=home?'が帰宅しました':'が外出しました';addAct(emoji+' '+myProfile.name+action);showToast('✅ 更新しました');if(!home)getLocAndSave(false);else saveLocHome();setTimeout(()=>renderSUPage(),300);}).catch(e=>{showToast('更新失敗: '+e.message);if(btn){btn.disabled=false;btn.textContent='更新する';}});}
+function saveMyStatus(){
+  var home=window._draftHome!==undefined?window._draftHome:true;
+  var retEl=document.getElementById('draft-ret');
+  var ret=retEl?retEl.value:'';
+  var mood=window._draftMood||'';
+  var u=currentUser.uid;
+  var btn=document.getElementById('status-save-btn');
+  if(btn){btn.disabled=true;btn.textContent='保存中...';}
+  db.collection('iedash').doc(ROOM).collection('status').doc(u)
+    .set({home:home,ret:ret,mood:mood,updatedAt:new Date().toISOString()},{merge:true})
+    .then(function(){
+      var emoji=home?'🏠':'🚶';
+      var action=home?'が帰宅しました':'が外出しました';
+      addAct(emoji+' '+myProfile.name+action);
+      showToast('✅ 更新しました');
+      // 位置情報を取得して保存（shareLocationと同じ処理）
+      if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(function(pos){
+          var lat=pos.coords.latitude,lng=pos.coords.longitude;
+          fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lng+'&format=json&accept-language=ja')
+            .then(function(r){return r.json();}).then(function(j){
+              var area=j.address&&(j.address.neighbourhood||j.address.suburb||j.address.city)||'';
+              var place=(j.address&&j.address.road||'')+(area?' '+area:'');
+              db.collection('iedash').doc(ROOM).collection('locations').doc(u)
+                .set({uid:u,lat:lat,lng:lng,place:place,ts:Date.now(),status:home?'home':'out'});
+            }).catch(function(){
+              db.collection('iedash').doc(ROOM).collection('locations').doc(u)
+                .set({uid:u,lat:lat,lng:lng,place:'',ts:Date.now(),status:home?'home':'out'});
+            });
+        },function(){});
+      }
+      setTimeout(function(){renderSUPage();},300);
+    }).catch(function(e){
+      showToast('更新失敗: '+e.message);
+      if(btn){btn.disabled=false;btn.textContent='更新する';}
+    });
+}
 function setSt(home){
   const u=currentUser.uid,c=state.status[u]||{};
   db.collection('iedash').doc(ROOM).collection('status').doc(u)
@@ -1819,6 +1855,12 @@ function renderMeal(){renderMealTime();
   }).join('');
 }
 function openModal(type,data={}){
+  if(type==='status_update'){
+    // 家族タブ「自分」パネルタップ → じぶんタブへ移動してopenStatusEdit
+    setPage('status', document.getElementById('ni-status'));
+    setTimeout(openStatusEdit, 100);
+    return;
+  }
   if(type==='mealSettings'){
     const overrides=JSON.parse(localStorage.getItem('iedash_meal_overrides_'+ROOM)||'{}');
     const tpl=JSON.parse(localStorage.getItem('iedash_meal_tpl_'+ROOM)||'{}');
