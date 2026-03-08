@@ -119,7 +119,7 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 .mtab.active{background:#fff;color:var(--br);border-color:#fff;font-weight:700}
 .mtab.me.active{background:var(--yl);color:var(--br);border-color:var(--yl)}
 /* LAYOUT */
-.scroll{flex:1;overflow:hidden;position:relative}
+.scroll{flex:1;overflow:hidden;position:relative;height:0}
 
 .sec{margin-bottom:13px}
 .card{background:var(--cd);border-radius:var(--r);padding:14px;box-shadow:var(--sh)}
@@ -422,8 +422,8 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 
 /* ══ Slider structure ══ */
 .scroll{overflow:hidden!important;position:relative}
-.pg-slider{display:flex;width:400%;transition:transform .32s cubic-bezier(.4,0,.2,1);will-change:transform}
-.pg{flex:0 0 25%;min-height:calc(100vh - 120px);padding:12px 12px 90px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.pg-slider{display:flex;width:400%;height:100%;transition:transform .32s cubic-bezier(.4,0,.2,1);will-change:transform}
+.pg{flex:0 0 25%;height:100%;padding:12px 12px 90px;overflow-y:auto;-webkit-overflow-scrolling:touch;box-sizing:border-box}
 .pg.active{}
 /* settings はslider外 */
 #pg-settings{display:none;padding:12px 12px 90px}
@@ -962,6 +962,24 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
   </div>
   <button class="fab-main" id="fabBtn" onclick="toggleFab()">＋</button>
 </div>
+<nav class="bnav">
+  <div class="ni active" id="ni-home" onclick="setPage('home',this)">
+    <div class="ni-ic">👨‍👩‍👧</div>
+    <div class="ni-lb">家族</div>
+  </div>
+  <div class="ni" id="ni-todo" onclick="setPage('todo',this)">
+    <div class="ni-ic">✅</div>
+    <div class="ni-lb">やること</div>
+  </div>
+  <div class="ni" id="ni-calendar" onclick="setPage('calendar',this)">
+    <div class="ni-ic">📅</div>
+    <div class="ni-lb">予定</div>
+  </div>
+  <div class="ni" id="ni-status" onclick="setPage('status',this)">
+    <div class="ni-ic">🙋</div>
+    <div class="ni-lb">じぶん</div>
+  </div>
+</nav>
 </div>
 <script>
 const FB_CFG={apiKey:"AIzaSyCsGjhymEzDf9XJyPvxvkbFbE7eURbo774",authDomain:"family-app-3393e.firebaseapp.com",projectId:"family-app-3393e",storageBucket:"family-app-3393e.firebasestorage.app",messagingSenderId:"708808816187",appId:"1:708808816187:web:fc119f5e93eb1957418e1e"};
