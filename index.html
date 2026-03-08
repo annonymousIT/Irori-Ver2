@@ -291,8 +291,8 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 .ni-ic{font-size:var(--fi)}.ni-lb{font-size:10px;font-weight:700;color:var(--br)}
 
 /* TOAST */
-#statusToast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--br);color:#fff;padding:10px 18px;border-radius:14px;font-size:13px;font-weight:700;z-index:9000;transition:transform .3s cubic-bezier(.34,1.4,.64,1);pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.25)}
-#statusToast.show{transform:translateX(-50%) translateY(0)}
+#statusToast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(30px);background:var(--br);color:#fff;padding:11px 22px;border-radius:20px;font-size:13px;font-weight:700;z-index:9000;transition:opacity .25s,transform .25s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0}
+#statusToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 /* MAINTENANCE SCREEN */
 #maintenance-screen{position:fixed;inset:0;z-index:10000;background:var(--br);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}
 #maintenance-screen.hide{display:none}
@@ -989,7 +989,7 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
   <div class="ni" id="ni-status" onclick="setPage('status',this)"><div class="ni-ic">🙋</div><div class="ni-lb">じぶん</div></div>
 </div>
 <div class="overlay" id="modal" onclick="ocl(event)"><div class="sheet"><div class="handle"></div><div id="mc"></div></div></div>
-<script>
+
 const FB_CFG={apiKey:"AIzaSyCsGjhymEzDf9XJyPvxvkbFbE7eURbo774",authDomain:"family-app-3393e.firebaseapp.com",projectId:"family-app-3393e",storageBucket:"family-app-3393e.firebasestorage.app",messagingSenderId:"708808816187",appId:"1:708808816187:web:fc119f5e93eb1957418e1e"};
 let ROOM='';  // set dynamically after room selection
 const ADMIN_EMAIL='b.sho.isshiki'+'@'+'gmail.com';
@@ -1696,10 +1696,12 @@ function renderSUPage(){
     else return'<div class="su-c"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:24px">'+m.emoji+'</span><span style="font-size:14px;font-weight:700">'+m.name+'</span></div><span style="font-size:10px;color:var(--t3);background:var(--wm);padding:2px 9px;border-radius:6px">閲覧のみ</span></div><div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap"><span class="sc-b '+(s.home?'hm':'out')+'" style="font-size:12px;padding:5px 11px">'+(s.home?'🟢 在宅中':'🔴 外出中')+'</span>'+(s.ret?'<span style="font-size:12px;color:var(--t2)">帰宅予定 '+s.ret+'</span>':'')+(mood?'<span style="font-size:20px">'+mood+'</span>':'')+'</div><div style="font-size:11px;color:var(--t3);margin-top:8px">※ '+m.name+'の端末からのみ更新できます</div></div>';
   }).join('');
 }
+let _toastTimer=null;
 function showToast(msg){
   const t=document.getElementById('statusToast');if(!t)return;
+  if(_toastTimer){clearTimeout(_toastTimer);_toastTimer=null;}
   t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),1500);
+  _toastTimer=setTimeout(()=>{t.classList.remove('show');_toastTimer=null;},2000);
 }
 function draftSt(home){
   window._draftHome=home;
@@ -2955,6 +2957,8 @@ function showGcalComingSoon(){
   h+='<div style="font-size:13px;color:var(--t2);line-height:1.7">GoogleカレンダーやiCalとの連携機能を<br>準備しています。もうしばらくお待ちください。</div></div>';
   h+='<button class="btn btn-ghost btn-full" onclick="closeModal()">閉じる</button>';
   mc.innerHTML=h;openOv();
+}
+Ov();
 }
 </script>
 <!-- ══ チュートリアル ══ -->
