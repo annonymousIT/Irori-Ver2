@@ -18,7 +18,7 @@
 :root{
   --cr:#FAF7F2;--wm:#EFE8DA;--br:#4E3425;--br2:#6B4535;
   --ac:#D4663E;--gn:#5A9E7C;--bl:#6480B8;--yl:#E8B84B;--rd:#C94040;
-  --tx:#28180D;--t2:#5C4A3E;--t3:#8A7568;--cd:#FFF;
+  --tx:#28180D;--t2:#7A6558;--t3:#B09A8E;--cd:#FFF;
   --sh:0 3px 20px rgba(78,52,37,.13);--r:16px;
   --fs:14px;--fi:20px
 }
@@ -26,7 +26,7 @@ body.dark{--cr:#1C1209;--wm:#2E2018;--tx:#F0E6DC;--t2:#D4B8A8;--t3:#A08878;--cd:
 body.dark .hdr{background:#1A110A}
 body.dark .bnav{background:#2C1E16;border-color:#452E22}
 body.dark .sheet{background:#2C1E16}
-body.dark .fi,.dark select{background:#352820;color:var(--tx);border-color:#452E22;font-size:calc(var(--fs)+1px)}
+body.dark .fi,.dark select{background:#352820;color:var(--tx);border-color:#452E22}
 body.dark .card{background:#2C1E16;box-shadow:0 2px 12px rgba(0,0,0,.3)}
 body.dark .iset-group{background:#2C1E16}
 body.dark .iset-row{border-color:#452E22}
@@ -48,10 +48,8 @@ body.fs-small{--fs:11px;--fi:15px;--fcard:11px;--fbtn:11px;--ftitle:13px;--fsub:
 body.fs-mid{--fs:14px;--fi:20px;--fcard:13px;--fbtn:13px;--ftitle:15px;--fsub:11px}
 body.fs-large{--fs:16px;--fi:22px;--fcard:15px;--fbtn:15px;--ftitle:17px;--fsub:13px}
 body.fs-xl{--fs:19px;--fi:26px;--fcard:18px;--fbtn:17px;--ftitle:20px;--fsub:15px}
-body.elder{--fs:20px;--fi:28px;--fcard:19px;--fbtn:18px;--ftitle:22px;--fsub:16px}
-body.elder .btn{padding:12px 18px;font-size:18px}
-body.elder .li{padding:12px 6px}
-body.elder .med-item{padding:12px 0}
+body.elder{--fs:19px;--fi:26px;--fcard:18px;--fbtn:17px;--ftitle:20px;--fsub:15px}
+body.elder .btn{padding:10px 16px;font-size:16px}
 body.elder .card-title{font-size:18px}
 body.elder .ni-ic{font-size:26px}
 body.elder .ni-lb{font-size:11px}
@@ -62,7 +60,7 @@ html,body{height:100%;overflow:hidden}
 body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--tx);display:flex;flex-direction:column;font-size:var(--fs)}
 /* Font size cascade - all key elements scale with --fs */
 .card-title{font-size:calc(var(--fs) + 1px);font-weight:700}
-.sec-title{font-size:calc(var(--fs) - 1px);color:var(--t2);font-weight:700}
+.sec-title{font-size:calc(var(--fs) - 1px)}
 .li-txt{font-size:var(--fs)}
 .li-sub{font-size:calc(var(--fs) - 2px)}
 .btn{font-size:calc(var(--fs) - 1px)}
@@ -80,7 +78,7 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 #loading{position:fixed;inset:0;z-index:9999;background:var(--br);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px}
 #loading.hide{display:none}
 .ld-logo{font-size:26px;font-weight:700;color:#fff}.ld-logo em{color:var(--yl);font-style:normal}
-.ld-spin{width:34px;height:34px;border:3px solid rgba(255,255,255,.2);border-top-color:var(--yl);border-radius:50%;animation:spin .6s linear infinite}
+.ld-spin{width:34px;height:34px;border:3px solid rgba(255,255,255,.2);border-top-color:var(--yl);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .ld-txt{font-size:12px;color:rgba(255,255,255,.5)}
 /* LOGIN */
@@ -90,7 +88,7 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 .lc-icon{font-size:52px;margin-bottom:10px}
 .lc-title{font-size:22px;font-weight:700;margin-bottom:6px}
 .lc-sub{font-size:13px;color:var(--t2);margin-bottom:24px;line-height:1.8}
-.g-btn{width:100%;padding:15px;background:#fff;color:var(--tx);border:2px solid var(--wm);border-radius:14px;font-family:'Zen Maru Gothic',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .1s;margin-bottom:10px}
+.g-btn{width:100%;padding:15px;background:#fff;color:var(--tx);border:2px solid var(--wm);border-radius:14px;font-family:'Zen Maru Gothic',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .15s;margin-bottom:10px}
 .g-btn:hover{background:var(--wm)}.g-btn:active{transform:scale(.97)}
 .g-icon{width:22px;height:22px;flex-shrink:0}
 /* PROFILE */
@@ -99,7 +97,7 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 .pc{background:#fff;border-radius:22px;padding:22px;width:100%;max-width:360px}
 .pc-title{font-size:17px;font-weight:700;margin-bottom:4px}
 .pc-sub{font-size:11px;color:var(--t2);margin-bottom:14px;line-height:1.6}
-.pc-eg{display:grid;grid-template-columns:repeat(8,1fr);gap:7px;margin-bottom:14px}
+.pc-eg{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:14px}
 .pc-e{font-size:24px;text-align:center;padding:7px;border-radius:10px;cursor:pointer;border:2px solid transparent;transition:all .13s}
 .pc-e.sel{background:var(--wm);border-color:var(--ac);transform:scale(1.1)}
 .pc-inp{width:100%;padding:12px;border:2px solid var(--wm);border-radius:11px;font-family:'Zen Maru Gothic',sans-serif;font-size:15px;outline:none;transition:border-color .15s;margin-bottom:12px}
@@ -117,7 +115,7 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 .ibtn:active{background:rgba(255,255,255,.25)}
 .mtabs{display:flex;gap:5px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none}
 .mtabs::-webkit-scrollbar{display:none}
-.mtab{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;border:2px solid rgba(255,255,255,.18);background:transparent;color:rgba(255,255,255,.5);font-family:'Zen Maru Gothic',sans-serif;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .1s;flex-shrink:0}
+.mtab{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;border:2px solid rgba(255,255,255,.18);background:transparent;color:rgba(255,255,255,.5);font-family:'Zen Maru Gothic',sans-serif;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0}
 .mtab.active{background:#fff;color:var(--br);border-color:#fff;font-weight:700}
 .mtab.me.active{background:var(--yl);color:var(--br);border-color:var(--yl)}
 /* LAYOUT */
@@ -135,7 +133,7 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 .btn-o{background:var(--ac);color:#fff}.btn-g{background:var(--gn);color:#fff}.btn-b{background:var(--bl);color:#fff}.btn-r{background:var(--rd);color:#fff}.btn-ghost{background:var(--wm);color:var(--t2)}.btn-dark{background:var(--br);color:#fff}
 .btn-full{width:100%;padding:13px;font-size:14px;border-radius:13px;margin-top:6px}
 /* EMERGENCY */
-.emg-btn{width:100%;padding:18px;background:linear-gradient(135deg,#C94040,#a02020);color:#fff;border:none;border-radius:16px;font-family:'Zen Maru Gothic',sans-serif;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 20px rgba(201,64,64,.4);transition:all .1s;margin-bottom:13px}
+.emg-btn{width:100%;padding:18px;background:linear-gradient(135deg,#C94040,#a02020);color:#fff;border:none;border-radius:16px;font-family:'Zen Maru Gothic',sans-serif;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 20px rgba(201,64,64,.4);transition:all .15s;margin-bottom:13px}
 .emg-btn:active{transform:scale(.96);box-shadow:0 2px 10px rgba(201,64,64,.3)}
 /* STATUS GRID */
 .sg{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
@@ -196,7 +194,7 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 .med-chk.done{background:#8E6BB5;border-color:#8E6BB5}.med-chk.done::after{content:"✓";color:#fff;font-size:13px;font-weight:700}
 /* CALENDAR */
 .cal-view-tog{display:flex;background:var(--wm);border-radius:12px;padding:3px;margin-bottom:10px;gap:2px}
-.cvt{flex:1;padding:7px 4px;border:none;background:transparent;border-radius:9px;font-family:'Zen Maru Gothic',sans-serif;font-size:11px;font-weight:700;cursor:pointer;color:var(--t2);transition:all .1s}
+.cvt{flex:1;padding:7px 4px;border:none;background:transparent;border-radius:9px;font-family:'Zen Maru Gothic',sans-serif;font-size:11px;font-weight:700;cursor:pointer;color:var(--t2);transition:all .15s}
 .cvt.active{background:#fff;color:var(--br);box-shadow:0 1px 5px rgba(0,0,0,.1)}
 .cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .cnav-btn{background:var(--wm);border:none;border-radius:10px;font-size:18px;cursor:pointer;padding:6px 12px;color:var(--br);transition:background .13s}.cnav-btn:active{background:#e0d8cc}
@@ -257,14 +255,14 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 /* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .18s}
 .overlay.open{opacity:1;pointer-events:all}
-.sheet{background:#fff;width:100%;border-radius:22px 22px 0 0;padding:20px 18px 34px;transform:translateY(100%);transition:transform .25s cubic-bezier(.34,1.4,.64,1);max-height:92vh;overflow-y:auto}
+.sheet{background:#fff;width:100%;border-radius:22px 22px 0 0;padding:16px 16px 30px;transform:translateY(100%);transition:transform .25s cubic-bezier(.34,1.4,.64,1);max-height:90vh;overflow-y:auto}
 .overlay.open .sheet{transform:translateY(0)}
 .handle{width:36px;height:4px;background:var(--wm);border-radius:2px;margin:0 auto 14px}
-.m-title{font-size:calc(var(--fs) + 4px);font-weight:700;margin-bottom:14px}
-.fg{margin-bottom:13px}.fl{font-size:calc(var(--fs) - 1px);color:var(--t2);margin-bottom:5px;display:block;font-weight:700;letter-spacing:.04em}
-.fi{width:100%;padding:13px 14px;border:2px solid var(--wm);border-radius:12px;font-family:'Zen Maru Gothic',sans-serif;font-size:calc(var(--fs) + 1px);outline:none;transition:border-color .14s;background:#fff;color:var(--tx)}.fi:focus{border-color:var(--ac)}
+.m-title{font-size:16px;font-weight:700;margin-bottom:12px}
+.fg{margin-bottom:11px}.fl{font-size:11px;color:var(--t2);margin-bottom:4px;display:block;font-weight:700;letter-spacing:.04em}
+.fi{width:100%;padding:11px 13px;border:2px solid var(--wm);border-radius:12px;font-family:'Zen Maru Gothic',sans-serif;font-size:var(--fs);outline:none;transition:border-color .14s;background:#fff;color:var(--tx)}.fi:focus{border-color:var(--ac)}
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.eg{display:grid;grid-template-columns:repeat(8,1fr);gap:7px}
+.eg{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
 .eo{font-size:24px;text-align:center;padding:7px;border-radius:9px;cursor:pointer;border:2px solid transparent;transition:all .12s}.eo.sel,.eo:hover{background:var(--wm);border-color:var(--ac)}
 .dr{display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--wm);font-size:13px}.dr:last-child{border-bottom:none}
 .dl{color:var(--t2);width:58px;flex-shrink:0;font-size:11px;padding-top:2px}.dv{flex:1}
@@ -387,7 +385,7 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 
 
 /* Status page new buttons */
-.su-btn2{padding:12px;border-radius:12px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .1s;color:var(--t2)}
+.su-btn2{padding:12px;border-radius:12px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;color:var(--t2)}
 .su-btn2.sel-home{background:rgba(90,158,124,.15);border-color:var(--gn);color:var(--gn)}
 .su-btn2.sel-out{background:rgba(201,64,64,.1);border-color:var(--rd);color:var(--rd)}
 .mood-btn2{font-size:24px;padding:6px;background:none;border:2px solid transparent;border-radius:10px;cursor:pointer;transition:all .13s}
@@ -414,97 +412,12 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 .gcal-evt-pill{font-size:10px;font-weight:700;padding:1px 4px;border-radius:4px;margin-bottom:1px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;line-height:1.5}
 .gcal-more{font-size:10px;color:var(--t3);text-align:right;padding-right:2px}
 /* Bath checkboxes */
-.bath-chk{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:14px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;transition:all .1s;width:100%}
+.bath-chk{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:14px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;transition:all .15s;width:100%}
 .bath-chk-on.bath-blue{border-color:#6480B8;background:rgba(100,128,184,.1);color:#6480B8}
 .bath-chk-on.bath-green{border-color:#5A9E7C;background:rgba(90,158,124,.1);color:#5A9E7C}
 
 .fs-btn2{padding:10px 4px;border-radius:10px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:13px;font-weight:700;cursor:pointer;color:var(--t2);transition:all .13s}
 .fs-btn2.active{background:var(--ac);color:#fff;border-color:var(--ac)}
-
-
-
-/* Collapsible cards */
-.card-hdr{cursor:pointer;user-select:none}
-.card-hdr .chev{transition:transform .2s;display:inline-block;color:var(--t3);font-size:14px;margin-left:4px}
-.card-body{transition:all .12s;overflow:hidden}
-.card-body.collapsed{display:none}
-
-/* FAB - Floating Action Button */
-#fab-backdrop{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0);backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);transition:all .25s;pointer-events:none}
-#fab-backdrop.show{background:rgba(0,0,0,.35);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);pointer-events:all}
-#fab-wrap{position:fixed;bottom:80px;right:16px;z-index:1000;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
-#fab-main{width:56px;height:56px;border-radius:50%;background:var(--ac);border:none;font-size:26px;color:#fff;cursor:pointer;box-shadow:0 4px 20px rgba(212,102,62,.45);display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s;-webkit-tap-highlight-color:transparent}
-#fab-main:active{transform:scale(.93)}
-#fab-main.open{transform:rotate(45deg);background:#8A8A8A}
-.fab-items{display:flex;flex-direction:column;align-items:flex-end;gap:8px;transition:all .12s}
-.fab-items.hide{display:none}
-.fab-item{display:flex;align-items:center;gap:10px;animation:fabIn .15s ease both}
-@keyframes fabIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.fab-item-btn{width:46px;height:46px;border-radius:50%;border:none;font-size:20px;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;transition:transform .15s}
-.fab-item-btn:active{transform:scale(.9)}
-.fab-item-lbl{background:var(--cd);color:var(--tx);font-family:'Zen Maru Gothic',sans-serif;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,.12);white-space:nowrap}
-
-
-/* Hero Card */
-.hero{background:linear-gradient(135deg,var(--br) 0%,var(--br2) 100%);border-radius:20px;padding:18px 20px;color:#fff;margin-bottom:4px;box-shadow:0 6px 24px rgba(78,52,37,.25)}
-.hero-date{font-size:calc(var(--fs) - 1px);opacity:.7;margin-bottom:8px;font-weight:600}
-.hero-family{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-.hero-member{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border-radius:20px;padding:5px 12px}
-.hero-member-emoji{font-size:18px}
-.hero-member-info{display:flex;flex-direction:column}
-.hero-member-name{font-size:calc(var(--fs) - 2px);font-weight:700;color:#fff}
-.hero-member-status{font-size:calc(var(--fs) - 4px);opacity:.75}
-.hero-divider{border:none;border-top:1px solid rgba(255,255,255,.15);margin:10px 0}
-.hero-bottom{display:flex;gap:16px;flex-wrap:wrap}
-.hero-item{display:flex;align-items:center;gap:6px}
-.hero-item-icon{font-size:16px}
-.hero-item-text{font-size:calc(var(--fs) - 2px);color:rgba(255,255,255,.9)}
-.hero-item-val{font-size:calc(var(--fs) - 1px);font-weight:700;color:#fff}
-
-/* ── Tutorial / Onboarding ── */
-.tut-overlay{position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;padding:0 0 env(safe-area-inset-bottom,0)}
-.tut-overlay.hide{display:none}
-.tut-card{background:var(--cd);border-radius:24px 24px 0 0;padding:28px 24px 32px;width:100%;max-width:480px;animation:tutUp .25s cubic-bezier(.34,1.2,.64,1) both}
-@keyframes tutUp{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
-.tut-icon{font-size:40px;margin-bottom:10px;text-align:center}
-.tut-title{font-size:calc(var(--fs) + 5px);font-weight:700;color:var(--tx);text-align:center;margin-bottom:8px;line-height:1.4}
-.tut-body{font-size:calc(var(--fs) + 1px);color:var(--t2);text-align:center;line-height:1.8;margin-bottom:22px}
-.tut-btn{width:100%;padding:16px;background:var(--ac);color:#fff;border:none;border-radius:14px;font-family:'Zen Maru Gothic',sans-serif;font-size:calc(var(--fs) + 2px);font-weight:700;cursor:pointer;margin-bottom:10px}
-.tut-skip{width:100%;padding:10px;background:none;border:none;font-family:'Zen Maru Gothic',sans-serif;font-size:calc(var(--fs));color:var(--t3);cursor:pointer}
-/* Tab hint tooltip */
-.tab-hint{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 70px);left:50%;transform:translateX(-50%);background:var(--br);color:#fff;padding:10px 20px;border-radius:16px;font-size:calc(var(--fs) + 1px);font-weight:700;z-index:3000;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.3);animation:tutUp .2s ease both}
-.tab-hint.hide{display:none}
-/* Trash banner */
-.trash-banner{background:linear-gradient(135deg,#E8B84B22,#E8B84B11);border:1.5px solid var(--yl);border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:10px;cursor:pointer}
-.trash-banner.hide{display:none}
-.trash-banner-text{flex:1;font-size:calc(var(--fs));color:var(--tx);line-height:1.5}
-.trash-banner-btn{background:var(--yl);color:#fff;border:none;border-radius:10px;padding:7px 14px;font-family:'Zen Maru Gothic',sans-serif;font-size:calc(var(--fs) - 1px);font-weight:700;cursor:pointer;white-space:nowrap}
-
-/* Med Today Card in Hero */
-.med-today{background:var(--cd);border-radius:14px;padding:12px 14px;margin-top:10px}
-.med-today-title{font-size:calc(var(--fs));font-weight:700;color:var(--tx);margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.med-today-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--wm)}
-.med-today-item:last-child{border-bottom:none}
-.med-today-name{font-size:calc(var(--fs));color:var(--tx);font-weight:600}
-.med-today-time{font-size:calc(var(--fs) - 2px);color:var(--t2)}
-.med-today-chk{width:32px;height:32px;border-radius:50%;border:2px solid var(--t3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .15s;flex-shrink:0}
-.med-today-chk.done{background:var(--gn);border-color:var(--gn);color:#fff}
-body.elder .med-today-chk{width:44px;height:44px;font-size:22px}
-body.elder .med-today-name{font-size:calc(var(--fs) + 2px)}
-
-
-/* Custom confirm dialog */
-#irori-confirm{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.5);backdrop-filter:blur(4px)}
-#irori-confirm.hide{display:none}
-.confirm-box{background:var(--cd);border-radius:20px;padding:24px 20px;width:100%;max-width:320px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.3)}
-.confirm-icon{font-size:36px;margin-bottom:10px}
-.confirm-title{font-size:calc(var(--fs) + 2px);font-weight:700;color:var(--tx);margin-bottom:8px}
-.confirm-msg{font-size:var(--fs);color:var(--t2);margin-bottom:20px;line-height:1.6}
-.confirm-btns{display:flex;gap:10px}
-.confirm-btn-ok{flex:1;padding:13px;border:none;border-radius:12px;font-family:'Zen Maru Gothic',sans-serif;font-size:calc(var(--fs));font-weight:700;cursor:pointer;transition:all .1s}
-.confirm-btn-cancel{flex:1;padding:13px;background:var(--wm);color:var(--t2);border:none;border-radius:12px;font-family:'Zen Maru Gothic',sans-serif;font-size:calc(var(--fs));font-weight:700;cursor:pointer}
-body.elder .confirm-title{font-size:calc(var(--fs) + 4px)}
-body.elder .confirm-btn-ok,.elder .confirm-btn-cancel{padding:16px;font-size:calc(var(--fs) + 2px)}
 
 </style>
 </head>
@@ -571,7 +484,7 @@ body.elder .confirm-btn-ok,.elder .confirm-btn-cancel{padding:16px;font-size:cal
     <div class="rs-divider">または招待コードで参加</div>
     <div class="rs-card">
       <div class="rs-card-title">🔑 招待コードで参加する</div>
-      <div class="rs-card-sub">かぞくから受け取った6けたのコードをにゅうりょくしてください。<br><span style="color:var(--ac);font-weight:700">📱 コードのかくにんほうほう：</span><br>コードをもっている人のアプリ→⚙️設定→ルーム名をタップ</div>
+      <div class="rs-card-sub">家族から受け取った6桁のコードを入力してください。</div>
       <input class="rs-code" id="rs-inv-code" maxlength="6" placeholder="000000" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
       <button class="pc-btn" style="background:var(--bl)" onclick="joinByCode()">参加する →</button>
       <div class="rs-err" id="rs-join-err"></div>
@@ -593,17 +506,12 @@ body.elder .confirm-btn-ok,.elder .confirm-btn-cancel{padding:16px;font-size:cal
   </div>
 </div>
 <div id="profile-screen" class="hide">
-  <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:16px">I<em style="color:var(--yl);font-style:normal">rori</em></div>
+  <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:16px">いえ<em style="color:var(--yl);font-style:normal">ダッシュ</em></div>
   <div class="pc">
     <div class="pc-title">👋 はじめまして！</div>
     <div class="pc-sub">アイコンと名前を設定してください</div>
     <div class="pc-eg" id="pc-eg"></div>
     <input class="pc-inp" id="pc-name" placeholder="名前（例：たろう）" maxlength="8">
-    <div style="margin-bottom:12px">
-      <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">生まれた年（西暦）</div>
-      <input class="pc-inp" id="pc-birth-year" type="number" placeholder="例：1955" min="1920" max="2020" style="margin-bottom:0">
-      <div style="font-size:11px;color:var(--t3);margin-top:4px">文字サイズなどを自動で調整します</div>
-    </div>
     <button class="pc-btn" onclick="saveProfile()">始める →</button>
   </div>
 </div>
@@ -613,7 +521,7 @@ body.elder .confirm-btn-ok,.elder .confirm-btn-cancel{padding:16px;font-size:cal
     <div class="hdr-r">
       <span class="sync-dot" id="syncDot"></span>
       <div class="hdr-date" id="hdrDate"></div>
-      <button class="ibtn" id="myBtn" onclick="setPage('settings',null)" style="font-size:20px">⚙️</button>
+      <button class="ibtn" id="myBtn" onclick="setPage('settings',document.getElementById('ni-settings'))">👤</button>
     </div>
   </div>
   <div class="mtabs" id="mtabs"></div>
@@ -624,71 +532,62 @@ body.elder .confirm-btn-ok,.elder .confirm-btn-cancel{padding:16px;font-size:cal
     <div id="home-summary" style="display:flex;gap:6px;flex-wrap:wrap"></div>
     <button onclick="sendEmergency()" style="background:rgba(201,64,64,.12);color:var(--rd);border:1.5px solid rgba(201,64,64,.3);border-radius:10px;padding:5px 12px;font-family:'Zen Maru Gothic',sans-serif;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0">🚨 緊急</button>
   </div>
-  <div class="hero" id="heroCard">
-    <div class="hero-date" id="heroDate">読み込み中...</div>
-    <div class="hero-family" id="heroFamily"></div>
-    <hr class="hero-divider">
-    <div class="hero-bottom" id="heroBottom"></div>
-  </div>
-  <div class="trash-banner hide" id="trashBanner" onclick="setPage('settings',null);setTimeout(()=>document.getElementById('iset-trash-section')&&document.getElementById('iset-trash-section').scrollIntoView({behavior:'smooth'}),300)">
-    <span style="font-size:24px">🗑️</span>
-    <div class="trash-banner-text">ゴミ出し地域が<br>まだ設定されていません</div>
-    <button class="trash-banner-btn" onclick="event.stopPropagation();setPage('settings',null)">設定する</button>
-  </div>
   <div id="trashNotice"></div>
-  <div id="med-today-wrap" style="display:none">
-    <div class="med-today">
-      <div class="med-today-title">💊 今日のお薬</div>
-      <div id="med-today-list"></div>
-    </div>
-  </div>
   <div class="sec">
-    <div class="sec-row"><div class="sec-title">🏠 いまだれがいる？</div><button class="btn btn-ghost" style="font-size:10px" onclick="setPage('status',document.getElementById('ni-status'))">みんなの状況→</button></div>
+    <div class="sec-row"><div class="sec-title">🏠 いまだれがいる？</div><button class="btn btn-ghost" style="font-size:10px" onclick="setPage('status',document.getElementById('ni-status'))">全員の状況→</button></div>
     <div class="sg" id="sg"></div>
   </div>
-
   <div class="sec">
-    <div class="tmr">
-      <div class="tmr-hdr"><div class="tmr-title">🌙 明日の予定</div><button class="btn" onclick="openModal('tomorrow')" style="background:rgba(255,255,255,.15);color:#fff;font-size:11px">＋ 入力</button></div>
-      <div id="tmrList"></div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">📍 いまどこにいる？</div></div>
+      <div id="locList"><div class="empty">まだ誰も共有していません</div></div>
     </div>
   </div>
   <div class="sec" id="meal-sec">
     <div class="card">
-      <div class="card-hdr" onclick="toggleCard('meal')" style="display:flex;align-items:center;justify-content:space-between"><div class="card-title">🍽️ 今日のごはん <span id="meal-badge"></span><span class="chev" id="chev-meal">›</span></div><button class="btn btn-ghost" style="font-size:10px" onclick="event.stopPropagation();openModal('mealSettings')">設定</button></div>
-      </div><div class="card-body" id="cbody-meal"><div id="mealDisplay"></div>
-    </div>
-  </div>
-
-
-
-
-
-
-</div>
-</div>
-<div class="pg" id="pg-todo">
-  <div class="sec">
-    <div class="card">
-      <div class="card-hdr" onclick="toggleCard('shop')" style="display:flex;align-items:center;justify-content:space-between"><div class="card-title">🛒 買い物リスト<span class="chev" id="chev-shop">›</span></div><div style="display:flex;gap:5px" onclick="event.stopPropagation()"><button class="btn btn-ghost" style="font-size:10px" onclick="clearDoneShop()">完了削除</button><button class="btn btn-g" onclick="openModal('shop')">＋</button></div></div>
-      <div class="card-body" id="cbody-shop"><div id="shopList"></div></div>
+      <div class="card-hdr"><div class="card-title">🍽️ 今日のごはん <span id="meal-badge"></span></div><button class="btn btn-ghost" style="font-size:10px" onclick="openModal('mealSettings')">設定</button></div>
+      <div id="mealDisplay"></div>
     </div>
   </div>
   <div class="sec">
     <div class="card">
-      <div class="card-hdr" onclick="toggleCard('task')" style="display:flex;align-items:center;justify-content:space-between"><div class="card-title">✅ タスク<span class="chev" id="chev-task">›</span></div><div style="display:flex;gap:5px" onclick="event.stopPropagation()"><button class="btn btn-ghost" style="font-size:10px" onclick="clearDoneTask()">完了削除</button><button class="btn btn-b" onclick="openModal('task')">＋</button></div></div>
-      <div class="card-body" id="cbody-task"><div id="taskList"></div></div>
+      <div class="card-hdr"><div class="card-title">🛒 買い物リスト</div><div style="display:flex;gap:5px"><button class="btn btn-ghost" style="font-size:10px" onclick="clearDoneShop()">完了削除</button><button class="btn btn-g" onclick="openModal('shop')">＋</button></div></div>
+      <div id="shopList"></div>
     </div>
   </div>
   <div class="sec">
     <div class="card">
-      <div class="card-hdr" onclick="toggleCard('bath')" style="display:flex;align-items:center;justify-content:space-between"><div class="card-title">🛁 お風呂<span class="chev" id="chev-bath">›</span></div></div>
-      <div class="card-body" id="cbody-bath"><div id="bathStatus"></div></div>
+      <div class="card-hdr"><div class="card-title">✅ タスク</div><div style="display:flex;gap:5px"><button class="btn btn-ghost" style="font-size:10px" onclick="clearDoneTask()">完了削除</button><button class="btn btn-b" onclick="openModal('task')">＋</button></div></div>
+      <div id="taskList"></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">🛁 お風呂</div></div>
+      <div id="bathStatus"></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">💊 お薬リマインダー</div><button class="btn btn-ghost" style="background:#F3E8FF;color:#8E6BB5" onclick="openModal('medicine')">＋ 追加</button></div>
+      <div id="medList"></div>
     </div>
   </div>
   <div class="sec">
     <div class="sec-row"><div class="sec-title" id="trash-area-lbl">🗑️ ゴミ出し</div></div>
     <div class="card" id="trashCard"></div>
+  </div>
+  <div class="sec">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title" id="schTitle">今日のスケジュール</div><button class="btn btn-o" onclick="openModal('schedule')">＋ 追加</button></div>
+      <div id="schList"></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="tmr">
+      <div class="tmr-hdr"><div class="tmr-title">🌙 明日の予定</div><button class="btn" onclick="openModal('tomorrow')" style="background:rgba(255,255,255,.15);color:#fff;font-size:11px">＋ 入力</button></div>
+      <div id="tmrList"></div>
+    </div>
   </div>
 </div>
 <div class="pg" id="pg-calendar">
@@ -724,43 +623,21 @@ body.elder .confirm-btn-ok,.elder .confirm-btn-cancel{padding:16px;font-size:cal
   <div style="text-align:center;margin-top:10px" id="calAddBtn"><button class="btn btn-o" style="padding:11px 22px;font-size:14px" onclick="openModal('schedule')">＋ 予定を追加</button></div>
 </div>
 <div class="pg" id="pg-status">
-  <!-- 自分の状態 - 大きく・わかりやすく -->
   <div class="sec">
-    <div class="card" style="padding:20px 16px">
+    <div class="card">
       <div id="myStatusCard"></div>
-      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--wm);display:flex;justify-content:space-between;align-items:center">
-        <div style="font-size:calc(var(--fs) - 2px);color:var(--t3)" id="status-last-updated">最終更新：未設定</div>
-        <button class="btn btn-o" onclick="saveMyStatus()" style="padding:10px 24px;font-weight:700">更新する</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--wm)">
+        <div style="font-size:11px;color:var(--t3)" id="status-last-updated">最終更新：未設定</div>
+        <button class="btn btn-o" onclick="saveMyStatus()" style="font-size:13px;padding:9px 20px">更新する</button>
       </div>
     </div>
   </div>
-  <!-- お薬リマインダー -->
   <div class="sec">
     <div class="card">
-      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between">
-        <div class="card-title">💊 お薬リマインダー</div>
-        <button class="btn btn-ghost" style="background:#F3E8FF;color:#8E6BB5" onclick="openModal('medicine')">＋ 追加</button>
-      </div>
-      <div id="medList"></div>
-    </div>
-  </div>
-  <!-- 位置共有 -->
-  <div class="sec">
-    <div class="card">
-      <div class="card-hdr" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div class="card-title">📍 いまどこにいる？</div>
-      </div>
-      <div id="locList"><div class="empty">まだ誰も共有していません</div></div>
-    </div>
-  </div>
-  <!-- 家族の状況 -->
-  <div class="sec">
-    <div class="card">
-      <div class="card-title" style="margin-bottom:10px">🏠 みんなの状況</div>
+      <div class="card-title" style="margin-bottom:10px">🏠 家族の状況</div>
       <div id="suCards"></div>
     </div>
   </div>
-  <!-- アクティビティ -->
   <div class="sec">
     <div class="card">
       <div class="card-title" style="margin-bottom:10px">📬 最近のアクティビティ</div>
@@ -768,8 +645,7 @@ body.elder .confirm-btn-ok,.elder .confirm-btn-cancel{padding:16px;font-size:cal
     </div>
   </div>
 </div>
-<div id="pg-settings-overlay" style="display:none" style="position:fixed;inset:0;z-index:2000;background:var(--cr);overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,20px)"><div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--wm);background:var(--cd);position:sticky;top:0;z-index:1"><button onclick="closeSettings()" style="background:none;border:none;font-size:22px;cursor:pointer;padding:4px;color:var(--ac)">‹</button><div style="font-weight:700;font-size:calc(var(--fs)+2px)">設定</div></div>
-<div id="pg-settings">
+<div class="pg" id="pg-settings">
   <!-- Profile card at top (iPhone style) -->
   <div id="iset-profile-card" class="iset-profile-card" onclick="openEditProfile()">
     <div id="iset-avatar" class="iset-avatar"></div>
@@ -905,61 +781,11 @@ body.elder .confirm-btn-ok,.elder .confirm-btn-cancel{padding:16px;font-size:cal
   </div>
 </div>
 </div>
-<div id="irori-confirm" class="hide">
-  <div class="confirm-box">
-    <div class="confirm-icon" id="confirm-icon">⚠️</div>
-    <div class="confirm-title" id="confirm-title">確認</div>
-    <div class="confirm-msg" id="confirm-msg"></div>
-    <div class="confirm-btns">
-      <button class="confirm-btn-cancel" onclick="confirmCancel()">キャンセル</button>
-      <button class="confirm-btn-ok" id="confirm-ok-btn" onclick="confirmOk()">OK</button>
-    </div>
-  </div>
-</div>
-<div id="fab-backdrop" onclick="closeFab()"></div>
-<div id="fab-wrap">
-  <div class="fab-items hide" id="fab-items">
-    <div class="fab-item" style="animation-delay:.05s">
-      <div class="fab-item-lbl">明日の予定</div>
-      <button class="fab-item-btn" style="background:#4E3425;color:#fff" onclick="fabAction('tomorrow')">🌙</button>
-    </div>
-    <div class="fab-item" style="animation-delay:.04s">
-      <div class="fab-item-lbl">お薬</div>
-      <button class="fab-item-btn" style="background:#F3E8FF;color:#8E6BB5" onclick="fabAction('medicine')">💊</button>
-    </div>
-    <div class="fab-item" style="animation-delay:.03s">
-      <div class="fab-item-lbl">タスク</div>
-      <button class="fab-item-btn" style="background:#EBF4FF;color:#6480B8" onclick="fabAction('task')">✅</button>
-    </div>
-    <div class="fab-item" style="animation-delay:.02s">
-      <div class="fab-item-lbl">買い物</div>
-      <button class="fab-item-btn" style="background:#E8F5EE;color:#5A9E7C" onclick="fabAction('shop')">🛒</button>
-    </div>
-    <div class="fab-item" style="animation-delay:.01s">
-      <div class="fab-item-lbl">予定</div>
-      <button class="fab-item-btn" style="background:#FFF0E8;color:#D4663E" onclick="fabAction('schedule')">📅</button>
-    </div>
-  </div>
-  <button id="fab-main" onclick="toggleFab()">＋</button>
-</div>
-
-<!-- Tutorial overlay -->
-<div class="tut-overlay hide" id="tutOverlay">
-  <div class="tut-card">
-    <div class="tut-icon" id="tutIcon"></div>
-    <div class="tut-title" id="tutTitle"></div>
-    <div class="tut-body" id="tutBody"></div>
-    <button class="tut-btn" id="tutBtn" onclick="tutNext()"></button>
-    <button class="tut-skip" onclick="tutClose()">スキップ</button>
-  </div>
-</div>
-<!-- Tab hint -->
-<div class="tab-hint hide" id="tabHint"></div>
 <div class="bnav">
-  <div class="ni active" id="ni-home" onclick="setPage('home',this)"><div class="ni-ic">🏠</div><div class="ni-lb">今日</div></div>
-  <div class="ni" id="ni-todo" onclick="setPage('todo',this)"><div class="ni-ic">✅</div><div class="ni-lb">やること</div></div>
-  <div class="ni" id="ni-calendar" onclick="setPage('calendar',this)"><div class="ni-ic">📅</div><div class="ni-lb">よてい</div></div>
-  <div class="ni" id="ni-status" onclick="setPage('status',this)"><div class="ni-ic">🙋</div><div class="ni-lb">じぶん</div></div>
+  <div class="ni active" id="ni-home" onclick="setPage('home',this)"><div class="ni-ic">🏠</div><div class="ni-lb">ホーム</div></div>
+  <div class="ni" id="ni-calendar" onclick="setPage('calendar',this)"><div class="ni-ic">📅</div><div class="ni-lb">カレンダー</div></div>
+  <div class="ni" id="ni-status" onclick="setPage('status',this)"><div class="ni-ic">📍</div><div class="ni-lb">状況</div></div>
+  <div class="ni" id="ni-settings" onclick="setPage('settings',this)"><div class="ni-ic">⚙️</div><div class="ni-lb">設定</div></div>
 </div>
 <div class="overlay" id="modal" onclick="ocl(event)"><div class="sheet"><div class="handle"></div><div id="mc"></div></div></div>
 <script>
@@ -967,7 +793,7 @@ const FB_CFG={apiKey:"AIzaSyCsGjhymEzDf9XJyPvxvkbFbE7eURbo774",authDomain:"famil
 let ROOM='';  // set dynamically after room selection
 const ADMIN_EMAIL='b.sho.isshiki'+'@'+'gmail.com';
 let isAdmin=false,maintenanceMode=false,isRoomAdmin=false;
-const EMOJIS=['🧑','👩','👨','👧','👦','👵','👴','🧓','👶','🧒','👱','👲','🐱','🐶','🐸','🦊','🐼','🐨','🐯','🦁','🌸','🌺','🌻','⭐','🌟','🎓','💼','🏃','🧘','🍀','🎮','🎵','📚','🍜','🎨','⚽','🎸','🌈','🦋','🐠'];
+const EMOJIS=['🧑','👩','👨','👧','👦','👵','👴','🧓','🐱','🐶','🐸','🦊','🐼','🌸','⭐','🎓','💼','🏃','🧘','🍀'];
 const TAGC={'学校':'#6480B8','仕事':'#5A9E7C','プライベート':'#D4663E','家族':'#E8A040','病院':'#8E6BB5','その他':'#8A8A8A'};
 const MOODS=['😄','😊','😐','😔','😤','🤒'];
 const DN=['日','月','火','水','木','金','土'];
@@ -1131,13 +957,10 @@ function saveRoomToHistory(id,name){
   localStorage.setItem(key,JSON.stringify(rooms));
 }
 function saveMeals(mode){
-  const b=document.getElementById('meal-b')?document.getElementById('meal-b').value.trim():'';
-  const l=document.getElementById('meal-l')?document.getElementById('meal-l').value.trim():'';
-  const d2=document.getElementById('meal-d')?document.getElementById('meal-d').value.trim():'';
-  const bt=document.getElementById('meal-bt')?document.getElementById('meal-bt').value:'';
-  const lt=document.getElementById('meal-lt')?document.getElementById('meal-lt').value:'';
-  const dt=document.getElementById('meal-dt')?document.getElementById('meal-dt').value:'';
-  const entry={breakfast:b,lunch:l,dinner:d2,breakfast_time:bt,lunch_time:lt,dinner_time:dt};
+  const b=document.getElementById('meal-b').value.trim();
+  const l=document.getElementById('meal-l').value.trim();
+  const d2=document.getElementById('meal-d').value.trim();
+  const entry={breakfast:b,lunch:l,dinner:d2};
   if(mode==='today'){
     const overrides=JSON.parse(localStorage.getItem('iedash_meal_overrides_'+ROOM)||'{}');
     overrides[tday()]=entry;
@@ -1161,7 +984,7 @@ function showMealTodayEdit(){
   const mc=document.getElementById('mc');
   mc.innerHTML='<div class="m-title">📝 今日のごはんを編集</div>'+
     '<div style="font-size:12px;color:var(--t2);margin-bottom:12px">今日だけの内容を入力。曜日テンプレは変わりません。</div>'+
-    MEAL_SLOTS.map(sl=>'<div class="fg"><label class="fl">'+sl.label+'</label><div style="display:flex;gap:8px"><input type="time" class="fi" id="meal-'+sl.key.slice(0,1)+'t" value="'+(d[sl.timeKey]||'')+'" style="width:110px;flex-shrink:0"><input class="fi" id="meal-'+sl.key.slice(0,1)+'" value="'+(d[sl.key]||'')+'" placeholder="'+sl.placeholder+'"></div></div>').join('')+
+    MEAL_SLOTS.map(sl=>'<div class="fg"><label class="fl">'+sl.label+'</label><input class="fi" id="meal-'+sl.key.slice(0,1)+'" value="'+(d[sl.key]||'')+'" placeholder="'+sl.placeholder+'"></div>').join('')+
     '<button class="btn btn-o btn-full" onclick="saveMeals(\'today\')">今日だけ保存</button>'+
     '<button class="btn btn-ghost btn-full" style="margin-top:6px" onclick="openModal(\'mealSettings\')">戻る</button>';
   // don't call openOv again - already open
@@ -1189,10 +1012,7 @@ function openMealTplEditor(){
 function renderTplFields(d){
   return MEAL_SLOTS.map(sl=>
     '<div class="fg"><label class="fl">'+sl.label+'</label>'+
-    '<div style="display:flex;gap:8px">'+
-    '<input type="time" class="fi" id="meal-'+sl.key.slice(0,1)+'t" value="'+(d[sl.timeKey]||'')+'" style="width:110px;flex-shrink:0">'+
-    '<input class="fi" id="meal-'+sl.key.slice(0,1)+'" value="'+(d[sl.key]||'')+'" placeholder="'+sl.placeholder+'">'+
-    '</div></div>'
+    '<input class="fi" id="meal-'+sl.key.slice(0,1)+'" value="'+(d[sl.key]||'')+'" placeholder="'+sl.placeholder+'"></div>'
   ).join('');
 }
 function cpCode(code){navigator.clipboard.writeText(code).then(()=>showToast('コピーしました！'));}
@@ -1247,27 +1067,23 @@ function initPS(u){
 function selPE(e){profEmoji=e;document.querySelectorAll('.pc-e').forEach(el=>el.classList.toggle('sel',el.textContent===e));}
 async function saveProfile(){
   const name=document.getElementById('pc-name').value.trim();if(!name){document.getElementById('pc-name').focus();return;}
-  const byEl=document.getElementById('pc-birth-year');
-  const birthYear=byEl&&byEl.value?parseInt(byEl.value):null;
   document.getElementById('profile-screen').classList.add('hide');document.getElementById('loading').classList.remove('hide');ldtxt('保存中...');
   const color=COLS[Math.floor(Math.random()*COLS.length)];
-  myProfile={uid:currentUser.uid,name,emoji:profEmoji,color,email:currentUser.email||'',birthYear,createdAt:new Date().toISOString()};
+  myProfile={uid:currentUser.uid,name,emoji:profEmoji,color,email:currentUser.email||'',createdAt:new Date().toISOString()};
   try{
     await db.collection('iedash').doc(ROOM).collection('members').doc(currentUser.uid).set(myProfile);
     await db.collection('iedash').doc(ROOM).collection('status').doc(currentUser.uid).set({home:true,ret:'',mood:''},{merge:true});
-    applyAgeSettings();
     boot();
   }catch(e){alert('保存失敗: '+e.message);document.getElementById('loading').classList.add('hide');document.getElementById('profile-screen').classList.remove('hide');}
 }
 function boot(){
-  ldtxt('データ読み込み中...');
-  applyAgeSettings();curM=currentUser.uid;
+  ldtxt('データ読み込み中...');curM=currentUser.uid;
   const now=new Date();calY=now.getFullYear();calM=now.getMonth();
   calWeek=new Date(now);calWeek.setDate(now.getDate()-now.getDay());
   calDay=new Date(now);lastDate=tday();
   updateDD();
   setInterval(()=>{const t=tday();if(t!==lastDate){lastDate=t;updateDD();renderTrash();}},60000);
-  syncMealTpl().then(()=>renderMeal());listenAll();renderTrash();initCollapse();renderHero();renderMedToday();schedChecks();renderNotifToggles();renderBath();renderHomeSummary();
+  syncMealTpl().then(()=>renderMeal());listenAll();renderTrash();schedChecks();renderNotifToggles();renderBath();renderHomeSummary();
   // Unregister all old service workers to prevent caching issues
   if('serviceWorker'in navigator){
     navigator.serviceWorker.getRegistrations().then(regs=>{
@@ -1277,11 +1093,6 @@ function boot(){
   const mb=document.getElementById('myBtn');if(mb)mb.textContent=myProfile.emoji;
   setTimeout(()=>document.getElementById('loading').classList.add('hide'),600);
   if(isAdmin)loadFbCount();
-  // Onboarding
-  setTimeout(()=>{
-    runFirstRoomTut();
-    checkTrashBanner();
-  }, 800);
 }
 function loadFbCount(){
   db.collection('iedash').doc(ROOM).collection('feedbacks').get().then(s=>{
@@ -1290,95 +1101,6 @@ function loadFbCount(){
   }).catch(()=>{});
 }
 function updateDD(){const now=new Date();const el=document.getElementById('hdrDate');if(el)el.textContent=(now.getMonth()+1)+'/'+(now.getDate())+'（'+DN[now.getDay()]+'）';}
-
-
-
-let _confirmResolve=null;
-function iroriConfirm({icon='⚠️',title='確認',msg='',okLabel='OK',okColor='#C94040',dangerMode=false}={}){
-  return new Promise(resolve=>{
-    _confirmResolve=resolve;
-    document.getElementById('confirm-icon').textContent=icon;
-    document.getElementById('confirm-title').textContent=title;
-    document.getElementById('confirm-msg').textContent=msg;
-    const okBtn=document.getElementById('confirm-ok-btn');
-    okBtn.textContent=okLabel;
-    okBtn.style.background=okColor;
-    okBtn.style.color='#fff';
-    document.getElementById('irori-confirm').classList.remove('hide');
-  });
-}
-function confirmOk(){document.getElementById('irori-confirm').classList.add('hide');if(_confirmResolve){_confirmResolve(true);_confirmResolve=null;}}
-function confirmCancel(){document.getElementById('irori-confirm').classList.add('hide');if(_confirmResolve){_confirmResolve(false);_confirmResolve=null;}}
-
-function applyAgeSettings(){
-  if(!myProfile)return;
-  const by=myProfile.birthYear;
-  if(!by)return;
-  const age=new Date().getFullYear()-by;
-  // 65歳以上 → elder モード
-  if(age>=65){
-    document.body.classList.add('elder');
-    localStorage.setItem('irori_elder','1');
-  } else {
-    document.body.classList.remove('elder');
-    localStorage.removeItem('irori_elder');
-  }
-}
-
-function renderHero(){
-  const dateEl=document.getElementById('heroDate');
-  const familyEl=document.getElementById('heroFamily');
-  const bottomEl=document.getElementById('heroBottom');
-  if(!dateEl)return;
-
-  // Date
-  const now=new Date();
-  const DOW=['日','月','火','水','木','金','土'];
-  dateEl.textContent=`${now.getMonth()+1}月${now.getDate()}日（${DOW[now.getDay()]}）`;
-
-  // Family members
-  if(familyEl&&state.members&&state.status){
-    familyEl.innerHTML=state.members.map(m=>{
-      const st=state.status[m.uid]||{};
-      const isHome=st.home;
-      return `<div class="hero-member" onclick="quickToggleStatus()" style="${m.uid===currentUser?.uid?'border:1.5px solid rgba(255,255,255,.4)':''}">
-        <span class="hero-member-emoji">${m.emoji||'👤'}</span>
-        <div class="hero-member-info">
-          <span class="hero-member-name">${m.name||''}</span>
-          <span class="hero-member-status">${isHome?'🏠 在宅':'🚶 外出'}</span>
-        </div>
-      </div>`;
-    }).join('');
-  }
-
-  // Bottom summary
-  if(bottomEl){
-    const today=tday();
-    const bath=JSON.parse(localStorage.getItem('iedash_bath_'+ROOM)||'{}')[today]||{};
-    const meal=getMealForToday();
-    const items=[];
-
-    // Dinner time
-    if(meal&&meal.data&&meal.data.dinner_time){
-      items.push(`<div class="hero-item"><span class="hero-item-icon">🍽️</span><div><div class="hero-item-text">夜ごはん</div><div class="hero-item-val">${meal.data.dinner_time}${meal.data.dinner?' · '+meal.data.dinner:''}</div></div></div>`);
-    } else if(meal&&meal.data&&meal.data.dinner){
-      items.push(`<div class="hero-item"><span class="hero-item-icon">🍽️</span><div><div class="hero-item-text">夜ごはん</div><div class="hero-item-val">${meal.data.dinner}</div></div></div>`);
-    }
-
-    // Bath status
-    const bathLabel=bath.washed&&bath.filled?'✅ 完了':bath.washed?'🔵 洗い済':'🔴 未';
-    items.push(`<div class="hero-item"><span class="hero-item-icon">🛁</span><div><div class="hero-item-text">お風呂</div><div class="hero-item-val">${bathLabel}</div></div></div>`);
-
-    // Today's schedule count
-    const todaySch=state.schedules?state.schedules.filter(s=>s.date===today).length:0;
-    if(todaySch>0){
-      items.push(`<div class="hero-item"><span class="hero-item-icon">📅</span><div><div class="hero-item-text">今日の予定</div><div class="hero-item-val">${todaySch}件</div></div></div>`);
-    }
-
-    bottomEl.innerHTML=items.join('');
-  }
-}
-
 function renderHomeSummary(){
   const el=document.getElementById('home-summary');if(!el)return;
   const today=tday();
@@ -1440,7 +1162,7 @@ function listenAll(){
   db.collection('iedash').doc(ROOM).collection('shopping').onSnapshot(s=>{state.shopping=s.docs.map(d=>({id:d.id,...d.data()}));renderShop();renderHomeSummary();},console.error);
   db.collection('iedash').doc(ROOM).collection('tasks').onSnapshot(s=>{state.tasks=s.docs.map(d=>({id:d.id,...d.data()}));renderTasks();},console.error);
   db.collection('iedash').doc(ROOM).collection('tomorrow').onSnapshot(s=>{state.tomorrow=s.docs.map(d=>({id:d.id,...d.data()}));renderTmr();},console.error);
-  db.collection('iedash').doc(ROOM).collection('medicine').onSnapshot(s=>{state.medicine=s.docs.map(d=>({id:d.id,...d.data()}));renderMed();renderMedToday();},console.error);
+  db.collection('iedash').doc(ROOM).collection('medicine').onSnapshot(s=>{state.medicine=s.docs.map(d=>({id:d.id,...d.data()}));renderMed();},console.error);
   db.collection('iedash').doc(ROOM).collection('meals').onSnapshot(s=>{state.meals={};s.docs.forEach(d=>{state.meals[d.id]=d.data();});renderMeal();},console.error);
   db.collection('iedash').doc(ROOM).collection('emergency').onSnapshot(s=>{const recent=s.docs.map(d=>({id:d.id,...d.data()})).filter(x=>x.createdAt&&(Date.now()-new Date(x.createdAt).getTime())<300000);if(recent.length>0)showEmergencyAlert(recent[recent.length-1]);},console.error);
 }
@@ -1530,33 +1252,6 @@ function renderTrash(){
   const tc=document.getElementById('trashCard');if(!tc)return;
   tc.innerHTML='<div style="font-size:11px;font-weight:700;color:var(--t3);margin-bottom:7px">今週のゴミ出し</div><div class="wk-row">'+wk+'</div><div class="tr-types"><div class="tr-row"><span>🔥 燃えるごみ</span><span class="tr-fr">毎週 月・木</span></div><div class="tr-row"><span>🥫 かん・びん</span><span class="tr-fr">第1・3水曜</span></div><div class="tr-row"><span>♻️ ペット・不燃・危険・大型</span><span class="tr-fr">第2・4水曜</span></div></div>';
 }
-
-function renderMedToday(){
-  const wrap=document.getElementById('med-today-wrap');
-  const el=document.getElementById('med-today-list');
-  if(!wrap||!el)return;
-  // 自分のお薬だけ表示
-  const myMeds=state.medicine.filter(m=>m.member===currentUser.uid||m.ownerUid===currentUser.uid);
-  if(!myMeds.length){wrap.style.display='none';return;}
-  wrap.style.display='block';
-  const td=tday();
-  el.innerHTML=myMeds.map(m=>{
-    const taken=m.taken&&m.taken[td];
-    return '<div class="med-today-item">'+
-      '<div>'+
-        '<div class="med-today-name">'+m.name+'</div>'+
-        '<div class="med-today-time">'+m.times.join(' / ')+'</div>'+
-      '</div>'+
-      '<div class="med-today-chk '+(taken?'done':'')+'" onclick="togMedToday(\''+m.id+'\')">'+
-        (taken?'✓':'')+'</div>'+
-    '</div>';
-  }).join('');
-}
-function togMedToday(id){
-  togMed(id);
-  setTimeout(()=>{renderMedToday();renderHero();},300);
-}
-
 function renderMed(){
   const el=document.getElementById('medList');if(!el)return;
   if(!state.medicine.length){el.innerHTML='<div class="empty">お薬が登録されていません</div>';return;}
@@ -1580,7 +1275,7 @@ function togMed(id){
   db.collection('iedash').doc(ROOM).collection('medicine').doc(id).update({taken}).catch(console.error);
   if(!taken[td])return;addAct('💊 '+m.name+' 服用済み ✓');
 }
-async function delMed(id){const m=state.medicine.find(x=>x.id===id);if(!m||!canEdit(m.ownerUid))return;const ok=await iroriConfirm({icon:'💊',title:'お薬を削除',msg:m.name+'を削除しますか？',okLabel:'削除する',okColor:'#C94040'});if(!ok)return;db.collection('iedash').doc(ROOM).collection('medicine').doc(id).delete().catch(console.error);}
+function delMed(id){const m=state.medicine.find(x=>x.id===id);if(!m||!canEdit(m.ownerUid))return;db.collection('iedash').doc(ROOM).collection('medicine').doc(id).delete().catch(console.error);}
 function renderShop(){
   const el=document.getElementById('shopList');if(!el)return;
   if(!state.shopping.length){el.innerHTML='<div class="empty">リストは空です</div>';return;}
@@ -1592,7 +1287,7 @@ function togShop(id,done){
   ref.update({done:done}).catch(console.error);
   renderHomeSummary();
 }
-async function delShop(id){const ok=await iroriConfirm({icon:'🗑️',title:'削除',msg:'この買い物を削除しますか？',okLabel:'削除する',okColor:'#C94040'});if(!ok)return;db.collection('iedash').doc(ROOM).collection('shopping').doc(id).delete().catch(console.error);}
+function delShop(id){db.collection('iedash').doc(ROOM).collection('shopping').doc(id).delete().catch(console.error);}
 function clearDoneShop(){state.shopping.filter(x=>x.done&&canEdit(x.ownerUid)).forEach(x=>delShop(x.id));}
 function renderTasks(){
   const el=document.getElementById('taskList');if(!el)return;
@@ -1602,7 +1297,7 @@ function renderTasks(){
   el.innerHTML=sorted.map(t=>{const ov=t.due&&t.due<td&&!t.done,dueT=t.due===td&&!t.done,mine=canEdit(t.ownerUid);return'<div class="li"><div class="chk-sq '+(t.done?'done':'')+'" onclick="togTask(\''+t.id+'\','+!t.done+')"></div><div class="li-txt '+(t.done?'done':'')+'" onclick="openModal(\'taskDet\',{id:\''+t.id+'\'})">'+t.text+'</div><div class="tag">'+t.assign+'</div>'+(ov?'<span class="tag tag-ov">⚠️ 期限切れ</span>':'')+(dueT?'<span class="tag tag-due">今日まで</span>':'')+(t.due&&!ov&&!dueT?'<span class="tag tag-due">'+t.due.slice(5).replace('-','/')+'</span>':'')+(mine?'<button class="del" onclick="delTask(\''+t.id+'\')">✕</button>':'')+' </div>';}).join('');
 }
 function togTask(id,done){const t=state.tasks.find(x=>x.id===id);db.collection('iedash').doc(ROOM).collection('tasks').doc(id).update({done}).then(()=>{if(done&&t)addAct('✅「'+t.text+'」完了！');}).catch(console.error);}
-async function delTask(id){const ok=await iroriConfirm({icon:'🗑️',title:'削除',msg:'このタスクを削除しますか？',okLabel:'削除する',okColor:'#C94040'});if(!ok)return;db.collection('iedash').doc(ROOM).collection('tasks').doc(id).delete().catch(console.error);}
+function delTask(id){db.collection('iedash').doc(ROOM).collection('tasks').doc(id).delete().catch(console.error);}
 function clearDoneTask(){state.tasks.filter(x=>x.done&&canEdit(x.ownerUid)).forEach(x=>delTask(x.id));}
 function renderTmr(){
   const el=document.getElementById('tmrList');if(!el)return;
@@ -1612,7 +1307,7 @@ function renderTmr(){
 function delTmr(id){db.collection('iedash').doc(ROOM).collection('tomorrow').doc(id).delete().catch(console.error);}
 // ─── EMERGENCY ───
 async function sendEmergency(){
-  const ok=await iroriConfirm({icon:'🚨',title:'緊急連絡',msg:'家族全員に緊急通知を送ります。よろしいですか？',okLabel:'送信する',okColor:'#C94040'});if(!ok)return;
+  if(!confirm('🚨 家族全員に緊急通知を送りますか？'))return;
   await db.collection('iedash').doc(ROOM).collection('emergency').add({
     from:currentUser.uid,fromName:myProfile.name,fromEmoji:myProfile.emoji,
     message:myProfile.name+'から緊急連絡があります！',
@@ -1853,9 +1548,9 @@ function openPrivacy(){
 }
 // Meal helpers
 const MEAL_SLOTS=[
-  {key:'breakfast',label:'🌅 朝ごはん',timeKey:'breakfast_time',placeholder:'料理名（例：トースト）'},
-  {key:'lunch',label:'☀️ 昼ごはん',timeKey:'lunch_time',placeholder:'料理名（例：カレー）'},
-  {key:'dinner',label:'🌙 夜ごはん',timeKey:'dinner_time',placeholder:'料理名（例：鍋）'},
+  {key:'breakfast',label:'🌅 朝',placeholder:'トースト、おにぎり...'},
+  {key:'lunch',label:'☀️ 昼',placeholder:'カレー、パスタ...'},
+  {key:'dinner',label:'🌙 夜',placeholder:'鍋、炒め物...'},
 ];
 const DN7=['日','月','火','水','木','金','土'];
 // Meal sync: templates stored in Firestore, today overrides in localStorage
@@ -2555,9 +2250,6 @@ function switchRoom(){
 }
 
 function applySettings(){
-  // elder from localStorage
-  if(localStorage.getItem('irori_elder')==='1')document.body.classList.add('elder');
-
   const fs=localStorage.getItem('iedash_fs')||'mid';
   if(fs&&fs!=='mid')document.body.classList.add('fs-'+fs);
   if(localStorage.getItem('iedash_dark')==='1')document.body.classList.add('dark');
@@ -2568,32 +2260,15 @@ function openOv(){document.getElementById('modal').classList.add('open');}
 function closeModal(){document.getElementById('modal').classList.remove('open');}
 function ocl(e){if(e.target===document.getElementById('modal'))closeModal();}
 function setPage(name,el){
-  // Settings opens as overlay, not a tab
-  if(name==='settings'){
-    document.getElementById('pg-settings-overlay').style.display='block';
-    document.getElementById('iset-name').textContent=myProfile?myProfile.name:'';
-    document.getElementById('iset-email').textContent=currentUser?currentUser.email:'';
-    document.getElementById('iset-avatar').textContent=myProfile?myProfile.emoji:'👤';
-    const rn=document.getElementById('iset-room-name');
-    const rc=document.getElementById('iset-room-code');
-    if(rn)rn.textContent=window._roomName||ROOM;
-    if(rc)rc.textContent='招待コード：'+ROOM;
-    initSettingsPage();
-    return;
-  }
-  document.querySelectorAll('.scroll .pg').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
-  const pg=document.getElementById('pg-'+name);
-  if(pg)pg.classList.add('active');
+  const pgEl=document.getElementById('pg-'+name);
+  if(pgEl)pgEl.classList.add('active');
   if(el)el.classList.add('active');
+  document.querySelector('.scroll').scrollTop=0;
   if(name==='calendar')renderCal();
-  if(name==='home'){renderHomeSummary();renderHero();}
-  // Show tab hint on first visit
-  const tabMap={home:'home',todo:'todo',calendar:'calendar',status:'status'};
-  if(tabMap[name])setTimeout(()=>showTabHint(tabMap[name]),400);
-}
-function closeSettings(){
-  document.getElementById('pg-settings-overlay').style.display='none';
+  if(name==='status'){renderSUPage();renderNhistStatus();}
+  if(name==='settings')initSettingsPage();
 }
 function initSettingsPage(){
   // Profile card
@@ -2667,139 +2342,5 @@ function setTrashArea(id,label){
   closeModal();
   showToast('地域を更新しました');
 }
-
-
-const collapsedCards=JSON.parse(localStorage.getItem('irori_collapsed')||'{}');
-function toggleCard(id){
-  collapsedCards[id]=!collapsedCards[id];
-  localStorage.setItem('irori_collapsed',JSON.stringify(collapsedCards));
-  applyCollapse(id);
-}
-function applyCollapse(id){
-  const body=document.getElementById('cbody-'+id);
-  const chev=document.getElementById('chev-'+id);
-  if(!body)return;
-  const collapsed=collapsedCards[id];
-  body.classList.toggle('collapsed',!!collapsed);
-  if(chev)chev.style.transform=collapsed?'rotate(0deg)':'rotate(90deg)';
-}
-function initCollapse(){
-  ['meal','shop','task','bath','med','trash','sch'].forEach(id=>applyCollapse(id));
-}
-
-let fabOpen=false;
-function toggleFab(){
-  fabOpen=!fabOpen;
-  document.getElementById('fab-items').classList.toggle('hide',!fabOpen);
-  document.getElementById('fab-main').classList.toggle('open',fabOpen);
-  document.getElementById('fab-backdrop').classList.toggle('show',fabOpen);
-}
-function closeFab(){
-  fabOpen=false;
-  document.getElementById('fab-items').classList.add('hide');
-  document.getElementById('fab-main').classList.remove('open');
-  document.getElementById('fab-backdrop').classList.remove('show');
-}
-function fabAction(type){
-  closeFab();
-  openModal(type);
-}
-
-
-// ── Tutorial System ──────────────────────────────
-const TUT_KEY = 'irori_tut_v1';
-function tutFlags(){
-  return JSON.parse(localStorage.getItem(TUT_KEY)||'{}');
-}
-function tutDone(key){
-  const f=tutFlags(); f[key]=true;
-  localStorage.setItem(TUT_KEY,JSON.stringify(f));
-}
-function tutSeen(key){ return !!tutFlags()[key]; }
-
-// Tab hints - shown once per tab
-const TAB_HINTS = {
-  home:   {icon:'🏠', title:'今日タブ',        body:'かぞくの今日のようすを\nまとめて確かめられます。\nざいたく・ごはん・おふろがひとめでわかります！'},
-  todo:   {icon:'✅', title:'やることタブ',     body:'かいもの・タスク・おふろ・ゴミ出しを\nまとめてかんりできます。\nかぞくみんなでつかえます！'},
-  calendar:{icon:'📅',title:'よていタブ',      body:'かぞくのよていと\nゴミ出しカレンダーを\nかくにんできます。'},
-  status: {icon:'🙋', title:'じぶんタブ',      body:'じぶんのじょうたいや\nおくすりリマインダーを\nせっていできます。'},
-};
-
-let tutQueue=[], tutIdx=0, tutSteps=[];
-
-function showTabHint(tabName){
-  if(tutSeen('tab_'+tabName))return;
-  tutDone('tab_'+tabName);
-  const h=TAB_HINTS[tabName];if(!h)return;
-  const el=document.getElementById('tabHint');
-  if(!el)return;
-  el.textContent=h.icon+' '+h.body.split('\n')[0];
-  el.classList.remove('hide');
-  setTimeout(()=>el.classList.add('hide'),3000);
-}
-
-function tutClose(){
-  document.getElementById('tutOverlay').classList.add('hide');
-  if(tutSteps[tutIdx]&&tutSteps[tutIdx].key){
-    tutDone(tutSteps[tutIdx].key);
-  }
-  tutSteps=[];tutIdx=0;
-}
-
-function tutNext(){
-  tutIdx++;
-  if(tutIdx>=tutSteps.length){ tutClose(); return; }
-  showTutStep(tutSteps[tutIdx]);
-}
-
-function showTutStep(step){
-  document.getElementById('tutIcon').textContent=step.icon||'';
-  document.getElementById('tutTitle').textContent=step.title||'';
-  document.getElementById('tutBody').innerHTML=(step.body||'').replace(/\n/g,'<br>');
-  document.getElementById('tutBtn').textContent=step.btn||'わかった！';
-  document.getElementById('tutOverlay').classList.remove('hide');
-}
-
-function startTutorial(steps){
-  tutSteps=steps; tutIdx=0;
-  showTutStep(tutSteps[0]);
-}
-
-// ① 初回ルーム参加後チュートリアル
-function runFirstRoomTut(){
-  if(tutSeen('first_room'))return;
-  tutDone('first_room');
-  startTutorial([
-    {icon:'🎉',title:'Iroriへようこそ！',
-     body:'かぞくみんなで使うアプリです。\n\nまず4つのタブをかくにんしてみましょう！',
-     btn:'さっそく見てみる！'},
-    {icon:'🏠',title:'「今日」タブ',
-     body:'かぞくが今どこにいるか、\nごはん・おふろのじょうたいが\nひとめでわかります。',btn:'次へ'},
-    {icon:'✅',title:'「やること」タブ',
-     body:'かいものリストやタスクを\nかぞくでシェアできます。\nおつかいのメモにも！',btn:'次へ'},
-    {icon:'📅',title:'「よてい」タブ',
-     body:'かぞくのよていを\nカレンダーでかくにんできます。\nゴミ出しの日もわかります！',btn:'次へ'},
-    {icon:'🙋',title:'「じぶん」タブ',
-     body:'じぶんのざいたく・外出を\nここで切りかえられます。\nおくすりリマインダーも設定できます。',btn:'はじめる！'},
-  ]);
-}
-
-// ④ ゴミ地域バナー
-function checkTrashBanner(){
-  const area=localStorage.getItem('iedash_trash_'+ROOM);
-  const banner=document.getElementById('trashBanner');
-  if(!banner)return;
-  if(!area||area==='none'){
-    banner.classList.remove('hide');
-  } else {
-    banner.classList.add('hide');
-  }
-}
-
-// ② 招待コード画面のヒント（joinByCodeのUI内で表示）
-// → rs-card内にすでにテキストあり、さらに強化する
-
-// setPageにhint表示を追加
-
 applySettings();init();
 </script></body></html>
