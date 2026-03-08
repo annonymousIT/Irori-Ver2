@@ -895,10 +895,6 @@ body.elder select,.elder .fi{font-size:17px!important}
   <div class="ni" id="ni-calendar" onclick="setPage('calendar',this)"><div class="ni-ic">📅</div><div class="ni-lb">予定</div></div>
   <div class="ni" id="ni-status" onclick="setPage('status',this)"><div class="ni-ic">🙋</div><div class="ni-lb">じぶん</div></div>
 </div>
-  <div class="ni" id="ni-calendar" onclick="setPage('calendar',this)"><div class="ni-ic">📅</div><div class="ni-lb">カレンダー</div></div>
-  <div class="ni" id="ni-status" onclick="setPage('status',this)"><div class="ni-ic">📍</div><div class="ni-lb">状況</div></div>
-  <div class="ni" id="ni-settings" onclick="setPage('settings',this)"><div class="ni-ic">⚙️</div><div class="ni-lb">設定</div></div>
-</div>
 <div class="overlay" id="modal" onclick="ocl(event)"><div class="sheet"><div class="handle"></div><div id="mc"></div></div></div>
 <script>
 const FB_CFG={apiKey:"AIzaSyCsGjhymEzDf9XJyPvxvkbFbE7eURbo774",authDomain:"family-app-3393e.firebaseapp.com",projectId:"family-app-3393e",storageBucket:"family-app-3393e.firebasestorage.app",messagingSenderId:"708808816187",appId:"1:708808816187:web:fc119f5e93eb1957418e1e"};
@@ -2382,7 +2378,6 @@ function openOv(){document.getElementById('modal').classList.add('open');}
 function closeModal(){document.getElementById('modal').classList.remove('open');}
 function ocl(e){if(e.target===document.getElementById('modal'))closeModal();}
 function setPage(name,el){
-  if(name==='settings'){initSettingsPage();document.getElementById('pg-settings').style.cssText='display:block';document.querySelector('.scroll').scrollTop=0;return;}
   document.querySelectorAll('.pg').forEach(p=>{p.classList.remove('active');p.style.cssText='';});
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   const pgEl=document.getElementById('pg-'+name);
@@ -2390,6 +2385,7 @@ function setPage(name,el){
   if(el)el.classList.add('active');
   else{const ni=document.getElementById('ni-'+name);if(ni)ni.classList.add('active');}
   document.querySelector('.scroll').scrollTop=0;
+  if(name==='settings')initSettingsPage();
   if(name==='calendar'){renderCal();renderTodayFamGrid();}
   if(name==='status'){renderSUPage();renderNhistStatus();}
   if(name==='home'){renderFamStatus();renderTrash();}
