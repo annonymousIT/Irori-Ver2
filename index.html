@@ -122,7 +122,7 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 
 .sec{margin-bottom:13px}
-.card{background:var(--cd);border-radius:var(--r);padding:14px;box-shadow:var(--sh);border:1.5px solid #4E3425}
+.card{background:var(--cd);border-radius:var(--r);padding:14px;box-shadow:var(--sh)}
 .card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
 .card-title{font-size:15px;font-weight:700}
 .sec-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
@@ -541,8 +541,78 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 .pp-badge{display:inline-block;background:var(--ac);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:6px;vertical-align:middle}
 
 </style>
+<script>
+// キャッシュ強制クリア（古いSWを削除してリロード）
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    regs.forEach(function(r){r.unregister();});
+  });
+  caches.keys().then(function(keys){
+    keys.forEach(function(k){caches.delete(k);});
+  });
+}
+</script>
 </head>
 <body>
+<!-- ローディング画面 -->
+<div id="loading" style="position:fixed;inset:0;z-index:9999;background:var(--br);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
+  <div style="font-size:52px">🏠</div>
+  <div style="font-size:22px;font-weight:700;color:#fff">I<em style="color:var(--yl)">rori</em></div>
+  <div id="ldtxt" style="font-size:13px;color:rgba(255,255,255,.6)">読み込み中...</div>
+  <div style="width:48px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;margin-top:8px">
+    <div style="height:100%;background:var(--ac);border-radius:2px;animation:ldbar 1.4s ease-in-out infinite"></div>
+  </div>
+</div>
+<!-- ログイン画面 -->
+<div id="login-screen" class="hide" style="position:fixed;inset:0;z-index:9998;background:var(--br);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px">
+  <div style="font-size:52px;margin-bottom:12px">🏠</div>
+  <div style="font-size:28px;font-weight:700;color:#fff;margin-bottom:6px">I<em style="color:var(--yl)">rori</em></div>
+  <div style="font-size:13px;color:rgba(255,255,255,.6);margin-bottom:32px">家族をつなぐホームダッシュボード</div>
+  <div style="background:#fff;border-radius:22px;padding:28px 22px;width:100%;max-width:360px">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:16px;font-weight:700;color:var(--br)">ログインしてはじめる</div>
+      <div style="font-size:12px;color:var(--t2);margin-top:4px">Googleアカウントで安全にログイン</div>
+    </div>
+    <button onclick="signInGoogle()" style="width:100%;padding:14px;background:var(--br);color:#fff;border:none;border-radius:14px;font-family:'Zen Maru Gothic',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px">
+      <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#fff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66 2.84z"/><path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Googleでログイン
+    </button>
+    <div style="text-align:center;margin-top:16px">
+      <button onclick="openModal('privacy')" style="background:none;border:none;font-size:11px;color:var(--t3);cursor:pointer;text-decoration:underline">プライバシーポリシー</button>
+    </div>
+  </div>
+</div>
+<!-- メンテナンス画面 -->
+<div id="maintenance-screen" class="hide" style="position:fixed;inset:0;z-index:9997;background:var(--br);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
+  <div style="font-size:48px;margin-bottom:16px">🔧</div>
+  <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:10px">メンテナンス中</div>
+  <div id="maint-msg" style="font-size:14px;color:rgba(255,255,255,.7);line-height:1.8;margin-bottom:24px">ただいまメンテナンス中です。<br>しばらくお待ちください。</div>
+  <button onclick="maintAdminLogin()" style="background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.4);font-size:11px;padding:8px 16px;border-radius:8px;cursor:pointer">管理者ログイン</button>
+</div>
+<!-- ルーム選択画面 -->
+<div id="room-screen" class="hide" style="position:fixed;inset:0;z-index:9996;background:var(--br);display:flex;flex-direction:column;padding:24px;overflow-y:auto">
+  <div style="text-align:center;margin-bottom:28px;padding-top:32px">
+    <div style="font-size:48px;margin-bottom:8px">🏠</div>
+    <div style="font-size:22px;font-weight:700;color:#fff">ルームに参加する</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:4px">家族のルームを作成するか、招待コードで参加</div>
+  </div>
+  <div id="rs-myrooms-wrap" style="display:none;margin-bottom:20px">
+    <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:10px">最近のルーム</div>
+    <div id="rs-myrooms"></div>
+  </div>
+  <div style="background:#fff;border-radius:18px;padding:20px;margin-bottom:14px">
+    <div style="font-size:14px;font-weight:700;color:var(--br);margin-bottom:12px">✨ 新しいルームを作る</div>
+    <input class="fi" id="rs-room-name" placeholder="ルーム名（例：田中家）" style="margin-bottom:10px">
+    <button onclick="createRoom()" style="width:100%;padding:13px;background:var(--br);color:#fff;border:none;border-radius:12px;font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;cursor:pointer">作成する</button>
+    <div id="rs-create-err" style="font-size:11px;color:var(--rd);margin-top:6px;text-align:center"></div>
+  </div>
+  <div style="background:#fff;border-radius:18px;padding:20px">
+    <div style="font-size:14px;font-weight:700;color:var(--br);margin-bottom:12px">🔑 招待コードで参加</div>
+    <input class="fi" id="rs-inv-code" placeholder="6桁の招待コードを入力" maxlength="6" pattern="[0-9]*" inputmode="numeric" style="margin-bottom:10px">
+    <button onclick="joinByCode()" style="width:100%;padding:13px;background:var(--ac);color:#fff;border:none;border-radius:12px;font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;cursor:pointer">参加する</button>
+    <div id="rs-join-err" style="font-size:11px;color:var(--rd);margin-top:6px;text-align:center"></div>
+  </div>
+</div>
 <div id="statusToast"></div>
 <div id="privacyOverlay" class="pp-overlay">
   <div class="pp-sheet">
@@ -718,7 +788,7 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
     <button class="cvt active" id="cvt-month" onclick="setCalMode('month')">月</button>
     <button class="cvt" id="cvt-week" onclick="setCalMode('week')">週</button>
     <button class="cvt" id="cvt-day" onclick="setCalMode('day')">日</button>
-    <button class="cvt" id="cvt-gcal" onclick="showGcalComingSoon()">外部連携</button>
+    <button class="cvt" id="cvt-gcal" onclick="setCalMode('gcal')">外部連携</button>
   </div>
   <div class="cal-nav">
     <button class="cnav-btn" id="cal-prev" onclick="calDelta(-1)">◀</button>
@@ -746,7 +816,15 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
   <div style="text-align:center;margin-top:10px" id="calAddBtn"><button class="btn btn-o" style="padding:11px 22px;font-size:14px" onclick="openModal('schedule')">＋ 予定を追加</button></div>
 </div>
 <div class="pg" id="pg-status">
-  <div class="sec"><div class="card"><div id="myStatusCard"></div></div></div>
+  <div class="sec">
+    <div class="card">
+      <div id="myStatusCard"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--wm)">
+        <div style="font-size:11px;color:var(--t3)" id="status-last-updated">最終更新：未設定</div>
+        <button class="btn btn-o" onclick="saveMyStatus()" style="font-size:13px;padding:9px 20px">更新する</button>
+      </div>
+    </div>
+  </div>
   <div class="sec">
     <div class="card">
       <div class="card-title" style="margin-bottom:10px">🏠 家族の状況</div>
@@ -891,8 +969,7 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 
   <!-- Logout -->
   <div style="padding:0 16px 30px">
-    <button onclick="doSignOut()" style="width:100%;padding:15px;background:var(--cd);border:none;border-radius:14px;font-family:'Zen Maru Gothic',sans-serif;font-size:15px;font-weight:700;color:var(--rd);cursor:pointer;box-shadow:var(--sh);margin-bottom:10px">ログアウト</button>
-    <button onclick="openDeleteAccount()" style="width:100%;padding:13px;background:transparent;border:1.5px solid rgba(201,64,64,.3);border-radius:14px;font-family:'Zen Maru Gothic',sans-serif;font-size:13px;font-weight:700;color:var(--rd);cursor:pointer">アカウント・データを削除</button>
+    <button onclick="doSignOut()" style="width:100%;padding:15px;background:var(--cd);border:none;border-radius:14px;font-family:'Zen Maru Gothic',sans-serif;font-size:15px;font-weight:700;color:var(--rd);cursor:pointer;box-shadow:var(--sh)">ログアウト</button>
     <div style="text-align:center;font-size:10px;color:var(--t3);margin-top:12px">Irori v1.0 · 開発：一色翔</div>
   </div>
 </div>
@@ -1540,36 +1617,23 @@ function renderWeekCal(){
   const today=new Date();
   document.getElementById('calTitle').textContent=(start.getMonth()+1)+'/'+start.getDate()+'〜'+(end.getMonth()+1)+'/'+end.getDate();
   const days=Array.from({length:7},(_,i)=>{const d=new Date(start);d.setDate(start.getDate()+i);return d;});
-  const PXPH=44,SH=6,NHOURS=18;
-  let head='<div style="display:flex;align-items:center"><div style="width:36px;flex-shrink:0"></div>';
+  let head='<div class="wcal-head"><div></div>';
   days.forEach((d,i)=>{
-    const isT=d.toDateString()===today.toDateString();
-    head+='<div style="flex:1;text-align:center"><div class="wcal-dh '+(i===0?'s':i===6?'sat':'')+'">'+DN[i]+'</div><div class="wcal-dnum '+(isT?'today':'')+'" onclick="jumpToDay('+d.getFullYear()+','+d.getMonth()+','+d.getDate()+')">'+d.getDate()+'</div></div>';
+    const ds=d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate()),isT=d.toDateString()===today.toDateString();
+    head+='<div style="text-align:center"><div class="wcal-dh '+(i===0?'s':i===6?'sat':'')+'">'+DN[i]+'</div><div class="wcal-dnum '+(isT?'today':'')+'" onclick="jumpToDay('+d.getFullYear()+','+d.getMonth()+','+d.getDate()+')">'+d.getDate()+'</div></div>';
   });
   head+='</div>';
-  let body='<div style="position:relative;height:'+(NHOURS*PXPH)+'px">';
-  for(let i=0;i<=NHOURS;i++){
-    const top=i*PXPH;
-    body+='<div style="position:absolute;top:'+top+'px;left:0;right:0;display:flex;pointer-events:none"><div style="width:36px;font-size:9px;color:var(--t3);text-align:right;padding-right:4px;flex-shrink:0;margin-top:-6px">'+(i>0?p2(SH+i):'')+'</div><div style="flex:1;border-top:1px solid var(--wm)"></div></div>';
-  }
-  const ciT=days.findIndex(d=>d.toDateString()===today.toDateString());
-  if(ciT>=0){
-    const nt=(today.getHours()+today.getMinutes()/60-SH)*PXPH;
-    if(nt>=0&&nt<=NHOURS*PXPH)
-      body+='<div style="position:absolute;top:'+nt+'px;left:calc(36px + '+ciT/7*100+'%);width:calc('+(100/7)+'% - 2px);height:2px;background:var(--ac);z-index:4;pointer-events:none"></div>';
-  }
-  days.forEach((d,ci)=>{
-    const ds=d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
-    filteredSch().filter(s=>s.date===ds).sort((a,b)=>a.time.localeCompare(b.time)).forEach(s=>{
-      const sp=(s.time||'0:0').split(':'),sh2=parseInt(sp[0]),sm=parseInt(sp[1]||0);
-      const sMin=(sh2-SH)*60+sm;
-      const ep=(s.endTime||s.time).split(':'),eh=parseInt(ep[0]),em2=parseInt(ep[1]||0);
-      const dur=Math.max((eh-SH)*60+em2-sMin,45);
-      const top=sMin/60*PXPH,ht=Math.max(dur/60*PXPH,20);
-      body+='<div onclick="openModal(\'schedDet\',{id:\''+s.id+'\'})" style="position:absolute;top:'+top+'px;left:calc(36px + '+ci/7*100+'% + 1px);width:calc('+(100/7)+'% - 3px);height:'+ht+'px;background:'+(s.color||'var(--ac)')+';border-radius:5px;padding:2px 4px;cursor:pointer;z-index:2;overflow:hidden"><div style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+s.time+' '+s.text+'</div></div>';
+  let body='<div class="wcal-body"><div class="wcal-timecol">';
+  for(let h=0;h<24;h++){
+    body+='<div class="wcal-tl">'+(h>0?p2(h)+':00':'')+'</div>';
+    days.forEach(d=>{
+      const ds=d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
+      const dayEvts=filteredSch().filter(s=>s.date===ds&&parseInt(s.time.split(':')[0])===h);
+      const tr=h===9&&getTrash(d);
+      body+='<div class="wcal-cell">'+dayEvts.map(s=>'<div class="wcal-evt" style="background:'+s.color+'" onclick="openModal(\'schedDet\',{id:\''+s.id+'\'})" title="'+s.text+'">'+s.text.slice(0,6)+'</div>').join('')+(tr&&tr.length?'<div class="wcal-trash">'+tr.map(x=>x.emoji).join('')+'</div>':'')+'</div>';
     });
-  });
-  body+='</div>';
+  }
+  body+='</div></div>';
   document.getElementById('calBody').innerHTML='<div class="card wcal" style="padding:9px">'+head+body+'</div>';
 }
 function renderDayCal(){
@@ -1611,25 +1675,16 @@ function renderNhistStatus(){
   el.innerHTML=acts.map(h=>'<div class="nh"><div class="nh-txt">'+h.msg+'<div class="nh-t">'+h.time+'</div></div></div>').join('');
 }
 function renderSUPage(){
+  // My status card
   const myCard=document.getElementById('myStatusCard');
   if(myCard&&currentUser){
     const m=gm(currentUser.uid);
     const s=state.status[currentUser.uid]||{home:true,ret:''};
     const mood=state.mood[currentUser.uid]||'';
-    const lastUp=s.updatedAt?new Date(s.updatedAt).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'}):'未設定';
-    myCard.innerHTML=
-      '<div style="display:flex;align-items:center;margin-bottom:12px">'
-      +'<span style="font-size:28px">'+m.emoji+'</span>'
-      +'<span style="font-size:15px;font-weight:700;margin-left:8px">'+m.name+'</span>'
-      +'<span style="font-size:9px;background:var(--yl);color:var(--br);padding:1px 6px;border-radius:5px;margin-left:6px">自分</span>'
-      +'</div>'
-      +'<div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:10px">'
-      +'<span class="sc-b '+(s.home?'hm':'out')+'" style="font-size:13px;padding:6px 14px">'+(s.home?'🟢 在宅中':'🔴 外出中')+'</span>'
-      +(s.ret?'<span style="font-size:12px;color:var(--t2)">帰宅予定 '+s.ret+'</span>':'')
-      +(mood?'<span style="font-size:22px">'+mood+'</span>':'')
-      +'</div>'
-      +'<div style="font-size:11px;color:var(--t3);margin-bottom:12px">最終更新：'+lastUp+'</div>'
-      +'<button class="btn btn-o" style="font-size:13px;padding:9px 20px" onclick="openStatusEdit()">✏️ 編集する</button>';
+    myCard.innerHTML='<div style="display:flex;align-items:center;margin-bottom:12px"><span style="font-size:28px">'+m.emoji+'</span><span style="font-size:15px;font-weight:700;margin-left:8px">'+m.name+'</span><span style="font-size:9px;background:var(--yl);color:var(--br);padding:1px 6px;border-radius:5px;margin-left:6px">自分</span></div>'+
+      '<div class="su-btns"><button class="su-btn '+(s.home?'hmon':'')+'" onclick="setSt(true)">🏠 在宅</button><button class="su-btn '+(!s.home?'outon':'')+'" onclick="setSt(false)">🚶 外出</button></div>'+
+      '<div class="ret-row"><span class="ret-lbl">帰宅予定</span><input class="ret-inp" type="time" value="'+(s.ret||'')+'" onchange="setRet(this.value)"></div>'+
+      '<div class="mood-sec"><div class="mood-lbl">今日の気分</div><div class="mood-row">'+MOODS.map(e=>'<button class="mood-btn '+(mood===e?'on':'')+'" onclick="setMood(\''+e+'\')">'+e+'</button>').join('')+'</div></div>';
   }
   const el=document.getElementById('suCards');if(!el)return;
   el.innerHTML=members.filter(m=>m.uid!==currentUser?.uid).map(m=>{
@@ -1652,7 +1707,26 @@ function draftMood(e){
   window._draftMood=window._draftMood===e?'':e;
   document.querySelectorAll('.mood-btn2').forEach(b=>b.classList.toggle('on',b.id==='mood-'+e&&window._draftMood===e));
 }
-function saveMyStatus(){const home=window._draftHome??true;const ret=(document.getElementById('draft-ret')||{}).value||'';const mood=window._draftMood||'';const u=currentUser.uid;const btn=document.getElementById('status-save-btn');if(btn){btn.disabled=true;btn.textContent='保存中...';}db.collection('iedash').doc(ROOM).collection('status').doc(u).set({home,ret,mood,updatedAt:new Date().toISOString()},{merge:true}).then(()=>{const emoji=home?'🏠':'🚶';const action=home?'が帰宅しました':'が外出しました';addAct(emoji+' '+myProfile.name+action);showToast('✅ 更新しました');if(!home)getLocAndSave(false);else saveLocHome();setTimeout(()=>renderSUPage(),300);}).catch(e=>{showToast('更新失敗: '+e.message);if(btn){btn.disabled=false;btn.textContent='更新する';}});}
+function saveMyStatus(){
+  const home=window._draftHome??true;
+  const ret=document.getElementById('draft-ret')?.value||'';
+  const mood=window._draftMood||'';
+  const u=currentUser.uid;
+  db.collection('iedash').doc(ROOM).collection('status').doc(u)
+    .set({home,ret,mood,updatedAt:new Date().toISOString()},{merge:true})
+    .then(()=>{
+      const now=new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
+      const el=document.getElementById('status-last-updated');
+      if(el)el.textContent='最終更新：'+now;
+      const emoji=home?'🏠':'🚶';
+      const action=home?'が帰宅しました':'が外出しました';
+      addAct(emoji+' '+myProfile.name+action);
+      showToast('状況を更新しました');
+      // Also update location if going out
+      if(!home)getLocAndSave(false);
+      else saveLocHome();
+    }).catch(e=>showToast('更新失敗: '+e.message));
+}
 function setSt(home){
   const u=currentUser.uid,c=state.status[u]||{};
   db.collection('iedash').doc(ROOM).collection('status').doc(u)
@@ -2427,7 +2501,7 @@ function applySettings(){
   if(localStorage.getItem('iedash_dark')==='1')document.body.classList.add('dark');
   if(localStorage.getItem('iedash_elder')==='1'){document.body.classList.add('elder');setTimeout(()=>{const b=document.getElementById('tgl-elder');if(b)b.classList.add('on');},0);}
 }
-function doSignOut(){if(!confirm('ログアウトしますか？'))return;auth.signOut().then(function(){localStorage.removeItem('iedash_room');showToast('ログアウトしました');setTimeout(function(){location.reload();},800);}).catch(function(err){showToast('ログアウト失敗: '+err.message);});}
+function doSignOut(){if(confirm('ログアウトしますか？'))auth.signOut().catch(console.error);}
 function openOv(){document.getElementById('modal').classList.add('open');}
 function closeModal(){document.getElementById('modal').classList.remove('open');}
 function ocl(e){if(e.target===document.getElementById('modal'))closeModal();}
@@ -2780,81 +2854,6 @@ function removeProfilePhoto(){
   window._pendingPhoto='__remove__';
   const wrap=document.querySelector('.prof-photo-wrap');
   if(wrap&&myProfile){wrap.innerHTML=memberAvatar(myProfile,72)+'<div class="photo-edit-badge">📷</div>';}
-}
-
-function _setDraftHome(v){window._draftHome=v;var h=document.getElementById('sb-home'),o=document.getElementById('sb-out');if(!h||!o)return;if(v){h.classList.add('hmon');o.classList.remove('outon');}else{o.classList.add('outon');h.classList.remove('hmon');}}
-function _setDraftMood(v){window._draftMood=v;document.querySelectorAll('#edit-mood-row .mood-btn').forEach(function(b){b.classList.toggle('on',b.textContent===v);});}
-function openStatusEdit(){
-  var myCard=document.getElementById('myStatusCard');if(!myCard||!currentUser)return;
-  var em=gm(currentUser.uid);
-  var ss=state.status[currentUser.uid]||{home:true,ret:''};
-  var cm=state.mood[currentUser.uid]||'';
-  window._draftHome=(ss.home!==undefined?ss.home:true);
-  window._draftMood=cm;
-  var h='<div style="display:flex;align-items:center;margin-bottom:14px">';
-  h+='<span style="font-size:28px">'+em.emoji+'</span>';
-  h+='<span style="font-size:15px;font-weight:700;margin-left:8px">'+em.name+'</span>';
-  h+='<span style="font-size:9px;background:var(--yl);color:var(--br);padding:1px 6px;border-radius:5px;margin-left:6px">自分</span></div>';
-  h+='<div class="su-btns">';
-  h+='<button id="sb-home" class="su-btn '+(ss.home?'hmon':'')+'" onclick="_setDraftHome(true)">🏠 在宅</button>';
-  h+='<button id="sb-out" class="su-btn '+(!ss.home?'outon':'')+'" onclick="_setDraftHome(false)">🚶 外出</button>';
-  h+='</div>';
-  h+='<div class="ret-row"><span class="ret-lbl">帰宅予定</span>';
-  h+='<input class="ret-inp" id="draft-ret" type="time" value="'+(ss.ret||'')+'"></div>';
-  h+='<div class="mood-sec"><div class="mood-lbl">今日の気分</div>';
-  h+='<div class="mood-row" id="edit-mood-row">';
-  MOODS.forEach(function(mv){
-    h+='<button class="mood-btn '+(cm===mv?'on':'')+'" onclick="_setDraftMood('+JSON.stringify(mv)+')">'+mv+'</button>';
-  });
-  h+='</div></div>';
-  h+='<div style="display:flex;gap:8px;margin-top:14px">';
-  h+='<button class="btn btn-ghost" style="flex:1;padding:10px" onclick="renderSUPage()">キャンセル</button>';
-  h+='<button id="status-save-btn" class="btn btn-o" style="flex:2;padding:10px;font-size:14px;font-weight:700" onclick="saveMyStatus()">更新する</button>';
-  h+='</div>';
-  myCard.innerHTML=h;
-}
-function openDeleteAccount(){
-  var mc=document.getElementById('mc');if(!mc)return;
-  var h='<div class="m-title" style="color:var(--rd)">⚠️ アカウント削除</div>';
-  h+='<div style="background:rgba(201,64,64,.08);border:1.5px solid rgba(201,64,64,.25);border-radius:12px;padding:12px;margin-bottom:14px;font-size:12px;line-height:1.9">';
-  h+='削除されるデータ：<br>・プロフィール・ステータス<br>・あなたの予定・タスク・買い物<br>・位置情報<br>';
-  h+='<b style="color:var(--rd)">この操作は取り消せません。</b></div>';
-  h+='<div class="fg"><label class="fl">確認のため「削除する」と入力してください</label>';
-  h+='<input class="fi" id="del-confirm-inp" placeholder="削除する"></div>';
-  h+='<button style="background:var(--rd);color:#fff;padding:13px;font-size:14px;font-weight:700;border-radius:12px;border:none;margin-top:8px;width:100%;cursor:pointer" onclick="execDeleteAccount()">完全に削除する</button>';
-  h+='<button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="closeModal()">キャンセル</button>';
-  mc.innerHTML=h;openOv();
-}
-async function execDeleteAccount(){
-  var inp=document.getElementById('del-confirm-inp');
-  if(!inp||inp.value!=='削除する'){showToast('「削除する」と入力してください');return;}
-  if(!currentUser||!ROOM){showToast('ログインしてください');return;}
-  showToast('削除中...');closeModal();
-  try{
-    var dUid=currentUser.uid;
-    var bat=db.batch();
-    ['members','status','locations'].forEach(function(col){bat.delete(db.collection('iedash').doc(ROOM).collection(col).doc(dUid));});
-    var dSchs=await db.collection('iedash').doc(ROOM).collection('schedules').where('member','==',dUid).get();
-    dSchs.docs.forEach(function(dd){bat.delete(dd.ref);});
-    await bat.commit();
-    ['iedash_room','iedash_elder','iedash_dark','iedash_tut_done'].forEach(function(k){localStorage.removeItem(k);});
-    await currentUser.delete();
-    location.reload();
-  }catch(ex){
-    if(ex.code==='auth/requires-recent-login'){
-      showToast('再ログインが必要です。ログアウト後に再ログインしてください');
-    }else{showToast('削除失敗: '+ex.message);}
-  }
-}
-function showGcalComingSoon(){
-  var mc=document.getElementById('mc');if(!mc)return;
-  var h='<div class="m-title">🔗 外部カレンダー連携</div>';
-  h+='<div style="text-align:center;padding:20px 0">';
-  h+='<div style="font-size:48px;margin-bottom:12px">🚧</div>';
-  h+='<div style="font-size:16px;font-weight:700;color:var(--br);margin-bottom:8px">実装準備中</div>';
-  h+='<div style="font-size:13px;color:var(--t2);line-height:1.7">GoogleカレンダーやiCalとの連携機能を<br>準備しています。もうしばらくお待ちください。</div></div>';
-  h+='<button class="btn btn-ghost btn-full" onclick="closeModal()">閉じる</button>';
-  mc.innerHTML=h;openOv();
 }
 </script>
 <!-- ══ チュートリアル ══ -->
