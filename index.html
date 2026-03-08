@@ -506,92 +506,109 @@ body.elder select,.elder .fi{font-size:17px!important}
 /* ══ チュートリアル表示 ══ */
 #tutOverlay.open{display:flex!important}
 
+
+/* ══ カード・パネル枠 ══ */
+.card{border:1.5px solid rgba(78,52,37,.12)}
+.mbr-panel{border:1.5px solid rgba(78,52,37,.15)!important}
+.today-fam-box{border:1.5px solid rgba(78,52,37,.12)}
+body.dark .card{border-color:rgba(255,255,255,.07)}
+body.dark .mbr-panel{border-color:rgba(255,255,255,.08)!important}
+body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
+
+/* ══ ヘッダー日付フォント ══ */
+#hdrDateMain{font-family:'Zen Maru Gothic',sans-serif;font-size:15px!important;font-weight:800!important;color:rgba(255,255,255,.95)!important;letter-spacing:.02em}
+#hdrDateSub{font-family:'DM Sans',sans-serif;font-size:11px!important;color:rgba(255,255,255,.55)!important}
+
+/* ══ プロフィール写真 ══ */
+.prof-photo{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--ac)}
+.prof-photo-wrap{position:relative;width:72px;height:72px;cursor:pointer}
+.prof-photo-wrap .photo-edit-badge{position:absolute;bottom:0;right:0;background:var(--ac);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;border:2px solid var(--cd)}
+
+/* ══ プライバシーポリシー ══ */
+.pp-overlay{position:fixed;inset:0;z-index:19999;background:rgba(20,10,5,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;align-items:flex-end;justify-content:center}
+.pp-overlay.open{display:flex!important}
+.pp-sheet{background:var(--cd);border-radius:24px 24px 0 0;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:0 0 40px}
+.pp-header{position:sticky;top:0;background:var(--cd);padding:20px 20px 12px;border-bottom:1px solid var(--wm);z-index:1}
+.pp-logo{font-size:20px;font-weight:900;color:var(--br);font-family:'Zen Maru Gothic',sans-serif}
+.pp-logo em{color:var(--ac);font-style:normal}
+.pp-close{background:var(--wm);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.pp-body{padding:20px}
+.pp-section{margin-bottom:24px}
+.pp-section-title{font-size:13px;font-weight:800;color:var(--br);background:var(--wm);padding:6px 12px;border-radius:8px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.pp-text{font-size:12px;color:var(--t2);line-height:1.9}
+.pp-dev{background:var(--wm);border-radius:14px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--t2);line-height:1.7}
+.pp-dev-name{font-size:15px;font-weight:800;color:var(--br);margin-bottom:4px;font-family:'Zen Maru Gothic',sans-serif}
+.pp-badge{display:inline-block;background:var(--ac);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:6px;vertical-align:middle}
+
 </style>
 </head>
 <body>
 <div id="statusToast"></div>
-<div id="privacyOverlay" style="display:none;position:fixed;inset:0;z-index:19999;background:rgba(0,0,0,.6);overflow-y:auto">
-  <div style="background:var(--cd,#fff);border-radius:22px 22px 0 0;margin-top:60px;padding:22px 18px 40px;min-height:calc(100vh - 60px)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <div style="font-size:16px;font-weight:700">📋 プライバシーポリシー・利用規約</div>
-      <button onclick="document.getElementById('privacyOverlay').style.display='none'" style="background:var(--wm,#EFE8DA);border:none;border-radius:8px;padding:6px 12px;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer">閉じる</button>
+<div id="privacyOverlay" class="pp-overlay">
+  <div class="pp-sheet">
+    <div class="pp-header">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="pp-logo">I<em>rori</em> <span style="font-size:11px;font-weight:400;color:var(--t3)">by AnIT</span></div>
+        <button class="pp-close" onclick="document.getElementById('privacyOverlay').classList.remove('open')">✕</button>
+      </div>
+      <div style="font-size:13px;font-weight:700;color:var(--tx);margin-top:10px">プライバシーポリシー・利用規約</div>
+      <div style="font-size:10px;color:var(--t3);margin-top:2px">最終更新：2026年3月</div>
     </div>
-    <div style="font-size:13px;line-height:2;color:#555">
-      <div style="font-weight:700;color:#222;margin:14px 0 5px">いえダッシュについて</div>
-      いえダッシュは、家族間での情報共有を目的とした非営利のウェブアプリです。<br>開発者：一色翔（<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a2c08cd1cacd8ccbd1d1cacbc9cbe2c5cfc3cbce8cc1cdcf">[email&#160;protected]</a>）
+    <div class="pp-body">
+      <div class="pp-dev">
+        <div class="pp-dev-name">AnIT <span class="pp-badge">開発者</span></div>
+        <div>本アプリ「Irori」は、家族のコミュニケーションをサポートすることを目的として、AnITが個人開発したサービスです。</div>
+      </div>
 
-      <div style="font-weight:700;color:#222;margin:14px 0 5px">収集する情報</div>
-      ・Googleアカウントのメールアドレス・表示名（ログイン認証のみに使用）<br>
-      ・ユーザーが入力した情報（予定・タスク・メモ・名前・絵文字など）<br>
-      ・位置情報（外出・帰宅ボタンを押したときのみ、任意で取得）<br>
-      ・デバイスのローカルストレージ（設定・ルームIDの保存）
+      <div class="pp-section">
+        <div class="pp-section-title">🔒 取得する情報</div>
+        <div class="pp-text">
+          ・Googleアカウントのメールアドレス・表示名（ログイン識別のみ）<br>
+          ・アプリ内で設定した名前・アイコン・カラー<br>
+          ・予定・買い物・タスク・ゴミ出し設定などの入力データ<br>
+          ・位置情報（任意・共有ボタンを押した場合のみ）
+        </div>
+      </div>
 
-      <div style="font-weight:700;color:#222;margin:14px 0 5px">情報の利用目的</div>
-      収集した情報は、同じルームに参加した家族メンバーとの情報共有のみに使用します。第三者への提供・販売は一切行いません。広告は表示されません。
+      <div class="pp-section">
+        <div class="pp-section-title">📦 データの保存・利用</div>
+        <div class="pp-text">
+          ・すべてのデータはFirebase（Google LLC）のサービスを利用して保存されます<br>
+          ・データは同じルームに参加した家族メンバー間でのみ共有されます<br>
+          ・取得した情報を第三者に販売・提供することはありません<br>
+          ・広告表示・マーケティング目的での利用は一切行いません
+        </div>
+      </div>
 
-      <div style="font-weight:700;color:#222;margin:14px 0 5px">データの保管</div>
-      データはGoogle Firebase（Firestore）に保存されます。削除希望の場合は開発者にご連絡ください。
+      <div class="pp-section">
+        <div class="pp-section-title">🗑️ データの削除</div>
+        <div class="pp-text">
+          ・設定画面からいつでもアカウントを削除できます<br>
+          ・削除後、ルームから退出しすべての個人データが消去されます<br>
+          ・ルーム自体のデータはルーム管理者のみ削除できます
+        </div>
+      </div>
 
-      <div style="font-weight:700;color:#222;margin:14px 0 5px">位置情報について</div>
-      位置情報は外出・帰宅ボタン押下時のみ取得します。常時追跡は行いません。取得した情報はルームメンバーのみ閲覧可能です。
+      <div class="pp-section">
+        <div class="pp-section-title">📋 利用規約</div>
+        <div class="pp-text">
+          ・本サービスは個人・家族利用を目的としています<br>
+          ・商用利用・営業目的での使用はご遠慮ください<br>
+          ・本サービスの利用により生じた損害について、開発者は責任を負いかねます<br>
+          ・サービス内容は予告なく変更・終了する場合があります
+        </div>
+      </div>
 
-      <div style="font-weight:700;color:#222;margin:14px 0 5px">利用規約</div>
-      ・本アプリは現状提供（as-is）であり、動作を保証するものではありません<br>
-      ・個人・家族での利用を目的としており、商用利用はご遠慮ください<br>
-      ・法令に違反する目的での利用は禁止します<br>
-      ・開発者は本アプリの利用により生じた損害について責任を負いません
-
-      <div style="font-weight:700;color:#222;margin:14px 0 5px">お問い合わせ</div>
-      <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a7c589d4cfc889ced4d4cfcecccee7c0cac6cecb89c4c8ca">[email&#160;protected]</a>
-      <div style="font-size:11px;color:#999;margin-top:16px">最終更新：2026年3月</div>
+      <div class="pp-section">
+        <div class="pp-section-title">📮 お問い合わせ</div>
+        <div class="pp-text">
+          ご意見・ご要望・バグ報告はGitHubのIssueまたは開発者までお気軽にどうぞ。<br>
+          <span style="color:var(--ac);font-weight:700">開発者：AnIT</span>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-<div id="loading"><div class="ld-logo">I<em>rori</em></div><div class="ld-spin"></div><div class="ld-txt" id="ld-txt">読み込み中...</div></div>
-<div id="maintenance-screen" class="hide">
-  <div class="maint-icon">🔧</div>
-  <div class="maint-title">メンテナンス中</div>
-  <div class="maint-msg" id="maint-msg">ただいまメンテナンス中です。<br>しばらくお待ちください。</div>
-  <button class="maint-admin-btn" onclick="maintAdminLogin()">管理者としてログイン</button>
-</div>
-<div id="room-screen" class="hide">
-  <div class="rs-wrap">
-    <div class="rs-logo">I<em>rori</em></div>
-    <div id="rs-myrooms-wrap" class="rs-myrooms" style="display:none">
-      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.1em;margin-bottom:8px">最近使ったルーム</div>
-      <div id="rs-myrooms"></div>
-    </div>
-    <div class="rs-card">
-      <div class="rs-card-title">🏠 ルームを作成する</div>
-      <div class="rs-card-sub">家族の名前（例：石丸家）でルームを作成。<br>作成後に招待コードを家族に送れます。</div>
-      <input class="rs-inp" id="rs-room-name" placeholder="例：石丸家、田中家" maxlength="20">
-      <button class="pc-btn" onclick="createRoom()">ルームを作成 →</button>
-      <div class="rs-err" id="rs-create-err"></div>
-    </div>
-    <div class="rs-divider">または招待コードで参加</div>
-    <div class="rs-card">
-      <div class="rs-card-title">🔑 招待コードで参加する</div>
-      <div class="rs-card-sub">家族から受け取った6桁のコードを入力してください。</div>
-      <input class="rs-code" id="rs-inv-code" maxlength="6" placeholder="000000" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-      <button class="pc-btn" style="background:var(--bl)" onclick="joinByCode()">参加する →</button>
-      <div class="rs-err" id="rs-join-err"></div>
-    </div>
-    <div class="rs-privacy-link"><a onclick="openPrivacy()">プライバシーポリシー・利用規約</a></div>
-  </div>
-</div>
-<div id="login-screen" class="hide">
-  <div class="lc">
-    <div class="lc-icon">🏠</div>
-    <div class="lc-title">Irori</div>
-    <div class="lc-sub">家族みんなの予定・タスク・<br>ゴミ出しを一画面で管理</div>
-    <button class="g-btn" onclick="signInGoogle()">
-      <svg class="g-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-      Googleでログイン
-    </button>
-    <div style="font-size:11px;color:var(--t3);line-height:1.7;margin-top:4px">ログイン情報は家族の識別にのみ使われます</div>
-    <div style="font-size:10px;margin-top:8px"><a style="color:var(--t3);text-decoration:underline;cursor:pointer" onclick="openPrivacy()">プライバシーポリシー・利用規約</a></div>
-  </div>
-</div>
+</div></div>
 <div id="profile-screen" class="hide">
   <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:16px">いえ<em style="color:var(--yl);font-style:normal">ダッシュ</em></div>
   <div class="pc">
@@ -1341,7 +1358,7 @@ function renderSG(){
   el.innerHTML=members.map(m=>{
     const s=state.status[m.uid]||{home:false,ret:''},mood=state.mood[m.uid]||'',mine=isMe(m.uid);
     return '<div class="sc '+(mine?'mine':'')+'" style="border-left-color:'+m.color+'" '+(mine?'onclick="quickTog()"':'')+'>'+
-      '<div class="sc-av" style="background:'+m.color+'22">'+m.emoji+'</div>'+
+      memberAvatar(m,36)+
       '<div style="flex:1;min-width:0">'+
         '<div class="sc-name">'+m.name+(mine?'<span style="font-size:9px;background:var(--yl);color:var(--br);padding:1px 5px;border-radius:4px;margin-left:4px">自分</span>':'')+'</div>'+
         '<span class="sc-b '+(s.home?'hm':'out')+'">'+(s.home?'🟢 在宅':'🔴 外出')+'</span>'+
@@ -1698,7 +1715,7 @@ function addAct(msg){notifHist.unshift({msg,time:new Date().toLocaleTimeString('
 function renderNhist(){const el=document.getElementById('nhist');if(!el)return;if(!notifHist.length){el.innerHTML='<div class="empty">まだ履歴なし</div>';return;}el.innerHTML=notifHist.map(h=>'<div class="nh"><div class="nh-txt">'+h.msg+'<div class="nh-t">'+h.time+'</div></div></div>').join('');}
 // ─── MODALS ───
 function openPrivacy(){
-  document.getElementById('privacyOverlay').style.display='block';
+  document.getElementById('privacyOverlay').classList.add('open');
 }
 // Meal helpers
 const MEAL_SLOTS=[
@@ -2534,7 +2551,7 @@ function renderFamStatus(){renderMemberPanels();
     const locTxt=!home&&loc&&loc.place?loc.place:'';
     const retTxt=s.ret?'帰宅予定 '+s.ret:'';
     return '<div class="fam-sc'+(mine?' mine':'')+'" style="border-left:3px solid '+m.color+'" onclick="'+(mine?'openMyStatusModal()':'')+'">'
-      +'<div class="fam-sc-av">'+m.emoji+'</div>'
+      +memberAvatar(m,32)
       +'<div style="flex:1;min-width:0">'
         +'<div class="fam-sc-name">'+m.name+'</div>'
         +'<div class="fam-sc-st '+(home?'home':'out')+'">'+(home?'🏠 在宅':'🚶 外出中')+(retTxt?' · '+retTxt:'')+'</div>'
@@ -2732,6 +2749,42 @@ function checkTutorial(){if(!localStorage.getItem('iedash_tut_done'))setTimeout(
     else if(dx>0&&i>0)setPage(TABS[i-1],null);
   });
 })();
+
+function memberAvatar(m,size){
+  const sz=size||36;
+  if(m.photoBase64){
+    return '<img src="'+m.photoBase64+'" style="width:'+sz+'px;height:'+sz+'px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid '+m.color+'">';
+  }
+  return '<div style="width:'+sz+'px;height:'+sz+'px;border-radius:50%;background:'+m.color+'22;border:2px solid '+m.color+'44;display:flex;align-items:center;justify-content:center;font-size:'+(sz*0.55)+'px;flex-shrink:0">'+m.emoji+'</div>';
+}
+
+function handlePhotoSelect(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const canvas=document.createElement('canvas');
+      canvas.width=128;canvas.height=128;
+      const ctx=canvas.getContext('2d');
+      const s=Math.min(img.width,img.height);
+      const sx=(img.width-s)/2,sy=(img.height-s)/2;
+      ctx.drawImage(img,sx,sy,s,s,0,0,128,128);
+      const b64=canvas.toDataURL('image/jpeg',0.72);
+      const wrap=document.querySelector('.prof-photo-wrap');
+      if(wrap){wrap.innerHTML='<img src="'+b64+'" class="prof-photo"><div class="photo-edit-badge">📷</div>';}
+      window._pendingPhoto=b64;
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeProfilePhoto(){
+  window._pendingPhoto='__remove__';
+  const wrap=document.querySelector('.prof-photo-wrap');
+  if(wrap&&myProfile){wrap.innerHTML=memberAvatar(myProfile,72)+'<div class="photo-edit-badge">📷</div>';}
+}
 </script>
 <!-- ══ チュートリアル ══ -->
 <div id="tutOverlay" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(20,10,5,.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center">
