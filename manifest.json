@@ -1,0 +1,14 @@
+{
+  "name": "Irori",
+  "short_name": "Irori",
+  "description": "家族をつなぐホームダッシュボード",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#4E3425",
+  "theme_color": "#4E3425",
+  "orientation": "portrait",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
