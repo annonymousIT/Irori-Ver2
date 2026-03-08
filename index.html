@@ -516,8 +516,8 @@ body.dark .mbr-panel{border-color:rgba(255,255,255,.08)!important}
 body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 
 /* ══ ヘッダー日付フォント ══ */
-#hdrDateMain{font-family:'Zen Maru Gothic',sans-serif;font-size:15px!important;font-weight:800!important;color:rgba(255,255,255,.95)!important;letter-spacing:.02em}
-#hdrDateSub{font-family:'DM Sans',sans-serif;font-size:11px!important;color:rgba(255,255,255,.55)!important}
+#hdrDateMain{font-family:'Zen Maru Gothic',sans-serif;font-size:17px!important;font-weight:800!important;color:#fff!important;letter-spacing:.01em}
+#hdrDateSub{font-family:'DM Sans',sans-serif;font-size:11px!important;font-weight:600!important;color:rgba(255,255,255,.6)!important;letter-spacing:.04em}
 
 /* ══ プロフィール写真 ══ */
 .prof-photo{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--ac)}
@@ -682,7 +682,10 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
     <div class="logo">I<em>rori</em></div>
     <div class="hdr-r">
       <span class="sync-dot" id="syncDot"></span>
-      <div id="hdrDate" style="display:flex;flex-direction:column;align-items:flex-end;line-height:1.2"><span id="hdrDateMain" style="font-size:13px;font-weight:700;color:rgba(255,255,255,.9);font-family:'DM Sans',sans-serif"></span><span id="hdrDateSub" style="font-size:10px;color:rgba(255,255,255,.5)"></span></div>
+      <div id="hdrDate" style="display:flex;flex-direction:column;align-items:flex-end;line-height:1.3">
+  <span id="hdrDateMain" style="font-size:17px;font-weight:800;color:#fff;letter-spacing:.01em;font-family:'Zen Maru Gothic',sans-serif"></span>
+  <span id="hdrDateSub" style="font-size:11px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:.04em;font-family:'DM Sans',sans-serif"></span>
+</div>
       <button class="ibtn" id="myBtn" onclick="openEditProfile()">👤</button>
       <button class="gear-btn" onclick="setPage('settings',null)">⚙️</button>
     </div>
@@ -1321,7 +1324,8 @@ function updateDD(){
   const m=document.getElementById('hdrDateMain');
   const s=document.getElementById('hdrDateSub');
   const MON=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
-  if(m)m.textContent=MON[now.getMonth()]+now.getDate()+'日（'+DN[now.getDay()]+'）';
+  const DOW=['日','月','火','水','木','金','土'];
+  if(m)m.textContent=MON[now.getMonth()]+now.getDate()+'日　'+DOW[now.getDay()]+'曜日';
   if(s)s.textContent=now.getFullYear()+'年';
 }
 function renderHomeSummary(){
@@ -2852,22 +2856,30 @@ function checkTutorial(){if(!localStorage.getItem('iedash_tut_done'))setTimeout(
 // ══ スワイプ切り替え ══
 (function(){
   const TABS=['home','todo','calendar','status'];
-  let sx=0,sy=0,moving=false;
-  const scroll=document.getElementById?document.getElementById('mainScroll'):null;
+  let sx=0,sy=0,moving=false,locked=false;
   function curIdx(){return TABS.findIndex(t=>document.getElementById('pg-'+t)?.classList.contains('active'));}
-  document.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;moving=false;},{passive:true});
+  document.addEventListener('touchstart',e=>{
+    sx=e.touches[0].clientX;
+    sy=e.touches[0].clientY;
+    moving=false;locked=false;
+  },{passive:true});
   document.addEventListener('touchmove',e=>{
-    if(moving)return;
-    const dx=e.touches[0].clientX-sx,dy=e.touches[0].clientY-sy;
-    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>30){moving=true;}
+    if(locked)return;
+    const dx=e.touches[0].clientX-sx;
+    const dy=e.touches[0].clientY-sy;
+    // 縦スクロール中はロック
+    if(!moving&&Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>8){locked=true;return;}
+    // 横スワイプ検出：縦より横が大きく、かつ15px以上
+    if(!moving&&Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>15){moving=true;}
   },{passive:true});
   document.addEventListener('touchend',e=>{
     if(!moving)return;
     const dx=e.changedTouches[0].clientX-sx;
-    if(Math.abs(dx)<50)return;
+    if(Math.abs(dx)<30)return;  // 30pxで反応
     const i=curIdx();
     if(dx<0&&i<TABS.length-1)setPage(TABS[i+1],null);
     else if(dx>0&&i>0)setPage(TABS[i-1],null);
+    moving=false;
   });
 })();
 
