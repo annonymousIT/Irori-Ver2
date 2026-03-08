@@ -1301,6 +1301,8 @@ function boot(){
     try{renderBath();}catch(e){}
     try{renderHomeSummary();}catch(e){}
     checkTutorial();schedChecks();
+    // 位置情報の「X分前」表示を1分ごと更新
+    setInterval(()=>{if(state.locations&&Object.keys(state.locations).length)renderLocations(state.locations);},60000);
     const mb=document.getElementById('myBtn');if(mb)mb.textContent=myProfile.emoji;
     if(isAdmin)loadFbCount();
   }catch(e){
@@ -2223,27 +2225,51 @@ function listenLocations(){
     renderLocations(locs);
   },e=>console.error('loc',e));
 }
+function _agoText(ts){
+  if(!ts)return '不明';
+  const ago=Math.round((Date.now()-ts)/60000);
+  if(ago<1)return 'たった今';
+  if(ago<60)return ago+'分前';
+  if(ago<1440)return Math.round(ago/60)+'時間前';
+  return Math.round(ago/1440)+'日前';
+}
 function renderLocations(locs){
   const el=document.getElementById('locList');if(!el)return;
-  const rows=state.members.map(m=>({m,loc:locs[m.uid]})).filter(x=>x.loc&&x.loc.lat);
-  if(!rows.length){el.innerHTML='<div class="empty">まだ誰も共有していません</div>';return;}
+  // 自分も含めた全メンバー（位置情報あり）
+  const rows=members.map(m=>({m,loc:locs[m.uid]})).filter(x=>x.loc&&x.loc.lat);
+  if(!rows.length){
+    el.innerHTML='<div class="empty" style="padding:12px 0">まだ誰も共有していません<br><span style="font-size:11px;color:var(--t3)">「共有する」を押すと位置が表示されます</span></div>';
+    return;
+  }
   el.innerHTML=rows.map(({m,loc})=>{
     const mapsUrl='https://www.google.com/maps?q='+loc.lat+','+loc.lng;
-    const ago=Math.round((Date.now()-loc.ts)/60000);
-    const agoTxt=ago<1?'たった今':ago<60?ago+'分前':Math.round(ago/60)+'時間前';
+    const agoTxt=_agoText(loc.ts);
     const mine=isMe(m.uid);
-    return'<div class="loc-row">'+
-      '<div style="font-size:26px;width:34px;text-align:center">'+m.emoji+'</div>'+
-      '<div style="flex:1">'+
-        '<div class="loc-name">'+m.name+'</div>'+
-        '<div class="loc-place">'+(loc.place||'📍 位置共有中')+'</div>'+
-        '<div style="font-size:10px;color:var(--t3)">'+agoTxt+' • '+(loc.status==='home'?'🏠 帰宅':'🚶 外出中')+'</div>'+
-      '</div>'+
-      '<a href="'+mapsUrl+'" target="_blank" style="text-decoration:none">'+
-        '<button class="btn btn-b" style="font-size:11px">地図</button>'+
-      '</a>'+
-      (mine?'<button class="btn btn-ghost" style="font-size:10px;margin-left:4px" onclick="clearMyLocation()">消去</button>':'')+
-    '</div>';
+    const stColor=loc.status==='home'?'var(--gn)':'var(--ac)';
+    const stLabel=loc.status==='home'?'🏠 在宅':'🚶 外出中';
+    return '<div class="loc-row" style="'+(mine?'background:rgba(212,102,62,.06);border:1.5px solid rgba(212,102,62,.2);border-radius:12px;padding:10px;margin-bottom:6px':'')+'">'
+      +'<div style="position:relative;margin-right:10px">'
+        +memberAvatar(m,36)
+        +'<div style="position:absolute;bottom:-2px;right:-2px;width:11px;height:11px;border-radius:50%;background:'+stColor+';border:2px solid var(--cd)"></div>'
+      +'</div>'
+      +'<div style="flex:1;min-width:0">'
+        +'<div style="display:flex;align-items:center;gap:5px">'
+          +'<span style="font-size:13px;font-weight:700">'+m.name+'</span>'
+          +(mine?'<span style="font-size:9px;background:var(--yl);color:var(--br);padding:1px 5px;border-radius:4px;font-weight:700">自分</span>':'')
+        +'</div>'
+        +'<div style="font-size:12px;color:var(--t2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(loc.place||'📍 位置共有中')+'</div>'
+        +'<div style="display:flex;align-items:center;gap:8px;margin-top:3px">'
+          +'<span style="font-size:10px;color:var(--t3)">🕐 '+agoTxt+'</span>'
+          +'<span style="font-size:10px;font-weight:700;color:'+stColor+'">'+stLabel+'</span>'
+        +'</div>'
+      +'</div>'
+      +'<div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">'
+        +'<a href="'+mapsUrl+'" target="_blank" style="text-decoration:none">'
+          +'<button class="btn btn-b" style="font-size:11px;padding:6px 12px">🗺️ 地図</button>'
+        +'</a>'
+        +(mine?'<button class="btn btn-ghost" style="font-size:10px;padding:4px 8px" onclick="clearMyLocation()">消去</button>':'')
+      +'</div>'
+    +'</div>';
   }).join('');
 }
 function clearMyLocation(){
@@ -2710,17 +2736,38 @@ function renderTodayFamGrid(){
 
 function shareLocation(){
   if(!navigator.geolocation){showToast('位置情報が使えません');return;}
+  const u=currentUser?.uid;if(!u)return;
   showToast('📍 取得中...');
   navigator.geolocation.getCurrentPosition(pos=>{
     const{latitude:lat,longitude:lng}=pos.coords;
-    const u=currentUser?.uid;if(!u)return;
+    const st=state.status[u]||{};
+    const status=st.home?'home':'out';
     fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lng+'&format=json&accept-language=ja')
       .then(r=>r.json()).then(j=>{
         const area=j.address?.neighbourhood||j.address?.suburb||j.address?.city||'';
         const place=(j.address?.road||'')+(area?' '+area:'');
+        const locData={uid:u,lat,lng,place,ts:Date.now(),status};
         db.collection('iedash').doc(ROOM).collection('locations').doc(u)
-          .set({uid:u,lat,lng,place,ts:Date.now(),status:'out'}).then(()=>showToast('📍 共有しました')).catch(console.error);
-      }).catch(()=>showToast('位置取得に失敗しました'));
+          .set(locData)
+          .then(()=>{
+            // 即座にローカルstateを更新→再描画
+            if(!state.locations)state.locations={};
+            state.locations[u]=locData;
+            renderLocations(state.locations);
+            showToast('📍 共有しました');
+          }).catch(console.error);
+      }).catch(()=>{
+        // 住所取得失敗でも位置だけ共有
+        const locData={uid:u,lat,lng,place:'',ts:Date.now(),status};
+        db.collection('iedash').doc(ROOM).collection('locations').doc(u)
+          .set(locData)
+          .then(()=>{
+            if(!state.locations)state.locations={};
+            state.locations[u]=locData;
+            renderLocations(state.locations);
+            showToast('📍 共有しました（住所取得失敗）');
+          }).catch(console.error);
+      });
   },()=>showToast('位置情報をオンにしてください'));
 }
 
