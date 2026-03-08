@@ -768,63 +768,7 @@ body.elder .confirm-btn-ok,.elder .confirm-btn-cancel{padding:16px;font-size:cal
     </div>
   </div>
 </div>
-<div id="fab-backdrop" onclick="closeFab()"></div>
-<div id="fab-wrap">
-  <div class="fab-items hide" id="fab-items">
-    <div class="fab-item" style="animation-delay:.05s">
-      <div class="fab-item-lbl">明日の予定</div>
-      <button class="fab-item-btn" style="background:#4E3425;color:#fff" onclick="fabAction('tomorrow')">🌙</button>
-    </div>
-    <div class="fab-item" style="animation-delay:.04s">
-      <div class="fab-item-lbl">お薬</div>
-      <button class="fab-item-btn" style="background:#F3E8FF;color:#8E6BB5" onclick="fabAction('medicine')">💊</button>
-    </div>
-    <div class="fab-item" style="animation-delay:.03s">
-      <div class="fab-item-lbl">タスク</div>
-      <button class="fab-item-btn" style="background:#EBF4FF;color:#6480B8" onclick="fabAction('task')">✅</button>
-    </div>
-    <div class="fab-item" style="animation-delay:.02s">
-      <div class="fab-item-lbl">買い物</div>
-      <button class="fab-item-btn" style="background:#E8F5EE;color:#5A9E7C" onclick="fabAction('shop')">🛒</button>
-    </div>
-    <div class="fab-item" style="animation-delay:.01s">
-      <div class="fab-item-lbl">予定</div>
-      <button class="fab-item-btn" style="background:#FFF0E8;color:#D4663E" onclick="fabAction('schedule')">📅</button>
-    </div>
-  </div>
-  <button id="fab-main" onclick="toggleFab()">＋</button>
-</div>
-
-<!-- Tutorial overlay -->
-<div class="tut-overlay hide" id="tutOverlay">
-  <div class="tut-card">
-    <div class="tut-icon" id="tutIcon"></div>
-    <div class="tut-title" id="tutTitle"></div>
-    <div class="tut-body" id="tutBody"></div>
-    <button class="tut-btn" id="tutBtn" onclick="tutNext()"></button>
-    <button class="tut-skip" onclick="tutClose()">スキップ</button>
-  </div>
-</div>
-<!-- Tab hint -->
-<div class="tab-hint hide" id="tabHint"></div>
-<div class="bnav">
-  <div class="ni active" id="ni-home" onclick="setPage('home',this)"><div class="ni-ic">🏠</div><div class="ni-lb">今日</div></div>
-  <div class="ni" id="ni-todo" onclick="setPage('todo',this)"><div class="ni-ic">✅</div><div class="ni-lb">やること</div></div>
-  <div class="ni" id="ni-calendar" onclick="setPage('calendar',this)"><div class="ni-ic">📅</div><div class="ni-lb">よてい</div></div>
-  <div class="ni" id="ni-status" onclick="setPage('status',this)"><div class="ni-ic">🙋</div><div class="ni-lb">じぶん</div></div>
-</div>
-<div id="irori-confirm" class="hide">
-  <div class="confirm-box">
-    <div class="confirm-icon" id="confirm-icon">⚠️</div>
-    <div class="confirm-title" id="confirm-title">確認</div>
-    <div class="confirm-msg" id="confirm-msg"></div>
-    <div class="confirm-btns">
-      <button class="confirm-btn-cancel" onclick="confirmCancel()">キャンセル</button>
-      <button class="confirm-btn-ok" id="confirm-ok-btn" onclick="confirmOk()">OK</button>
-    </div>
-  </div>
-</div>
-<div id="pg-settings-overlay" style="display:none;position:fixed;inset:0;z-index:2000;background:var(--cr);overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,20px)"><div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--wm);background:var(--cd);position:sticky;top:0;z-index:1"><button onclick="closeSettings()" style="background:none;border:none;font-size:22px;cursor:pointer;padding:4px;color:var(--ac)">‹</button><div style="font-weight:700;font-size:calc(var(--fs)+2px)">設定</div></div>
+<div id="pg-settings-overlay" style="display:none" style="position:fixed;inset:0;z-index:2000;background:var(--cr);overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,20px)"><div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--wm);background:var(--cd);position:sticky;top:0;z-index:1"><button onclick="closeSettings()" style="background:none;border:none;font-size:22px;cursor:pointer;padding:4px;color:var(--ac)">‹</button><div style="font-weight:700;font-size:calc(var(--fs)+2px)">設定</div></div>
 <div id="pg-settings">
   <!-- Profile card at top (iPhone style) -->
   <div id="iset-profile-card" class="iset-profile-card" onclick="openEditProfile()">
@@ -960,6 +904,62 @@ body.elder .confirm-btn-ok,.elder .confirm-btn-cancel{padding:16px;font-size:cal
     <div style="text-align:center;font-size:10px;color:var(--t3);margin-top:12px">Irori v1.0 · 開発：一色翔</div>
   </div>
 </div>
+</div>
+<div id="irori-confirm" class="hide">
+  <div class="confirm-box">
+    <div class="confirm-icon" id="confirm-icon">⚠️</div>
+    <div class="confirm-title" id="confirm-title">確認</div>
+    <div class="confirm-msg" id="confirm-msg"></div>
+    <div class="confirm-btns">
+      <button class="confirm-btn-cancel" onclick="confirmCancel()">キャンセル</button>
+      <button class="confirm-btn-ok" id="confirm-ok-btn" onclick="confirmOk()">OK</button>
+    </div>
+  </div>
+</div>
+<div id="fab-backdrop" onclick="closeFab()"></div>
+<div id="fab-wrap">
+  <div class="fab-items hide" id="fab-items">
+    <div class="fab-item" style="animation-delay:.05s">
+      <div class="fab-item-lbl">明日の予定</div>
+      <button class="fab-item-btn" style="background:#4E3425;color:#fff" onclick="fabAction('tomorrow')">🌙</button>
+    </div>
+    <div class="fab-item" style="animation-delay:.04s">
+      <div class="fab-item-lbl">お薬</div>
+      <button class="fab-item-btn" style="background:#F3E8FF;color:#8E6BB5" onclick="fabAction('medicine')">💊</button>
+    </div>
+    <div class="fab-item" style="animation-delay:.03s">
+      <div class="fab-item-lbl">タスク</div>
+      <button class="fab-item-btn" style="background:#EBF4FF;color:#6480B8" onclick="fabAction('task')">✅</button>
+    </div>
+    <div class="fab-item" style="animation-delay:.02s">
+      <div class="fab-item-lbl">買い物</div>
+      <button class="fab-item-btn" style="background:#E8F5EE;color:#5A9E7C" onclick="fabAction('shop')">🛒</button>
+    </div>
+    <div class="fab-item" style="animation-delay:.01s">
+      <div class="fab-item-lbl">予定</div>
+      <button class="fab-item-btn" style="background:#FFF0E8;color:#D4663E" onclick="fabAction('schedule')">📅</button>
+    </div>
+  </div>
+  <button id="fab-main" onclick="toggleFab()">＋</button>
+</div>
+
+<!-- Tutorial overlay -->
+<div class="tut-overlay hide" id="tutOverlay">
+  <div class="tut-card">
+    <div class="tut-icon" id="tutIcon"></div>
+    <div class="tut-title" id="tutTitle"></div>
+    <div class="tut-body" id="tutBody"></div>
+    <button class="tut-btn" id="tutBtn" onclick="tutNext()"></button>
+    <button class="tut-skip" onclick="tutClose()">スキップ</button>
+  </div>
+</div>
+<!-- Tab hint -->
+<div class="tab-hint hide" id="tabHint"></div>
+<div class="bnav">
+  <div class="ni active" id="ni-home" onclick="setPage('home',this)"><div class="ni-ic">🏠</div><div class="ni-lb">今日</div></div>
+  <div class="ni" id="ni-todo" onclick="setPage('todo',this)"><div class="ni-ic">✅</div><div class="ni-lb">やること</div></div>
+  <div class="ni" id="ni-calendar" onclick="setPage('calendar',this)"><div class="ni-ic">📅</div><div class="ni-lb">よてい</div></div>
+  <div class="ni" id="ni-status" onclick="setPage('status',this)"><div class="ni-ic">🙋</div><div class="ni-lb">じぶん</div></div>
 </div>
 <div class="overlay" id="modal" onclick="ocl(event)"><div class="sheet"><div class="handle"></div><div id="mc"></div></div></div>
 <script>
@@ -2581,7 +2581,7 @@ function setPage(name,el){
     initSettingsPage();
     return;
   }
-  document.querySelectorAll('.pg').forEach(p=>{if(p.id!=='pg-settings'&&p.id!=='pg-settings-overlay')p.classList.remove('active');});
+  document.querySelectorAll('.scroll .pg').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   const pg=document.getElementById('pg-'+name);
   if(pg)pg.classList.add('active');
@@ -2589,9 +2589,8 @@ function setPage(name,el){
   if(name==='calendar')renderCal();
   if(name==='home'){renderHomeSummary();renderHero();}
   // Show tab hint on first visit
-  // tab hints disabled for now
-  // const tabMap={home:'home',todo:'todo',calendar:'calendar',status:'status'};
-  // if(tabMap[name])setTimeout(()=>showTabHint(tabMap[name]),400);
+  const tabMap={home:'home',todo:'todo',calendar:'calendar',status:'status'};
+  if(tabMap[name])setTimeout(()=>showTabHint(tabMap[name]),400);
 }
 function closeSettings(){
   document.getElementById('pg-settings-overlay').style.display='none';
