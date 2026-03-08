@@ -485,6 +485,27 @@ body.elder .sheet *,.elder .m-title{font-size:16px!important}
 body.elder .iset-row-title{font-size:16px!important}
 body.elder select,.elder .fi{font-size:17px!important}
 
+
+/* ══ メンバーパネル ══ */
+.mbr-panel{background:var(--cd);border-radius:14px;padding:12px;box-shadow:var(--sh);border-top:3px solid #ccc;transition:transform .12s}
+.mbr-panel:active{transform:scale(.98)}
+.mbr-pname{font-size:calc(var(--fs) - 1px);font-weight:800;color:var(--tx);display:flex;align-items:center;gap:5px;margin-bottom:6px}
+.mbr-prow{font-size:calc(var(--fs) - 3px);color:var(--t2);line-height:1.5;display:flex;gap:4px;align-items:baseline}
+.mbr-plbl{color:var(--t3);flex-shrink:0;font-size:10px}
+
+/* ══ ご飯時間バッジ ══ */
+.meal-time-badge{display:flex;flex-direction:column;align-items:center;background:var(--wm);border-radius:10px;padding:6px 10px;flex:1;cursor:pointer}
+.meal-time-badge .mtb-lbl{font-size:9px;color:var(--t3);font-weight:700}
+.meal-time-badge .mtb-time{font-size:15px;font-weight:800;color:var(--tx)}
+.meal-time-badge .mtb-menu{font-size:10px;color:var(--t2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70px}
+
+/* ══ スワイプ ══ */
+.scroll{touch-action:pan-y}
+.pg.active{display:block;animation:pgIn .22s ease both}
+
+/* ══ チュートリアル表示 ══ */
+#tutOverlay.open{display:flex!important}
+
 </style>
 </head>
 <body>
@@ -586,17 +607,21 @@ body.elder select,.elder .fi{font-size:17px!important}
     <div class="logo">I<em>rori</em></div>
     <div class="hdr-r">
       <span class="sync-dot" id="syncDot"></span>
-      <div class="hdr-date" id="hdrDate"></div>
+      <div id="hdrDate" style="display:flex;flex-direction:column;align-items:flex-end;line-height:1.2"><span id="hdrDateMain" style="font-size:13px;font-weight:700;color:rgba(255,255,255,.9);font-family:'DM Sans',sans-serif"></span><span id="hdrDateSub" style="font-size:10px;color:rgba(255,255,255,.5)"></span></div>
       <button class="ibtn" id="myBtn" onclick="openEditProfile()">👤</button>
       <button class="gear-btn" onclick="setPage('settings',null)">⚙️</button>
     </div>
   </div>
 </div>
-<div class="scroll">
+<div class="scroll" id="mainScroll">
 <div class="pg active" id="pg-home">
   <!-- 緊急 -->
   <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
     <button onclick="sendEmergency()" style="background:rgba(201,64,64,.12);color:var(--rd);border:1.5px solid rgba(201,64,64,.3);border-radius:10px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif">🚨 緊急</button>
+  </div>
+  <!-- メンバーパネル -->
+  <div class="sec" id="memberPanelSec">
+    <div class="today-fam-grid" id="memberPanels"></div>
   </div>
   <!-- みんなの状況 -->
   <div class="sec">
@@ -622,13 +647,13 @@ body.elder select,.elder .fi{font-size:17px!important}
         <div class="card-title">🍽️ 今日のごはん <span id="meal-badge"></span></div>
         <button class="btn btn-ghost" style="font-size:10px" onclick="openModal('mealSettings')">設定</button>
       </div>
+      <div id="mealTimeDisplay" style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap"></div>
       <div id="mealDisplay"></div>
     </div>
   </div>
   <!-- ゴミ出し -->
   <div class="sec">
-    <div id="trashNotice"></div>
-    <div class="card">
+      <div class="card">
       <div class="card-hdr"><div class="card-title" id="trash-area-lbl">🗑️ ゴミ出し</div></div>
       <div id="trashCard"></div>
     </div>
@@ -1191,7 +1216,7 @@ function boot(){
   calDay=new Date(now);lastDate=tday();
   updateDD();
   setInterval(()=>{const t=tday();if(t!==lastDate){lastDate=t;updateDD();renderTrash();}},60000);
-  syncMealTpl().then(()=>renderMeal());listenAll();renderTrash();renderFamStatus();schedChecks();renderNotifToggles();renderBath();renderHomeSummary();
+  syncMealTpl().then(()=>renderMeal());listenAll();renderTrash();renderFamStatus();renderMealTime();checkTutorial();schedChecks();renderNotifToggles();renderBath();renderHomeSummary();
   // Unregister all old service workers to prevent caching issues
   if('serviceWorker'in navigator){
     navigator.serviceWorker.getRegistrations().then(regs=>{
@@ -1208,7 +1233,14 @@ function loadFbCount(){
     window._fbCount=s.size;
   }).catch(()=>{});
 }
-function updateDD(){const now=new Date();const el=document.getElementById('hdrDate');if(el)el.textContent=(now.getMonth()+1)+'/'+(now.getDate())+'（'+DN[now.getDay()]+'）';}
+function updateDD(){
+  const now=new Date();
+  const m=document.getElementById('hdrDateMain');
+  const s=document.getElementById('hdrDateSub');
+  const MON=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  if(m)m.textContent=MON[now.getMonth()]+now.getDate()+'日（'+DN[now.getDay()]+'）';
+  if(s)s.textContent=now.getFullYear()+'年';
+}
 function renderHomeSummary(){
   const el=document.getElementById('home-summary');if(!el)return;
   const today=tday();
@@ -1264,7 +1296,7 @@ function togBath(key){
   addAct('🛁 お風呂「'+label+'」'+(data[today][key]?'チェック':'解除'));
 }
 function listenAll(){
-  db.collection('iedash').doc(ROOM).collection('members').onSnapshot(s=>{members=s.docs.map(d=>d.data());renderTabs();renderSG();renderSUPage();renderFamStatus();renderTodayFamGrid();},console.error);
+  db.collection('iedash').doc(ROOM).collection('members').onSnapshot(s=>{members=s.docs.map(d=>d.data());renderTabs();renderSG();renderSUPage();renderFamStatus();renderTodayFamGrid();renderMemberPanels();},console.error);
   db.collection('iedash').doc(ROOM).collection('status').onSnapshot(s=>{state.status={};state.mood={};s.docs.forEach(d=>{const v=d.data();state.status[d.id]={home:v.home??false,ret:v.ret||''};if(v.mood)state.mood[d.id]=v.mood;});renderSG();renderSUPage();renderFamStatus();renderTodayFamGrid();},console.error);
   db.collection('iedash').doc(ROOM).collection('schedules').onSnapshot(s=>{state.schedules=s.docs.map(d=>({id:d.id,...d.data()}));renderSch();if(document.getElementById('pg-calendar').classList.contains('active'))renderCal();},console.error);
   db.collection('iedash').doc(ROOM).collection('shopping').onSnapshot(s=>{state.shopping=s.docs.map(d=>({id:d.id,...d.data()}));renderShop();renderHomeSummary();},console.error);
@@ -1357,8 +1389,8 @@ function renderTrash(){
   const hdr=document.getElementById('trash-area-lbl');
   if(hdr)hdr.textContent='🗑️ ゴミ出し（'+area+'）';
   const today=new Date(),tmr=new Date(today);tmr.setDate(today.getDate()+1);
-  const td=getTrash(today),tm=getTrash(tmr),ne=document.getElementById('trashNotice');if(!ne)return;
-  ne.innerHTML=td.length?'<div class="notice n-td"><span style="font-size:24px">'+td[0].emoji+'</span><div><div class="ntxt">今日はゴミの日！'+td.map(x=>x.name).join('・')+'</div><div class="nsub">朝9時までに出してください</div></div></div>':
+  const td=getTrash(today),tm=getTrash(tmr),ne=null;
+  if(ne)ne.innerHTML=td.length?'<div class="notice n-td"><span style="font-size:24px">'+td[0].emoji+'</span><div><div class="ntxt">今日はゴミの日！'+td.map(x=>x.name).join('・')+'</div><div class="nsub">朝9時までに出してください</div></div></div>':
     tm.length?'<div class="notice n-tm"><span style="font-size:24px">'+tm[0].emoji+'</span><div><div class="ntxt">明日はゴミの日！'+tm.map(x=>x.name).join('・')+'</div><div class="nsub">前日に準備しておきましょう</div></div></div>':'';
   const st=new Date(today);st.setDate(today.getDate()-today.getDay());
   const wk=Array.from({length:7},(_,i)=>{const d=new Date(st);d.setDate(st.getDate()+i);const tr=getTrash(d),isT=d.toDateString()===today.toDateString();return'<div class="wk-c '+(tr.length?'has':'')+' '+(isT?'tod':'')+'"><div class="wk-dn" style="'+(i===0?'color:var(--rd)':i===6?'color:var(--bl)':'')+'">'+DN[i]+'</div><div class="wk-ic">'+tr.map(x=>x.emoji).join('')+'</div></div>';}).join('');
@@ -1689,7 +1721,7 @@ function getMealForToday(){
   if(tpl[dow]&&Object.values(tpl[dow]).some(v=>v))return{data:tpl[dow],source:'tpl',dow};
   return{data:{},source:'none'};
 }
-function renderMeal(){
+function renderMeal(){renderMealTime();
   const el=document.getElementById('mealDisplay');if(!el)return;
   const {data,source,dow}=getMealForToday();
   const hasAny=Object.values(data).some(v=>v);
@@ -2482,7 +2514,7 @@ function closeFab(){
   document.getElementById('fabBg')?.classList.remove('open');
 }
 
-function renderFamStatus(){
+function renderFamStatus(){renderMemberPanels();
   const el=document.getElementById('famStatusGrid');if(!el)return;
   if(!members.length){el.innerHTML='<div class="empty">メンバーがいません</div>';return;}
   el.innerHTML=members.map(m=>{
@@ -2540,4 +2572,179 @@ function shareLocation(){
       }).catch(()=>showToast('位置取得に失敗しました'));
   },()=>showToast('位置情報をオンにしてください'));
 }
-</script></body></html>
+
+function renderMemberPanels(){
+  const el=document.getElementById('memberPanels');if(!el)return;
+  const td=tday();
+  el.innerHTML=members.map(m=>{
+    const evts=(state.schedules||[]).filter(s=>s.member===m.uid&&s.date===td).sort((a,b)=>a.time.localeCompare(b.time));
+    const st=state.status[m.uid]||{};
+    const ret=st.ret||'';
+    const firstEvt=evts[0];
+    return '<div class="mbr-panel" style="border-top-color:'+m.color+'">'
+      +'<div class="mbr-pname"><span>'+m.emoji+'</span>'+m.name+'</div>'
+      +'<div class="mbr-prow"><span class="mbr-plbl">📅</span>'
+        +(firstEvt?firstEvt.time+' '+firstEvt.text:'<span style="color:var(--t3)">予定なし</span>')
+      +'</div>'
+      +'<div class="mbr-prow"><span class="mbr-plbl">🏠</span>'
+        +(ret?'帰宅 '+ret:'<span style="color:var(--t3)">未設定</span>')
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function renderMealTime(){
+  const el=document.getElementById('mealTimeDisplay');if(!el)return;
+  const dow=new Date().getDay();
+  const LABELS=['🌅朝','☀️昼','🌙夜'];
+  const keys=['breakfast','lunch','dinner'];
+  // テンプレ（曜日別）または今日の設定
+  const tmpl=JSON.parse(localStorage.getItem('iedash_meal_time_tmpl')||'{}');
+  const today=JSON.parse(localStorage.getItem('iedash_meal_time_today')||'{}');
+  el.innerHTML=keys.map((k,i)=>{
+    const t=today[k]||tmpl[dow]?.[k]||'';
+    const meal=getMealForToday().data[k]||'';
+    return '<div class="meal-time-badge" onclick="openMealTimeModal()">'
+      +'<div class="mtb-lbl">'+LABELS[i]+'</div>'
+      +'<div class="mtb-time">'+(t||'--:--')+'</div>'
+      +(meal?'<div class="mtb-menu">'+meal+'</div>':'')
+      +'</div>';
+  }).join('');
+}
+
+function openMealTimeModal(){
+  const dow=new Date().getDay();
+  const DN2=['日','月','火','水','木','金','土'];
+  const tmpl=JSON.parse(localStorage.getItem('iedash_meal_time_tmpl')||'{}');
+  const today=JSON.parse(localStorage.getItem('iedash_meal_time_today')||'{}');
+  const t=today;
+  const mc=document.getElementById('mc');if(!mc)return;
+  document.getElementById('modal').classList.add('open');
+  mc.innerHTML='<div class="m-title">🍽️ ご飯の時間設定</div>'
+    +'<div style="font-size:12px;color:var(--t2);margin-bottom:12px">今日 ('+DN2[dow]+'曜日) の設定</div>'
+    +'<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">'
+    +['朝食','昼食','夕食'].map((lbl,i)=>{
+      const key=['breakfast','lunch','dinner'][i];
+      return '<div style="display:flex;align-items:center;gap:8px">'
+        +'<span style="width:60px;font-size:13px;font-weight:700">'+lbl+'</span>'
+        +'<input type="time" class="fi" id="mtime-'+key+'" value="'+(t[key]||tmpl[dow]?.[key]||'')+'" style="flex:1">'
+        +'</div>';
+    }).join('')
+    +'</div>'
+    +'<button class="btn btn-o btn-full" style="margin-bottom:8px" onclick="saveMealTimeToday()">今日に適用</button>'
+    +'<div style="font-size:12px;font-weight:700;color:var(--t2);margin:12px 0 8px">テンプレ（曜日ごとに保存）</div>'
+    +'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px">'
+    +DN2.map((d,i)=>'<button onclick="selectTmplDay('+i+')" id="tmpl-day-btn-'+i+'" class="btn btn-ghost" style="min-width:36px;font-size:12px'+(i===dow?';background:var(--ac);color:#fff':'')+'">'+(i===dow?'<b>'+d+'</b>':d)+'</button>').join('')
+    +'</div>'
+    +'<div id="tmpl-day-editor"></div>'
+    +'<button class="btn btn-b btn-full" onclick="saveMealTimeTmpl()">テンプレに保存</button>';
+  selectTmplDay(dow);
+}
+
+let _tmplDayEdit=new Date().getDay();
+function selectTmplDay(i){
+  _tmplDayEdit=i;
+  document.querySelectorAll('[id^="tmpl-day-btn-"]').forEach((b,idx)=>{
+    b.style.background=idx===i?'var(--ac)':'';
+    b.style.color=idx===i?'#fff':'';
+  });
+  const tmpl=JSON.parse(localStorage.getItem('iedash_meal_time_tmpl')||'{}');
+  const t=tmpl[i]||{};
+  const ed=document.getElementById('tmpl-day-editor');if(!ed)return;
+  ed.innerHTML='<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">'
+    +['朝食','昼食','夕食'].map((lbl,j)=>{
+      const key=['breakfast','lunch','dinner'][j];
+      return '<div style="display:flex;align-items:center;gap:8px">'
+        +'<span style="width:60px;font-size:12px">'+lbl+'</span>'
+        +'<input type="time" class="fi" id="tmpl-'+key+'" value="'+(t[key]||'')+'" style="flex:1">'
+        +'</div>';
+    }).join('')
+    +'</div>';
+}
+
+function saveMealTimeToday(){
+  const t={
+    breakfast:document.getElementById('mtime-breakfast')?.value||'',
+    lunch:document.getElementById('mtime-lunch')?.value||'',
+    dinner:document.getElementById('mtime-dinner')?.value||''
+  };
+  localStorage.setItem('iedash_meal_time_today',JSON.stringify(t));
+  renderMealTime();showToast('✅ 今日の時間を設定しました');
+}
+
+function saveMealTimeTmpl(){
+  const tmpl=JSON.parse(localStorage.getItem('iedash_meal_time_tmpl')||'{}');
+  tmpl[_tmplDayEdit]={
+    breakfast:document.getElementById('tmpl-breakfast')?.value||'',
+    lunch:document.getElementById('tmpl-lunch')?.value||'',
+    dinner:document.getElementById('tmpl-dinner')?.value||''
+  };
+  localStorage.setItem('iedash_meal_time_tmpl',JSON.stringify(tmpl));
+  showToast('✅ テンプレを保存しました');
+}
+
+const TUT_STEPS=[
+  {icon:'🏠',title:'Iroriへようこそ！',body:'家族みんなの予定・状況・ご飯・ゴミ出しを一画面で管理できるアプリです。かんたんに使い方を説明します！'},
+  {icon:'👨‍👩‍👧',title:'タブで移動する',body:'画面下のタブで画面を切り替えます。\n👨‍👩‍👧 家族 → みんなの状況\n✅ やること → 買い物・タスク\n📅 予定 → カレンダー\n🙋 じぶん → 自分の状態更新'},
+  {icon:'＋',title:'＋ボタンで追加',body:'右下の ＋ボタンをタップすると\n予定・買い物・タスクなどをかんたんに追加できます！'},
+  {icon:'🔑',title:'家族を招待する',body:'⚙️設定 → 招待コードから\n6桁のコードを家族に送りましょう。\nコードを入力すると同じルームに参加できます。'},
+  {icon:'🗑️',title:'ゴミ出し地域を設定',body:'⚙️設定 → ゴミ出し設定から\nお住まいの地域を選択してください。\n正確なゴミ出し情報が表示されます。'},
+];
+let _tutIdx=0;
+function startTutorial(){_tutIdx=0;document.getElementById('tutOverlay').classList.add('open');renderTutStep();}
+function renderTutStep(){
+  const step=TUT_STEPS[_tutIdx],total=TUT_STEPS.length;
+  document.getElementById('tutIcon').textContent=step.icon;
+  document.getElementById('tutTitle').textContent=step.title;
+  const bd=document.getElementById('tutBody');bd.style.whiteSpace='pre-line';bd.textContent=step.body;
+  document.getElementById('tutProgress').style.width=((_tutIdx+1)/total*100)+'%';
+  document.getElementById('tutNext').textContent=_tutIdx===total-1?'はじめる！':'次へ →';
+  const dots=document.getElementById('tutDots');
+  dots.innerHTML=Array.from({length:total},(_,i)=>'<div style="width:7px;height:7px;border-radius:50%;background:'+(i===_tutIdx?'var(--ac)':'var(--wm)')+'"></div>').join('');
+}
+function tutNext(){if(_tutIdx<TUT_STEPS.length-1){_tutIdx++;renderTutStep();}else closeTutorial();}
+function closeTutorial(){document.getElementById('tutOverlay').classList.remove('open');localStorage.setItem('iedash_tut_done','1');}
+function checkTutorial(){if(!localStorage.getItem('iedash_tut_done'))setTimeout(startTutorial,800);}
+
+// ══ スワイプ切り替え ══
+(function(){
+  const TABS=['home','todo','calendar','status'];
+  let sx=0,sy=0,moving=false;
+  const scroll=document.getElementById?document.getElementById('mainScroll'):null;
+  function curIdx(){return TABS.findIndex(t=>document.getElementById('pg-'+t)?.classList.contains('active'));}
+  document.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;moving=false;},{passive:true});
+  document.addEventListener('touchmove',e=>{
+    if(moving)return;
+    const dx=e.touches[0].clientX-sx,dy=e.touches[0].clientY-sy;
+    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>30){moving=true;}
+  },{passive:true});
+  document.addEventListener('touchend',e=>{
+    if(!moving)return;
+    const dx=e.changedTouches[0].clientX-sx;
+    if(Math.abs(dx)<50)return;
+    const i=curIdx();
+    if(dx<0&&i<TABS.length-1)setPage(TABS[i+1],null);
+    else if(dx>0&&i>0)setPage(TABS[i-1],null);
+  });
+})();
+</script>
+<!-- ══ チュートリアル ══ -->
+<div id="tutOverlay" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(20,10,5,.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center">
+  <div style="background:var(--cd);border-radius:24px;margin:20px;max-width:380px;width:100%;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.3)">
+    <div style="height:5px;background:var(--wm);position:relative">
+      <div id="tutProgress" style="height:100%;background:var(--ac);border-radius:5px;transition:width .3s"></div>
+    </div>
+    <div style="padding:24px">
+      <div id="tutIcon" style="font-size:48px;text-align:center;margin-bottom:12px"></div>
+      <div id="tutTitle" style="font-size:18px;font-weight:800;color:var(--tx);text-align:center;margin-bottom:8px"></div>
+      <div id="tutBody" style="font-size:13px;color:var(--t2);line-height:1.8;text-align:center;min-height:80px"></div>
+      <div id="tutImgArea" style="margin:12px 0;text-align:center;min-height:40px"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px 20px">
+      <button id="tutSkip" onclick="closeTutorial()" style="background:none;border:none;color:var(--t3);font-size:12px;cursor:pointer;padding:8px">スキップ</button>
+      <div id="tutDots" style="display:flex;gap:6px"></div>
+      <button id="tutNext" onclick="tutNext()" style="background:var(--ac);color:#fff;border:none;border-radius:12px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer">次へ →</button>
+    </div>
+  </div>
+</div>
+</body></html>
