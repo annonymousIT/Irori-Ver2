@@ -1,0 +1,3099 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="netlify-no-email-obfuscation" content="true">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#4E3425">
+<title>Irori</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+<style>
+:root{
+  --cr:#FAF7F2;--wm:#EFE8DA;--br:#4E3425;--br2:#6B4535;
+  --ac:#D4663E;--gn:#5A9E7C;--bl:#6480B8;--yl:#E8B84B;--rd:#C94040;
+  --tx:#28180D;--t2:#7A6558;--t3:#B09A8E;--cd:#FFF;
+  --sh:0 3px 20px rgba(78,52,37,.13);--r:16px;
+  --fs:14px;--fi:20px
+}
+body.dark{--cr:#1C1209;--wm:#2E2018;--tx:#F0E6DC;--t2:#D4B8A8;--t3:#A08878;--cd:#261A12;--sh:0 2px 16px rgba(0,0,0,.4)}
+body.dark .hdr{background:#1A110A}
+body.dark .bnav{background:#2C1E16;border-color:#452E22;transform:translateZ(0)}
+body.dark .sheet{background:#2C1E16}
+body.dark .fi,.dark select{background:#352820;color:var(--tx);border-color:#452E22}
+body.dark .card{background:#2C1E16;box-shadow:0 2px 12px rgba(0,0,0,.3);border:1.5px solid var(--br)}
+body.dark .iset-group{background:#2C1E16}
+body.dark .iset-row{border-color:#452E22}
+body.dark .sec-title{color:var(--t3)}
+body.dark .card-title{color:var(--tx)}
+body.dark .empty{color:var(--t3)}
+body.dark .li-txt{color:var(--tx)}
+body.dark .tag{background:var(--wm);color:var(--t2)}
+body.dark .btn-ghost{background:var(--wm);color:var(--t2)}
+body.dark .iset-row-title{color:var(--tx)}
+body.dark .iset-row-sub{color:var(--t2)}
+body.dark 
+body.dark .gcal-cell{background:#2C1E16}
+body.dark .gcal-cell:hover{background:var(--wm)}
+body.dark .gcal-dh{background:#221810}
+body.dark .sc{background:#2C1E16}
+body.dark .sc-name{color:var(--tx)}
+body.fs-small{--fs:11px;--fi:15px;--fcard:11px;--fbtn:11px;--ftitle:13px;--fsub:10px}
+body.fs-mid{--fs:14px;--fi:20px;--fcard:13px;--fbtn:13px;--ftitle:15px;--fsub:11px}
+body.fs-large{--fs:16px;--fi:22px;--fcard:15px;--fbtn:15px;--ftitle:17px;--fsub:13px}
+body.fs-xl{--fs:19px;--fi:26px;--fcard:18px;--fbtn:17px;--ftitle:20px;--fsub:15px}
+body.elder{--fs:19px;--fi:26px;--fcard:18px;--fbtn:17px;--ftitle:20px;--fsub:15px}
+body.elder .btn{padding:10px 16px;font-size:16px}
+body.elder .card-title{font-size:18px}
+body.elder .ni-ic{font-size:26px}
+body.elder .ni-lb{font-size:11px}
+body.elder .sc-name{font-size:16px}
+body.elder .li-txt{font-size:16px}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;word-break:keep-all;overflow-wrap:break-word}
+html,body{height:100%;overflow:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--tx);display:flex;flex-direction:column;font-size:var(--fs)}
+/* Font size cascade - all key elements scale with --fs */
+.card-title{font-size:calc(var(--fs) + 1px);font-weight:700}
+.sec-title{font-size:calc(var(--fs) - 1px)}
+.li-txt{font-size:var(--fs)}
+.li-sub{font-size:calc(var(--fs) - 2px)}
+.btn{font-size:calc(var(--fs) - 1px)}
+.sc-name{font-size:var(--fs)}
+.sc-time{font-size:calc(var(--fs) - 2px)}
+.iset-row-title{font-size:var(--fs)}
+.iset-row-sub{font-size:calc(var(--fs) - 2px)}
+.iset-section-label{font-size:calc(var(--fs) - 2px)}
+.ni-lb{font-size:calc(var(--fs) - 4px)}
+.ni-ic{font-size:calc(var(--fs) + 6px)}
+.tag{font-size:calc(var(--fs) - 3px)}
+.empty{font-size:calc(var(--fs) - 1px)}
+.tmr-title{font-size:calc(var(--fs) + 1px)}
+/* LOADING */
+#loading{position:fixed;inset:0;z-index:9999;background:var(--br);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+#loading.hide{display:none}
+.ld-logo{font-size:26px;font-weight:700;color:#fff}.ld-logo em{color:var(--yl);font-style:normal}
+.ld-spin{width:34px;height:34px;border:3px solid rgba(255,255,255,.2);border-top-color:var(--yl);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ld-txt{font-size:12px;color:rgba(255,255,255,.5)}
+/* LOGIN */
+#login-screen{position:fixed;inset:0;z-index:9998;background:var(--br);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+#login-screen.hide{display:none}
+.lc{background:#fff;border-radius:22px;padding:28px 22px;width:100%;max-width:360px;text-align:center}
+.lc-icon{font-size:52px;margin-bottom:10px}
+.lc-title{font-size:22px;font-weight:700;margin-bottom:6px}
+.lc-sub{font-size:13px;color:var(--t2);margin-bottom:24px;line-height:1.8}
+.g-btn{width:100%;padding:15px;background:#fff;color:var(--tx);border:2px solid var(--wm);border-radius:14px;font-family:'Zen Maru Gothic',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .15s;margin-bottom:10px}
+.g-btn:hover{background:var(--wm)}.g-btn:active{transform:scale(.97)}
+.g-icon{width:22px;height:22px;flex-shrink:0}
+/* PROFILE */
+#profile-screen{position:fixed;inset:0;z-index:9997;background:var(--br);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow-y:auto}
+#profile-screen.hide{display:none}
+.pc{background:#fff;border-radius:22px;padding:22px;width:100%;max-width:360px}
+.pc-title{font-size:17px;font-weight:700;margin-bottom:4px}
+.pc-sub{font-size:11px;color:var(--t2);margin-bottom:14px;line-height:1.6}
+.pc-eg{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:14px}
+.pc-e{font-size:24px;text-align:center;padding:7px;border-radius:10px;cursor:pointer;border:2px solid transparent;transition:all .13s}
+.pc-e.sel{background:var(--wm);border-color:var(--ac);transform:scale(1.1)}
+.pc-inp{width:100%;padding:12px;border:2px solid var(--wm);border-radius:11px;font-family:'Zen Maru Gothic',sans-serif;font-size:15px;outline:none;transition:border-color .15s;margin-bottom:12px}
+.pc-inp:focus{border-color:var(--ac)}
+.pc-btn{width:100%;padding:14px;background:var(--ac);color:#fff;border:none;border-radius:13px;font-family:'Zen Maru Gothic',sans-serif;font-size:15px;font-weight:700;cursor:pointer}
+/* HEADER */
+.hdr{background:var(--br);color:#fff;padding:13px 14px 0;flex-shrink:0}
+.hdr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.logo{font-size:19px;font-weight:700;letter-spacing:.03em}.logo em{color:var(--yl);font-style:normal}
+.hdr-r{display:flex;align-items:center;gap:7px}
+.hdr-date{font-size:11px;color:rgba(255,255,255,.5);font-family:'DM Sans',sans-serif}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--gn);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.ibtn{background:rgba(255,255,255,.13);border:none;border-radius:9px;color:#fff;font-size:var(--fi);padding:4px 8px;cursor:pointer;transition:background .13s}
+.ibtn:active{background:rgba(255,255,255,.25)}
+.mtabs{display:flex;gap:5px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none}
+.mtabs::-webkit-scrollbar{display:none}
+.mtab{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;border:2px solid rgba(255,255,255,.18);background:transparent;color:rgba(255,255,255,.5);font-family:'Zen Maru Gothic',sans-serif;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.mtab.active{background:#fff;color:var(--br);border-color:#fff;font-weight:700}
+.mtab.me.active{background:var(--yl);color:var(--br);border-color:var(--yl)}
+/* LAYOUT */
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+.sec{margin-bottom:13px}
+.card{background:var(--cd);border-radius:var(--r);padding:14px;box-shadow:var(--sh);border:1.5px solid #4E3425}
+.card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
+.card-title{font-size:15px;font-weight:700}
+.sec-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.sec-title{font-size:var(--fsub,10px);font-weight:700;color:var(--t3);letter-spacing:.1em}
+/* BUTTONS */
+.btn{border:none;border-radius:10px;padding:6px 12px;font-family:'Zen Maru Gothic',sans-serif;font-size:12px;cursor:pointer;font-weight:700;transition:all .13s;line-height:1.3}
+.btn:active{transform:scale(.93)}
+.btn-o{background:var(--ac);color:#fff}.btn-g{background:var(--gn);color:#fff}.btn-b{background:var(--bl);color:#fff}.btn-r{background:var(--rd);color:#fff}.btn-ghost{background:var(--wm);color:var(--t2)}.btn-dark{background:var(--br);color:#fff}
+.btn-full{width:100%;padding:13px;font-size:14px;border-radius:13px;margin-top:6px}
+/* EMERGENCY */
+.emg-btn{width:100%;padding:18px;background:linear-gradient(135deg,#C94040,#a02020);color:#fff;border:none;border-radius:16px;font-family:'Zen Maru Gothic',sans-serif;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 20px rgba(201,64,64,.4);transition:all .15s;margin-bottom:13px}
+.emg-btn:active{transform:scale(.96);box-shadow:0 2px 10px rgba(201,64,64,.3)}
+/* STATUS GRID */
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.sc{background:var(--cd);border-radius:var(--r);padding:12px;box-shadow:var(--sh);display:flex;align-items:center;gap:9px;position:relative;overflow:hidden;border-left:4px solid transparent}
+.sc.mine{box-shadow:var(--sh),0 0 0 2px var(--yl);cursor:pointer;transition:transform .13s}.sc.mine:active{transform:scale(.96)}
+.sc-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:var(--fi);flex-shrink:0}
+.sc-name{font-size:var(--fs);font-weight:700;margin-bottom:3px}
+.sc-b{display:inline-flex;align-items:center;font-size:10px;padding:3px 7px;border-radius:7px;font-weight:700}
+.hm{background:#E6F4EC;color:#2E7D52}.out{background:#FEF0E7;color:#C4500C}
+.sc-ret{font-size:10px;color:var(--t3);margin-top:2px}.sc-mood{position:absolute;top:7px;right:7px;font-size:14px}
+/* LISTS */
+.li{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--wm);animation:fi .18s ease}
+.li:last-child{border-bottom:none}
+@keyframes fi{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.chk{width:24px;height:24px;border-radius:50%;border:2.5px solid var(--gn);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .16s}
+.chk.done{background:var(--gn);border-color:var(--gn)}.chk.done::after{content:"✓";color:#fff;font-size:12px;font-weight:700}
+.chk-sq{width:24px;height:24px;border-radius:7px;border:2.5px solid var(--bl);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .16s}
+.chk-sq.done{background:var(--bl);border-color:var(--bl)}.chk-sq.done::after{content:"✓";color:#fff;font-size:12px;font-weight:700}
+.li-txt{font-size:var(--fs);flex:1;cursor:pointer;word-break:break-all;line-height:1.4}
+.li-txt.done{text-decoration:line-through;color:var(--t3)}
+.tag{font-size:10px;color:var(--t2);background:var(--wm);padding:2px 7px;border-radius:6px;flex-shrink:0;white-space:nowrap}
+.tag-urg{background:#FEF0E7;color:var(--ac)}.tag-due{background:#EEF2FF;color:var(--bl)}.tag-ov{background:#FEE2E2;color:var(--rd)}.tag-med{background:#F3E8FF;color:#8E6BB5}
+.del{background:none;border:none;color:var(--t3);font-size:16px;cursor:pointer;padding:2px 4px;flex-shrink:0;transition:color .13s}.del:hover{color:var(--rd)}
+/* SCHEDULE */
+.si{display:flex;gap:9px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--wm);cursor:pointer;animation:fi .18s ease}
+.si:last-child{border-bottom:none}
+.si-time{font-size:12px;color:var(--t2);width:40px;flex-shrink:0;font-family:'DM Sans',sans-serif;font-weight:600;padding-top:2px}
+.si-dot{width:9px;height:9px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.si-body{flex:1;min-width:0}
+.si-txt{font-size:var(--fs);margin-bottom:2px;font-weight:600}
+.si-end{font-size:10px;color:var(--t3)}
+.si-tag{font-size:10px;padding:2px 7px;border-radius:6px;font-weight:600}
+/* TRASH */
+.notice{border-radius:13px;padding:10px 13px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.n-td{background:#FEF6EE;border-left:4px solid var(--ac)}.n-tm{background:#FFFDE6;border-left:4px solid var(--yl)}
+.ntxt{font-size:13px;font-weight:700}.nsub{font-size:11px;color:var(--t2);margin-top:2px}
+.wk-row{display:flex;gap:4px;margin:8px 0}
+.wk-c{flex:1;border-radius:9px;padding:6px 2px;text-align:center;background:var(--wm)}
+.wk-c.has{background:#FFF5D6}.wk-c.tod{box-shadow:0 0 0 2.5px var(--ac);background:#FFF0E6}
+.wk-dn{font-size:10px;font-weight:700;color:var(--t2);margin-bottom:3px}
+.wk-ic{font-size:13px;min-height:16px}
+.tr-types{margin-top:10px;display:flex;flex-direction:column;gap:7px}
+.tr-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.tr-fr{font-size:11px;color:var(--t3)}
+/* TOMORROW */
+.tmr{background:linear-gradient(135deg,var(--br),var(--br2));border-radius:var(--r);padding:14px;color:#fff}
+.tmr-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.tmr-title{font-size:12px;color:rgba(255,255,255,.5);font-weight:700}
+.tmr-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.tmr-item:last-child{border-bottom:none}
+.tmr-name{font-size:13px;font-weight:700}.tmr-plan{font-size:11px;color:rgba(255,255,255,.6)}
+/* MEDICINE */
+.med-item{display:flex;align-items:center;gap:9px;padding:10px;background:var(--wm);border-radius:11px;margin-bottom:7px}
+.med-ic{font-size:22px;width:32px;text-align:center;flex-shrink:0}
+.med-name{font-size:var(--fs);font-weight:700}
+.med-time{font-size:11px;color:var(--t2);margin-top:2px}
+.med-chk{margin-left:auto;width:28px;height:28px;border-radius:50%;border:2.5px solid #8E6BB5;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .16s;flex-shrink:0}
+.med-chk.done{background:#8E6BB5;border-color:#8E6BB5}.med-chk.done::after{content:"✓";color:#fff;font-size:13px;font-weight:700}
+/* CALENDAR */
+.cal-view-tog{display:flex;background:var(--wm);border-radius:12px;padding:3px;margin-bottom:10px;gap:2px}
+.cvt{flex:1;padding:7px 4px;border:none;background:transparent;border-radius:9px;font-family:'Zen Maru Gothic',sans-serif;font-size:11px;font-weight:700;cursor:pointer;color:var(--t2);transition:all .15s}
+.cvt.active{background:#fff;color:var(--br);box-shadow:0 1px 5px rgba(0,0,0,.1)}
+.cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.cnav-btn{background:var(--wm);border:none;border-radius:10px;font-size:18px;cursor:pointer;padding:6px 12px;color:var(--br);transition:background .13s}.cnav-btn:active{background:#e0d8cc}
+.cal-mon{font-size:16px;font-weight:700}
+.frow{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px}
+.fc{padding:4px 10px;border-radius:11px;font-size:11px;font-weight:700;cursor:pointer;border:2px solid transparent;opacity:.4;transition:all .13s}.fc.active{opacity:1;border-color:currentColor}
+/* MONTH CALENDAR */
+.cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.chc{text-align:center;font-size:10px;font-weight:700;color:var(--t3);padding:4px 0}
+.chc.s{color:var(--rd)}.chc.sat{color:var(--bl)}
+.cc{min-height:54px;border-radius:9px;padding:4px 3px;cursor:pointer;transition:background .11s;position:relative}
+.cc:hover{background:var(--wm)}.cc.today{background:var(--ac)}.cc.today .cdn{color:#fff;font-weight:700}.cc.om .cdn{color:var(--t3)}
+.cdn{font-size:11px;text-align:center;font-family:'DM Sans',sans-serif;font-weight:600}
+.cc.sc .cdn{color:var(--rd)}.cc.satc .cdn{color:var(--bl)}
+.cdots{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;margin-top:2px}.cdot{width:6px;height:6px;border-radius:50%}
+.ctr{font-size:10px;text-align:center;line-height:1.3}
+/* WEEK CALENDAR */
+.wcal{overflow:hidden}
+.wcal-head{display:grid;grid-template-columns:40px repeat(7,1fr);gap:2px;margin-bottom:2px}
+.wcal-dh{text-align:center;font-size:10px;font-weight:700;color:var(--t3);padding:4px 0}
+.wcal-dh.s{color:var(--rd)}.wcal-dh.sat{color:var(--bl)}
+.wcal-dnum{font-size:12px;font-weight:700;text-align:center;padding:3px;border-radius:8px;cursor:pointer;transition:background .11s;font-family:'DM Sans',sans-serif}
+.wcal-dnum.today{background:var(--ac);color:#fff}
+.wcal-body{position:relative;overflow-y:auto;max-height:calc(100vh - 320px)}
+.wcal-timecol{display:grid;grid-template-columns:40px repeat(7,1fr);gap:2px}
+.wcal-tl{font-size:10px;color:var(--t3);text-align:right;padding-right:5px;height:44px;display:flex;align-items:flex-start;padding-top:2px;font-family:'DM Sans',sans-serif;flex-shrink:0}
+.wcal-cell{height:44px;border-top:1px solid var(--wm);position:relative}
+.wcal-evt{position:absolute;left:2px;right:2px;border-radius:5px;padding:2px 4px;font-size:10px;font-weight:700;color:#fff;overflow:hidden;cursor:pointer;z-index:2;line-height:1.3}
+.wcal-trash{position:absolute;top:1px;right:1px;font-size:10px;opacity:.6}
+/* DAY CALENDAR */
+.dcal-head{background:var(--ac);color:#fff;border-radius:12px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.dcal-date{font-size:16px;font-weight:700}
+.dcal-day{font-size:11px;opacity:.7}
+.dcal-timeline{position:relative}
+.dcal-row{display:flex;gap:8px;min-height:50px;border-bottom:1px solid var(--wm)}
+.dcal-t{width:45px;font-size:11px;color:var(--t3);padding-top:4px;text-align:right;flex-shrink:0;font-family:'DM Sans',sans-serif}
+.dcal-slot{flex:1;padding:3px 0;position:relative}
+.dcal-evt{background:var(--bl);color:#fff;border-radius:8px;padding:5px 8px;margin-bottom:3px;font-size:12px;font-weight:700;cursor:pointer}
+.dcal-trash{background:#FFF5D6;border-radius:8px;padding:4px 8px;margin-bottom:3px;font-size:11px;color:var(--br);display:flex;align-items:center;gap:5px}
+/* EVENT LIST */
+.evtlist{margin-top:10px}.edg{margin-bottom:10px}
+.edl{font-size:12px;font-weight:700;color:var(--t2);margin-bottom:5px;padding-left:3px}
+.ei{display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:10px;background:var(--wm);margin-bottom:4px;cursor:pointer;transition:background .11s}.ei:active{background:#e0d8cc}
+.eic{width:8px;height:8px;border-radius:50%;flex-shrink:0}.eit{font-size:11px;color:var(--t2);width:34px;font-family:'DM Sans',sans-serif;font-weight:600}.eitxt{font-size:13px;flex:1;font-weight:600}.eiwho{font-size:13px}
+.eidel{background:none;border:none;color:var(--t3);font-size:13px;cursor:pointer;padding:1px}.eidel:hover{color:var(--rd)}
+/* STATUS PAGE */
+.su-c{background:var(--cd);border-radius:var(--r);padding:13px;box-shadow:var(--sh);margin-bottom:9px}
+.su-me{font-size:9px;background:var(--yl);color:var(--br);padding:2px 6px;border-radius:5px;font-weight:700;margin-left:5px;vertical-align:middle}
+.su-btns{display:flex;gap:6px;margin:8px 0}
+.su-btn{flex:1;padding:10px;border-radius:10px;border:2px solid var(--wm);background:#fff;font-family:'Zen Maru Gothic',sans-serif;font-size:12px;cursor:pointer;font-weight:700;transition:all .13s}
+.su-btn.hmon{border-color:var(--gn);background:#E6F4EC;color:var(--gn)}.su-btn.outon{border-color:var(--ac);background:#FEF0E7;color:var(--ac)}
+.ret-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ret-lbl{font-size:11px;color:var(--t3);flex-shrink:0}
+.ret-inp{border:2px solid var(--wm);border-radius:9px;padding:6px 8px;font-size:13px;font-family:inherit;outline:none;flex:1;transition:border-color .14s;background:var(--cd);color:var(--tx)}.ret-inp:focus{border-color:var(--ac)}
+.mood-sec{padding-top:8px;border-top:1px solid var(--wm)}.mood-lbl{font-size:11px;color:var(--t3);margin-bottom:5px}
+.mood-row{display:flex;gap:8px;justify-content:center}
+.mood-btn{font-size:24px;border:none;background:none;cursor:pointer;opacity:.25;transition:all .14s;padding:3px}.mood-btn.on{opacity:1;transform:scale(1.2)}
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .18s}
+.overlay.open{opacity:1;pointer-events:all}
+.sheet{background:#fff;width:100%;border-radius:22px 22px 0 0;padding:16px 16px 30px;transform:translateY(100%);transition:transform .25s cubic-bezier(.34,1.4,.64,1);max-height:90vh;overflow-y:auto}
+.overlay.open .sheet{transform:translateY(0)}
+.handle{width:36px;height:4px;background:var(--wm);border-radius:2px;margin:0 auto 14px}
+.m-title{font-size:16px;font-weight:700;margin-bottom:12px}
+.fg{margin-bottom:11px}.fl{font-size:11px;color:var(--t2);margin-bottom:4px;display:block;font-weight:700;letter-spacing:.04em}
+.fi{width:100%;padding:11px 13px;border:2px solid var(--wm);border-radius:12px;font-family:'Zen Maru Gothic',sans-serif;font-size:var(--fs);outline:none;transition:border-color .14s;background:#fff;color:var(--tx)}.fi:focus{border-color:var(--ac)}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.eg{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
+.eo{font-size:24px;text-align:center;padding:7px;border-radius:9px;cursor:pointer;border:2px solid transparent;transition:all .12s}.eo.sel,.eo:hover{background:var(--wm);border-color:var(--ac)}
+.dr{display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--wm);font-size:13px}.dr:last-child{border-bottom:none}
+.dl{color:var(--t2);width:58px;flex-shrink:0;font-size:11px;padding-top:2px}.dv{flex:1}
+.cfr{display:flex;gap:8px;margin-top:12px}.cfr button{flex:1}
+.empty{text-align:center;padding:18px;color:var(--t3);font-size:13px}
+.lock-msg{font-size:12px;color:var(--t3);background:var(--wm);border-radius:10px;padding:9px 12px;margin-top:9px;text-align:center}
+/* SETTINGS */
+.set-sec{margin-bottom:15px}
+.set-sec-title{font-size:10px;font-weight:700;color:var(--t3);letter-spacing:.1em;margin-bottom:9px}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--wm)}.set-row:last-child{border-bottom:none}
+.set-lbl{font-size:14px;font-weight:600;color:var(--tx)}.set-sub{font-size:10px;color:var(--t3);margin-top:2px}
+.fs-btns{display:flex;gap:6px}
+.fs-btn{padding:7px 14px;border-radius:10px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:12px;cursor:pointer;font-weight:700;color:var(--t2);transition:all .13s}.fs-btn.active{background:var(--ac);border-color:var(--ac);color:#fff}
+/* TOGGLE */
+.tgl{width:46px;height:26px;background:var(--wm);border-radius:13px;position:relative;cursor:pointer;transition:background .18s;flex-shrink:0}.tgl.on{background:var(--gn)}
+.tgl::after{content:"";position:absolute;width:22px;height:22px;background:#fff;border-radius:50%;top:2px;left:2px;transition:transform .18s;box-shadow:0 1px 4px rgba(0,0,0,.18)}.tgl.on::after{transform:translateX(20px)}
+/* NOTIF PAGE */
+.nc{background:var(--cd);border-radius:var(--r);padding:14px;box-shadow:var(--sh)}
+.nr{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--wm)}.nr:last-child{border-bottom:none}
+.nl{font-size:14px;font-weight:600}.ns{font-size:11px;color:var(--t3);margin-top:2px}
+.nh{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--wm)}.nh:last-child{border-bottom:none}
+.nh-txt{font-size:13px;flex:1}.nh-t{font-size:10px;color:var(--t3);margin-top:2px}
+/* BNAV */
+.bnav{background:#fff;display:flex;border-top:1px solid var(--wm);padding:5px 0 env(safe-area-inset-bottom,10px);flex-shrink:0}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:3px;opacity:.3;transition:opacity .14s}.ni.active{opacity:1}
+.ni-ic{font-size:var(--fi)}.ni-lb{font-size:10px;font-weight:700;color:var(--br)}
+
+/* TOAST */
+#statusToast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(30px);background:var(--br);color:#fff;padding:11px 22px;border-radius:20px;font-size:13px;font-weight:700;z-index:9000;transition:opacity .25s,transform .25s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0}
+#statusToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* MAINTENANCE SCREEN */
+#maintenance-screen{position:fixed;inset:0;z-index:10000;background:var(--br);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}
+#maintenance-screen.hide{display:none}
+.maint-icon{font-size:64px;margin-bottom:16px}
+.maint-title{font-size:22px;font-weight:700;color:#fff;margin-bottom:10px}
+.maint-msg{font-size:14px;color:rgba(255,255,255,.65);line-height:1.8;max-width:320px}
+.maint-admin-btn{margin-top:24px;padding:10px 22px;background:rgba(255,255,255,.15);color:#fff;border:2px solid rgba(255,255,255,.3);border-radius:12px;font-family:'Zen Maru Gothic',sans-serif;font-size:13px;cursor:pointer}
+/* ROOM SELECT SCREEN */
+#room-screen{position:fixed;inset:0;z-index:9995;background:var(--br);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+#room-screen.hide{display:none}
+.rs-wrap{width:100%;max-width:360px}
+.rs-logo{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:20px}
+.rs-logo em{color:var(--yl);font-style:normal}
+.rs-card{background:#fff;border-radius:22px;padding:22px;margin-bottom:14px}
+.rs-card-title{font-size:15px;font-weight:700;margin-bottom:4px}
+.rs-card-sub{font-size:11px;color:var(--t2);margin-bottom:14px;line-height:1.7}
+.rs-inp{width:100%;padding:12px 14px;border:2px solid var(--wm);border-radius:11px;font-family:'Zen Maru Gothic',sans-serif;font-size:14px;outline:none;transition:border-color .15s;margin-bottom:10px}
+.rs-inp:focus{border-color:var(--ac)}
+.rs-code{width:100%;padding:14px;border:2px solid var(--wm);border-radius:13px;font-family:'DM Sans',sans-serif;font-size:20px;letter-spacing:.25em;text-align:center;outline:none;font-weight:700;margin-bottom:10px;transition:border-color .15s}
+.rs-code:focus{border-color:var(--ac)}
+.rs-divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:rgba(255,255,255,.5);font-size:11px}
+.rs-divider::before,.rs-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.2)}
+.rs-err{font-size:12px;color:#ffaaaa;text-align:center;min-height:16px;margin-top:6px}
+.rs-myrooms{margin-bottom:14px}
+.rs-room-item{display:flex;align-items:center;gap:10px;padding:12px;background:rgba(255,255,255,.1);border-radius:14px;margin-bottom:8px;cursor:pointer;border:2px solid rgba(255,255,255,.15);transition:all .13s}
+.rs-room-item:active{background:rgba(255,255,255,.2)}
+.rs-room-name{font-size:14px;font-weight:700;color:#fff}
+.rs-room-sub{font-size:10px;color:rgba(255,255,255,.55);margin-top:2px}
+.rs-privacy-link{text-align:center;margin-top:10px}
+.rs-privacy-link a{color:rgba(255,255,255,.45);font-size:11px;text-decoration:underline;cursor:pointer}
+/* MEMBER PICKER */
+.mpick{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0 12px}
+.mpick-btn{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:20px;border:2.5px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:12px;cursor:pointer;font-weight:700;transition:all .13s;color:var(--t2);opacity:.5}
+.mpick-btn.sel{opacity:1}
+/* LOCATION */
+.loc-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--wm)}
+.loc-row:last-child{border-bottom:none}
+.loc-name{font-size:13px;font-weight:700}.loc-place{font-size:11px;color:var(--t3);margin-top:2px}
+/* GCAL BUTTON */
+.gcal-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:11px;background:#fff;border:2px solid #4285F4;border-radius:12px;font-family:'Zen Maru Gothic',sans-serif;font-size:13px;font-weight:700;color:#4285F4;cursor:pointer;margin-top:8px;transition:all .13s}
+.gcal-btn:active{background:#EEF3FF}
+/* iCAL FEED LIST */
+.ical-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--wm)}
+.ical-item:last-child{border-bottom:none}
+.ical-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ical-name{font-size:13px;font-weight:700;flex:1}
+.ical-sub{font-size:10px;color:var(--t3)}
+/* INVITE CODE BOX */
+.inv-code-box{background:rgba(232,184,75,.15);border:2px solid var(--yl);border-radius:12px;padding:12px;text-align:center;margin:10px 0}
+.inv-code-num{font-size:32px;font-weight:700;letter-spacing:.3em;color:var(--yl);font-family:'DM Sans',sans-serif}
+.inv-code-hint{font-size:10px;color:rgba(232,184,75,.7);margin-top:4px}
+/* ADMIN PANEL */
+.admin-sec{background:linear-gradient(135deg,#1A1210,#2A1F1A);border-radius:14px;padding:14px;margin-top:10px;border:2px solid rgba(232,184,75,.3)}
+.admin-title{font-size:11px;font-weight:700;color:var(--yl);letter-spacing:.12em;margin-bottom:10px}
+.admin-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.admin-row:last-child{border-bottom:none}
+.admin-lbl{font-size:13px;color:#fff;font-weight:600}
+.admin-sub{font-size:10px;color:rgba(255,255,255,.45);margin-top:2px}
+/* FEEDBACK */
+.fb-item{padding:11px 0;border-bottom:1px solid var(--wm)}
+.fb-item:last-child{border-bottom:none}
+.fb-hdr{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.fb-name{font-size:12px;font-weight:700}.fb-time{font-size:10px;color:var(--t3)}
+.fb-cat{font-size:10px;padding:2px 8px;border-radius:6px;font-weight:700}
+.fb-body{font-size:13px;line-height:1.6;color:var(--tx)}
+.fb-type-bug{background:#FEE2E2;color:var(--rd)}
+.fb-type-req{background:#EEF2FF;color:var(--bl)}
+.fb-type-other{background:var(--wm);color:var(--t2)}
+
+
+/* ─── iPhone-style Settings Page ─── */
+.iset-profile-card{display:flex;align-items:center;gap:14px;background:var(--cd);margin:12px 12px 0;border-radius:16px;padding:16px;box-shadow:var(--sh);cursor:pointer;transition:opacity .13s}
+.iset-profile-card:active{opacity:.7}
+.iset-avatar{width:56px;height:56px;border-radius:28px;background:var(--ac);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.iset-pname{font-size:17px;font-weight:700;color:var(--tx)}
+.iset-pemail{font-size:12px;color:var(--t2);margin-top:2px}
+.iset-arrow{font-size:20px;color:var(--t3);margin-left:auto;flex-shrink:0}
+.iset-section{margin:20px 12px 0}
+.iset-section-label{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;padding-left:4px}
+.iset-group{background:var(--cd);border-radius:14px;box-shadow:var(--sh);overflow:hidden}
+.iset-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--wm);cursor:pointer;transition:opacity .13s;min-height:48px}
+.iset-row:active{opacity:.6}
+.iset-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;color:#fff}
+.iset-row-body{flex:1;min-width:0}
+.iset-row-title{font-size:var(--fcard,14px);font-weight:600;color:var(--tx)}
+.iset-row-sub{font-size:11px;color:var(--t3);margin-top:2px}
+.iset-pick-row{display:flex;align-items:center;justify-content:space-between;padding:13px 4px;border-bottom:1px solid var(--wm);cursor:pointer;font-size:14px;transition:background .1s}
+.iset-pick-row:last-of-type{border-bottom:none}
+.iset-pick-row:active{background:var(--wm)}
+
+
+/* Status page new buttons */
+.su-btn2{padding:12px;border-radius:12px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;color:var(--t2)}
+.su-btn2.sel-home{background:rgba(90,158,124,.15);border-color:var(--gn);color:var(--gn)}
+.su-btn2.sel-out{background:rgba(201,64,64,.1);border-color:var(--rd);color:var(--rd)}
+.mood-btn2{font-size:24px;padding:6px;background:none;border:2px solid transparent;border-radius:10px;cursor:pointer;transition:all .13s}
+.mood-btn2.on{background:var(--yl);border-color:var(--yl);transform:scale(1.15)}
+/* Meal display */
+#mealDisplay{padding:4px 0}
+/* Ret display in status */
+.ret-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(90,158,124,.12);color:var(--gn);border:1.5px solid rgba(90,158,124,.3);border-radius:10px;padding:4px 10px;font-size:12px;font-weight:700}
+
+
+/* Google Calendar style month grid */
+.gcal-grid{display:grid;grid-template-columns:repeat(7,1fr);background:var(--wm);gap:1px;border:1px solid var(--wm);border-radius:12px;overflow:hidden}
+.gcal-dh{background:var(--cd);text-align:center;font-size:11px;font-weight:700;color:var(--t3);padding:6px 0}
+.gcal-dh.s{color:var(--rd)}.gcal-dh.sat{color:var(--bl)}
+.gcal-cell{background:var(--cd);min-height:72px;padding:4px;cursor:pointer;transition:background .1s}
+.gcal-cell:hover{background:var(--wm)}
+.gcal-cell.gcal-other{background:var(--br);opacity:.5}
+.gcal-cell.gcal-today{background:rgba(212,102,62,.05)}
+.gcal-cell.gcal-sun .gcal-dn{color:var(--rd)}
+.gcal-cell.gcal-sat .gcal-dn{color:var(--bl)}
+.gcal-dn{font-size:12px;font-weight:700;color:var(--t2);text-align:center;margin-bottom:2px;font-family:'DM Sans',sans-serif;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;margin:0 auto 2px}
+.gcal-dn.gcal-dn-today span{background:var(--ac);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px}
+.gcal-trash{font-size:10px;text-align:center;margin-bottom:1px;line-height:1}
+.gcal-evt-pill{font-size:10px;font-weight:700;padding:1px 4px;border-radius:4px;margin-bottom:1px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;line-height:1.5}
+.gcal-more{font-size:10px;color:var(--t3);text-align:right;padding-right:2px}
+/* Bath checkboxes */
+.bath-chk{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:14px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;transition:all .15s;width:100%;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none}
+.bath-chk-on.bath-blue{border-color:#6480B8;background:rgba(100,128,184,.1);color:#6480B8}
+.bath-chk-on.bath-green{border-color:#5A9E7C;background:rgba(90,158,124,.1);color:#5A9E7C}
+
+.fs-btn2{padding:10px 4px;border-radius:10px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:13px;font-weight:700;cursor:pointer;color:var(--t2);transition:all .13s}
+.fs-btn2.active{background:var(--ac);color:#fff;border-color:var(--ac)}
+
+
+/* ══ Page animation ══ */
+.pg{display:none;padding:12px 12px 90px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:none}
+.pg.active{display:block;animation:pgIn .22s ease both;will-change:transform}
+@keyframes pgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes itemIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+@keyframes itemOut{from{opacity:1}to{opacity:0;transform:translateX(8px)}}
+.item-in{animation:itemIn .18s ease both}
+
+/* ══ FAB ══ */
+.fab-wrap{position:fixed;bottom:76px;right:16px;z-index:300;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.fab-main{width:52px;height:52px;border-radius:50%;background:var(--ac);border:none;color:#fff;font-size:28px;cursor:pointer;box-shadow:0 4px 18px rgba(212,102,62,.4);display:flex;align-items:center;justify-content:center;transition:transform .22s,background .22s;line-height:1}
+.fab-main.open{transform:rotate(45deg);background:var(--br)}
+.fab-items{display:flex;flex-direction:column;align-items:flex-end;gap:8px;pointer-events:none;opacity:0;transform:translateY(12px);transition:opacity .2s,transform .2s}
+.fab-items.open{pointer-events:all;opacity:1;transform:translateY(0)}
+.fab-item{display:flex;align-items:center;gap:9px}
+.fab-item-lbl{background:var(--cd);color:var(--tx);font-size:12px;font-weight:700;padding:5px 12px;border-radius:10px;box-shadow:0 2px 10px rgba(78,52,37,.15);white-space:nowrap}
+.fab-item-btn{width:42px;height:42px;border-radius:50%;border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.18);flex-shrink:0;transition:transform .15s}
+.fab-item-btn:active{transform:scale(.9)}
+.fab-bg{display:none;position:fixed;inset:0;z-index:299;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);background:rgba(28,18,9,.3)}
+.fab-bg.open{display:block}
+
+/* ══ bnav 4タブ ══ */
+.bnav{display:flex;justify-content:space-around;background:var(--cd);border-top:1px solid var(--wm);padding:5px 0 env(safe-area-inset-bottom,10px);flex-shrink:0}
+.ni{flex:1;max-width:90px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:6px 2px;opacity:.35;transition:opacity .15s}
+.ni.active{opacity:1}
+.ni-ic{font-size:22px;line-height:1}
+.ni-lb{font-size:9px;font-weight:700;color:var(--br);white-space:nowrap}
+body.dark .ni-lb{color:var(--t2)}
+
+/* ══ tgl (toggle switch) ══ */
+.tgl{width:44px;height:26px;border-radius:13px;background:var(--wm);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;border:none;display:inline-block}
+.tgl::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.tgl.on{background:var(--gn)}
+.tgl.on::after{transform:translateX(18px)}
+
+/* ══ 今日の家族予定グリッド ══ */
+.today-fam-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.today-fam-box{background:var(--cd);border-radius:14px;padding:12px;box-shadow:var(--sh)}
+.tfb-name{font-size:12px;font-weight:700;color:var(--tx);margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.tfb-evt{font-size:11px;color:var(--t2);padding:2px 0;border-bottom:1px solid var(--wm);line-height:1.4}
+.tfb-evt:last-child{border-bottom:none}
+.tfb-empty{font-size:11px;color:var(--t3);font-style:italic}
+
+/* ══ 家族タブ状況カード ══ */
+.fam-status-grid{display:flex;flex-direction:column;gap:6px}
+.fam-sc{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:12px;background:var(--wm);cursor:pointer;transition:filter .12s;border:1.5px solid transparent}
+.fam-sc.mine{border-color:var(--ac)}
+.fam-sc:active{filter:brightness(.95)}
+.fam-sc-av{font-size:26px;flex-shrink:0;width:32px;text-align:center}
+.fam-sc-name{font-size:var(--fs);font-weight:700;color:var(--tx)}
+.fam-sc-st{font-size:11px;margin-top:2px;font-weight:600}
+.fam-sc-st.home{color:var(--gn)}
+.fam-sc-st.out{color:var(--ac)}
+.fam-sc-loc{font-size:10px;color:var(--t3);margin-top:1px}
+.fam-sc-mood{font-size:20px;margin-left:auto;flex-shrink:0}
+
+/* ══ 設定歯車ボタン ══ */
+.gear-btn{background:rgba(255,255,255,.13);border:none;border-radius:9px;color:#fff;font-size:17px;padding:5px 8px;cursor:pointer}
+
+/* ══ elder ══ */
+body.elder .btn{font-size:15px!important}
+body.elder .sheet *,.elder .m-title{font-size:16px!important}
+body.elder .iset-row-title{font-size:16px!important}
+body.elder select,.elder .fi{font-size:17px!important}
+
+
+/* ══ メンバーパネル ══ */
+.mbr-panel{background:var(--cd);border-radius:14px;padding:12px;box-shadow:var(--sh);border-top:3px solid #ccc;transition:transform .12s}
+.mbr-panel:active{transform:scale(.98)}
+.mbr-pname{font-size:calc(var(--fs) - 1px);font-weight:800;color:var(--tx);display:flex;align-items:center;gap:5px;margin-bottom:6px}
+.mbr-prow{font-size:calc(var(--fs) - 3px);color:var(--t2);line-height:1.5;display:flex;gap:4px;align-items:baseline}
+.mbr-plbl{color:var(--t3);flex-shrink:0;font-size:10px}
+
+/* ══ ご飯時間バッジ ══ */
+.meal-time-badge{display:flex;flex-direction:column;align-items:center;background:var(--wm);border-radius:10px;padding:6px 10px;flex:1;cursor:pointer}
+.meal-time-badge .mtb-lbl{font-size:9px;color:var(--t3);font-weight:700}
+.meal-time-badge .mtb-time{font-size:15px;font-weight:800;color:var(--tx)}
+.meal-time-badge .mtb-menu{font-size:10px;color:var(--t2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70px}
+
+/* ══ スワイプ ══ */
+.scroll{touch-action:pan-y}
+.pg.active{display:block;animation:pgIn .22s ease both}
+
+/* ══ チュートリアル表示 ══ */
+#tutOverlay.open{display:flex!important}
+
+
+/* ══ カード・パネル枠 ══ */
+.card{border:1.5px solid rgba(78,52,37,.12)}
+.mbr-panel{border:1.5px solid rgba(78,52,37,.15)!important}
+.today-fam-box{border:1.5px solid rgba(78,52,37,.12)}
+body.dark .card{border-color:rgba(255,255,255,.07)}
+body.dark .mbr-panel{border-color:rgba(255,255,255,.08)!important}
+body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
+
+/* ══ ヘッダー日付フォント ══ */
+#hdrDateMain{font-family:'Zen Maru Gothic',sans-serif;font-size:17px!important;font-weight:800!important;color:#fff!important;letter-spacing:.01em}
+#hdrDateSub{font-family:'DM Sans',sans-serif;font-size:11px!important;font-weight:600!important;color:rgba(255,255,255,.6)!important;letter-spacing:.04em}
+
+/* ══ プロフィール写真 ══ */
+.prof-photo{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--ac)}
+.prof-photo-wrap{position:relative;width:72px;height:72px;cursor:pointer}
+.prof-photo-wrap .photo-edit-badge{position:absolute;bottom:0;right:0;background:var(--ac);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;border:2px solid var(--cd)}
+
+/* ══ プライバシーポリシー ══ */
+.pp-overlay{position:fixed;inset:0;z-index:19999;background:rgba(20,10,5,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;align-items:flex-end;justify-content:center}
+.pp-overlay.open{display:flex!important}
+.pp-sheet{background:var(--cd);border-radius:24px 24px 0 0;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:0 0 40px}
+.pp-header{position:sticky;top:0;background:var(--cd);padding:20px 20px 12px;border-bottom:1px solid var(--wm);z-index:1}
+.pp-logo{font-size:20px;font-weight:900;color:var(--br);font-family:'Zen Maru Gothic',sans-serif}
+.pp-logo em{color:var(--ac);font-style:normal}
+.pp-close{background:var(--wm);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.pp-body{padding:20px}
+.pp-section{margin-bottom:24px}
+.pp-section-title{font-size:13px;font-weight:800;color:var(--br);background:var(--wm);padding:6px 12px;border-radius:8px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.pp-text{font-size:12px;color:var(--t2);line-height:1.9}
+.pp-dev{background:var(--wm);border-radius:14px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--t2);line-height:1.7}
+.pp-dev-name{font-size:15px;font-weight:800;color:var(--br);margin-bottom:4px;font-family:'Zen Maru Gothic',sans-serif}
+.pp-badge{display:inline-block;background:var(--ac);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:6px;vertical-align:middle}
+
+@keyframes ldbar{0%,100%{width:30%;margin-left:0}50%{width:60%;margin-left:20%}}
+.hide{display:none!important}
+</style>
+<script>if('serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(s){s.unregister();});});caches.keys().then(function(k){k.forEach(function(n){caches.delete(n);});});}</script>
+</head>
+<body>
+<div id="loading" style="position:fixed;inset:0;z-index:9999;background:var(--br);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
+  <div style="font-size:52px">🏠</div>
+  <div style="font-size:22px;font-weight:700;color:#fff">I<em style="color:var(--yl)">rori</em></div>
+  <div id="ld-txt" style="font-size:13px;color:rgba(255,255,255,.6)">読み込み中...</div>
+  <button id="reload-btn" onclick="location.reload(true)" style="display:none;margin-top:20px;padding:10px 24px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.4);border-radius:24px;color:#fff;font-size:13px;font-family:'Zen Maru Gothic',sans-serif;font-weight:700;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent">🔄 再読み込みする</button>
+  <div style="width:48px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;margin-top:8px">
+    <div style="height:100%;background:var(--ac);border-radius:2px;animation:ldbar 1.4s ease-in-out infinite"></div>
+  </div>
+</div>
+<div id="login-screen" class="hide" style="position:fixed;inset:0;z-index:9998;background:var(--br);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px">
+  <div style="font-size:52px;margin-bottom:12px">🏠</div>
+  <div style="font-size:28px;font-weight:700;color:#fff;margin-bottom:6px">I<em style="color:var(--yl)">rori</em></div>
+  <div style="font-size:13px;color:rgba(255,255,255,.6);margin-bottom:32px">家族をつなぐホームダッシュボード</div>
+  <div style="background:#fff;border-radius:22px;padding:28px 22px;width:100%;max-width:360px">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:16px;font-weight:700;color:var(--br)">ログインしてはじめる</div>
+      <div style="font-size:12px;color:var(--t2);margin-top:4px">Googleアカウントで安全にログイン</div>
+    </div>
+    <button onclick="signInGoogle()" style="width:100%;padding:14px;background:var(--br);color:#fff;border:none;border-radius:14px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px">
+      <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#fff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66 2.84z"/><path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Googleでログイン
+    </button>
+    <div style="text-align:center;margin-top:16px">
+      <button onclick="openModal('privacy')" style="background:none;border:none;font-size:11px;color:var(--t3);cursor:pointer;text-decoration:underline">プライバシーポリシー</button>
+    </div>
+  </div>
+</div>
+<div id="maintenance-screen" class="hide" style="position:fixed;inset:0;z-index:9997;background:var(--br);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
+  <div style="font-size:48px;margin-bottom:16px">🔧</div>
+  <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:10px">メンテナンス中</div>
+  <div id="maint-msg" style="font-size:14px;color:rgba(255,255,255,.7);line-height:1.8;margin-bottom:24px">ただいまメンテナンス中です。<br>しばらくお待ちください。</div>
+  <button onclick="maintAdminLogin()" style="background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.4);font-size:11px;padding:8px 16px;border-radius:8px;cursor:pointer">管理者ログイン</button>
+</div>
+<div id="room-screen" class="hide" style="position:fixed;inset:0;z-index:9996;background:var(--br);display:flex;flex-direction:column;padding:24px;overflow-y:auto">
+  <div style="text-align:center;margin-bottom:28px;padding-top:32px">
+    <div style="font-size:48px;margin-bottom:8px">🏠</div>
+    <div style="font-size:22px;font-weight:700;color:#fff">ルームに参加する</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:4px">家族のルームを作成するか、招待コードで参加</div>
+  </div>
+  <div id="rs-myrooms-wrap" style="display:none;margin-bottom:20px">
+    <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:10px">最近のルーム</div>
+    <div id="rs-myrooms"></div>
+  </div>
+  <div style="background:#fff;border-radius:18px;padding:20px;margin-bottom:14px">
+    <div style="font-size:14px;font-weight:700;color:var(--br);margin-bottom:12px">✨ 新しいルームを作る</div>
+    <input class="fi" id="rs-room-name" placeholder="ルーム名（例：田中家）" style="margin-bottom:10px">
+    <button onclick="createRoom()" style="width:100%;padding:13px;background:var(--br);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">作成する</button>
+    <div id="rs-create-err" style="font-size:11px;color:var(--rd);margin-top:6px;text-align:center"></div>
+  </div>
+  <div style="background:#fff;border-radius:18px;padding:20px">
+    <div style="font-size:14px;font-weight:700;color:var(--br);margin-bottom:12px">🔑 招待コードで参加</div>
+    <input class="fi" id="rs-inv-code" placeholder="6桁の招待コードを入力" maxlength="6" pattern="[0-9]*" inputmode="numeric" style="margin-bottom:10px">
+    <button onclick="joinByCode()" style="width:100%;padding:13px;background:var(--ac);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">参加する</button>
+    <div id="rs-join-err" style="font-size:11px;color:var(--rd);margin-top:6px;text-align:center"></div>
+  </div>
+</div>
+<div id="statusToast"></div>
+<div id="privacyOverlay" class="pp-overlay">
+  <div class="pp-sheet">
+    <div class="pp-header">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="pp-logo">I<em>rori</em> <span style="font-size:11px;font-weight:400;color:var(--t3)">by AnIT</span></div>
+        <button class="pp-close" onclick="document.getElementById('privacyOverlay').classList.remove('open')">✕</button>
+      </div>
+      <div style="font-size:13px;font-weight:700;color:var(--tx);margin-top:10px">プライバシーポリシー・利用規約</div>
+      <div style="font-size:10px;color:var(--t3);margin-top:2px">最終更新：2026年3月</div>
+    </div>
+    <div class="pp-body">
+      <div class="pp-dev">
+        <div class="pp-dev-name">AnIT <span class="pp-badge">開発者</span></div>
+        <div>本アプリ「Irori」は、家族のコミュニケーションをサポートすることを目的として、AnITが個人開発したサービスです。</div>
+      </div>
+
+      <div class="pp-section">
+        <div class="pp-section-title">🔒 取得する情報</div>
+        <div class="pp-text">
+          ・Googleアカウントのメールアドレス・表示名（ログイン識別のみ）<br>
+          ・アプリ内で設定した名前・アイコン・カラー<br>
+          ・予定・買い物・タスク・ゴミ出し設定などの入力データ<br>
+          ・位置情報（任意・共有ボタンを押した場合のみ）
+        </div>
+      </div>
+
+      <div class="pp-section">
+        <div class="pp-section-title">📦 データの保存・利用</div>
+        <div class="pp-text">
+          ・すべてのデータはFirebase（Google LLC）のサービスを利用して保存されます<br>
+          ・データは同じルームに参加した家族メンバー間でのみ共有されます<br>
+          ・取得した情報を第三者に販売・提供することはありません<br>
+          ・広告表示・マーケティング目的での利用は一切行いません
+        </div>
+      </div>
+
+      <div class="pp-section">
+        <div class="pp-section-title">🗑️ データの削除</div>
+        <div class="pp-text">
+          ・設定画面からいつでもアカウントを削除できます<br>
+          ・削除後、ルームから退出しすべての個人データが消去されます<br>
+          ・ルーム自体のデータはルーム管理者のみ削除できます
+        </div>
+      </div>
+
+      <div class="pp-section">
+        <div class="pp-section-title">📋 利用規約</div>
+        <div class="pp-text">
+          ・本サービスは個人・家族利用を目的としています<br>
+          ・商用利用・営業目的での使用はご遠慮ください<br>
+          ・本サービスの利用により生じた損害について、開発者は責任を負いかねます<br>
+          ・サービス内容は予告なく変更・終了する場合があります
+        </div>
+      </div>
+
+      <div class="pp-section">
+        <div class="pp-section-title">📮 お問い合わせ</div>
+        <div class="pp-text">
+          ご意見・ご要望・バグ報告はGitHubのIssueまたは開発者までお気軽にどうぞ。<br>
+          <span style="color:var(--ac);font-weight:700">開発者：AnIT</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></div>
+<div id="profile-screen" class="hide">
+  <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:16px">いえ<em style="color:var(--yl);font-style:normal">ダッシュ</em></div>
+  <div class="pc">
+    <div class="pc-title">👋 はじめまして！</div>
+    <div class="pc-sub">アイコンと名前を設定してください</div>
+    <div class="pc-eg" id="pc-eg"></div>
+    <input class="pc-inp" id="pc-name" placeholder="名前（例：たろう）" maxlength="8">
+    <button class="pc-btn" onclick="saveProfile()">始める →</button>
+  </div>
+</div>
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="logo">I<em>rori</em></div>
+    <div class="hdr-r">
+      <span class="sync-dot" id="syncDot"></span>
+      <div id="hdrDate" style="display:flex;flex-direction:column;align-items:flex-end;line-height:1.3">
+  <span id="hdrDateMain" style="font-size:17px;font-weight:800;color:#fff;letter-spacing:.01em;font-family:'Zen Maru Gothic',sans-serif"></span>
+  <span id="hdrDateSub" style="font-size:11px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:.04em;font-family:'DM Sans',sans-serif"></span>
+</div>
+      <button class="ibtn" id="myBtn" onclick="openEditProfile()">👤</button>
+      <button class="gear-btn" onclick="setPage('settings',null)">⚙️</button>
+    </div>
+  </div>
+</div>
+<div class="scroll" id="mainScroll">
+<div class="pg active" id="pg-home">
+  <!-- 緊急 -->
+  <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+    <button onclick="sendEmergency()" style="background:rgba(201,64,64,.12);color:var(--rd);border:1.5px solid rgba(201,64,64,.3);border-radius:10px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif">🚨 緊急</button>
+  </div>
+  <!-- メンバーパネル -->
+  <div class="sec" id="memberPanelSec">
+    <div class="today-fam-grid" id="memberPanels"></div>
+  </div>
+  <!-- みんなの状況 -->
+  <div class="sec">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">🏠 いまだれがいる？</div></div>
+      <div class="fam-status-grid" id="famStatusGrid"></div>
+    </div>
+  </div>
+  <!-- いまどこにいる？ -->
+  <div class="sec">
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">📍 いまどこにいる？</div>
+        <button class="btn btn-ghost" style="font-size:10px" onclick="shareLocation()">共有する</button>
+      </div>
+      <div id="locList"><div class="empty">まだ誰も共有していません</div></div>
+    </div>
+  </div>
+  <!-- 今日のごはん -->
+  <div class="sec">
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">🍽️ 今日のごはん <span id="meal-badge"></span></div>
+        <button class="btn btn-ghost" style="font-size:10px" onclick="openModal('mealSettings')">設定</button>
+      </div>
+      <div id="mealTimeDisplay" style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap"></div>
+      <div id="mealDisplay"></div>
+    </div>
+  </div>
+  <!-- ゴミ出し -->
+  <div class="sec">
+      <div class="card">
+      <div class="card-hdr"><div class="card-title" id="trash-area-lbl">🗑️ ゴミ出し</div></div>
+      <div id="trashCard"></div>
+    </div>
+  </div>
+</div>
+<div class="pg" id="pg-todo">
+  <!-- 買い物リスト -->
+  <div class="sec">
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">🛒 買い物リスト</div>
+        <div style="display:flex;gap:5px">
+          <button class="btn btn-ghost" style="font-size:10px" onclick="clearDoneShop()">完了削除</button>
+          <button class="btn btn-g" onclick="openModal('shop')">＋</button>
+        </div>
+      </div>
+      <div id="shopList"></div>
+    </div>
+  </div>
+  <!-- タスク -->
+  <div class="sec">
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">✅ タスク</div>
+        <div style="display:flex;gap:5px">
+          <button class="btn btn-ghost" style="font-size:10px" onclick="clearDoneTask()">完了削除</button>
+          <button class="btn btn-b" onclick="openModal('task')">＋</button>
+        </div>
+      </div>
+      <div id="taskList"></div>
+    </div>
+  </div>
+  <!-- お風呂 -->
+  <div class="sec">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">🛁 お風呂</div></div>
+      <div id="bathStatus"></div>
+    </div>
+  </div>
+</div>
+<div class="pg" id="pg-calendar">
+  <!-- 今日の家族予定 -->
+  <div class="today-fam-grid" id="todayFamGrid"></div>
+  <div class="cal-view-tog">
+    <button class="cvt active" id="cvt-month" onclick="setCalMode('month')">月</button>
+    <button class="cvt" id="cvt-week" onclick="setCalMode('week')">週</button>
+    <button class="cvt" id="cvt-day" onclick="setCalMode('day')">日</button>
+    <button class="cvt" id="cvt-gcal" onclick="showGcalComingSoon()">外部連携</button>
+  </div>
+  <div class="cal-nav">
+    <button class="cnav-btn" id="cal-prev" onclick="calDelta(-1)">◀</button>
+    <div class="cal-mon" id="calTitle"></div>
+    <button class="cnav-btn" id="cal-next" onclick="calDelta(1)">▶</button>
+  </div>
+  <div class="frow" id="frow"></div>
+  <div id="gcalPanel" style="display:none">
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-hdr" style="margin-bottom:8px">
+        <div class="card-title">🔗 外部カレンダーを取り込む</div>
+      </div>
+      <div style="font-size:12px;color:var(--t2);background:var(--wm);border-radius:10px;padding:10px;margin-bottom:10px;line-height:1.7">
+        GoogleカレンダーのiCal URL（.ics）を登録すると、<br>予定がいえダッシュのカレンダーに表示されます。
+        <br><br>📌 取得方法：Googleカレンダー → ⚙️設定 → 各カレンダー → 「カレンダーの統合」→「ics形式の秘密のアドレス」
+      </div>
+      <div class="fg"><label class="fl">カレンダー名</label><input class="fi" id="ical-name" placeholder="仕事、学校、個人..."></div>
+      <div class="fg"><label class="fl">iCal URL（.ics）</label><input class="fi" id="ical-url" placeholder="https://calendar.google.com/calendar/ical/..."></div>
+      <button class="btn btn-b btn-full" onclick="addIcalFeed()">登録する</button>
+    </div>
+    <div id="icalFeeds"></div>
+  </div>
+  <div id="calBody"></div>
+  <div id="icalEvts"></div>
+  <div style="text-align:center;margin-top:10px" id="calAddBtn"><button class="btn btn-o" style="padding:11px 22px;font-size:14px" onclick="openModal('schedule')">＋ 予定を追加</button></div>
+</div>
+<div class="pg" id="pg-status">
+  <div class="sec"><div class="card"><div id="myStatusCard"></div></div></div>
+  <div class="sec">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:10px">🏠 家族の状況</div>
+      <div id="suCards"></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:10px">📬 最近のアクティビティ</div>
+      <div id="nhist-status"><div class="empty">まだ履歴なし</div></div>
+    </div>
+  </div>
+</div>
+<div class="pg" id="pg-settings">
+  <!-- Profile card at top (iPhone style) -->
+  <div id="iset-profile-card" class="iset-profile-card" onclick="openEditProfile()">
+    <div id="iset-avatar" class="iset-avatar"></div>
+    <div>
+      <div id="iset-name" class="iset-pname"></div>
+      <div id="iset-email" class="iset-pemail"></div>
+    </div>
+    <div class="iset-arrow">›</div>
+  </div>
+
+  <!-- Room section -->
+  <div class="iset-section">
+    <div class="iset-section-label">ルーム</div>
+    <div class="iset-group">
+      <div class="iset-row" onclick="showRoomInvite()">
+        <span class="iset-icon" style="background:#5A9E7C">🏠</span>
+        <div class="iset-row-body"><div class="iset-row-title" id="iset-room-name">読み込み中...</div><div class="iset-row-sub" id="iset-room-code"></div></div>
+        <div class="iset-arrow">›</div>
+      </div>
+      <div class="iset-row" onclick="switchRoom()">
+        <span class="iset-icon" style="background:#6480B8">🔄</span>
+        <div class="iset-row-body"><div class="iset-row-title">別のルームに切り替え</div></div>
+        <div class="iset-arrow">›</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifications -->
+  <div class="iset-section">
+    <div class="iset-section-label">通知</div>
+    <div class="iset-group">
+      <div class="iset-row"><span class="iset-icon" style="background:#C94040">🗑️</span><div class="iset-row-body"><div class="iset-row-title">ゴミ出し前日</div><div class="iset-row-sub">前日20:00に通知</div></div><div class="tgl" id="tgl-trash" onclick="toggleNotif('trash')"></div></div>
+      <div class="iset-row"><span class="iset-icon" style="background:#D4663E">📅</span><div class="iset-row-body"><div class="iset-row-title">予定リマインダー</div><div class="iset-row-sub">30分前に通知</div></div><div class="tgl" id="tgl-sched" onclick="toggleNotif('sched')"></div></div>
+      <div class="iset-row"><span class="iset-icon" style="background:#5A9E7C">🏠</span><div class="iset-row-body"><div class="iset-row-title">帰宅通知</div><div class="iset-row-sub">帰宅予定時刻に通知</div></div><div class="tgl" id="tgl-return" onclick="toggleNotif('return')"></div></div>
+      <div class="iset-row"><span class="iset-icon" style="background:#6480B8">✅</span><div class="iset-row-body"><div class="iset-row-title">タスク締切</div><div class="iset-row-sub">夜21:00に未完了をお知らせ</div></div><div class="tgl" id="tgl-task" onclick="toggleNotif('task')"></div></div>
+      <div class="iset-row" style="border:none"><span class="iset-icon" style="background:#8E6BB5">💊</span><div class="iset-row-body"><div class="iset-row-title">お薬リマインダー</div><div class="iset-row-sub">設定時刻に通知</div></div><div class="tgl" id="tgl-med" onclick="toggleNotif('med')"></div></div>
+    </div>
+  </div>
+
+  <!-- Appearance -->
+  <div class="iset-section">
+    <div class="iset-section-label">表示</div>
+    <div class="iset-group">
+      <div class="iset-row" style="flex-direction:column;align-items:flex-start;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px;width:100%">
+          <span class="iset-icon" style="background:#6480B8">🔤</span>
+          <div style="flex:1"><div class="iset-row-title">文字サイズ</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:100%">
+          <button id="fs-btn-small" class="fs-btn2" onclick="setFs('small')">小</button>
+          <button id="fs-btn-mid" class="fs-btn2" onclick="setFs('mid')">中</button>
+          <button id="fs-btn-large" class="fs-btn2" onclick="setFs('large')">大</button>
+          <button id="fs-btn-xl" class="fs-btn2" onclick="setFs('xl')">特大</button>
+        </div>
+      </div>
+      <div class="iset-row" id="iset-dark-row"><span class="iset-icon" style="background:#28180D">🌙</span><div class="iset-row-body"><div class="iset-row-title">ダークモード</div></div><div class="tgl" id="tgl-dark" onclick="toggleDark()"></div></div>
+      <div class="iset-row" style="border:none" id="iset-elder-row"><span class="iset-icon" style="background:#E8A040">👴</span><div class="iset-row-body"><div class="iset-row-title">大きいボタンモード</div><div class="iset-row-sub">おじいちゃん・おばあちゃん向け</div></div><div class="tgl" id="tgl-elder" onclick="toggleElder()"></div></div>
+    </div>
+  </div>
+
+  <!-- Trash area -->
+  <div class="iset-section">
+    <div class="iset-section-label">ゴミ出し設定</div>
+    <div class="iset-group">
+      <div class="iset-row" onclick="openTrashAreaPicker()" style="border:none">
+        <span class="iset-icon" style="background:#5A9E7C">🗺️</span>
+        <div class="iset-row-body"><div class="iset-row-title">地域の設定</div><div class="iset-row-sub" id="iset-trash-area-lbl">読み込み中...</div></div>
+        <div class="iset-arrow">›</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback -->
+  <div class="iset-section">
+    <div class="iset-section-label">サポート</div>
+    <div class="iset-group">
+      <div class="iset-row" onclick="openFeedback()">
+        <span class="iset-icon" style="background:#D4663E">💬</span>
+        <div class="iset-row-body"><div class="iset-row-title">フィードバックを送る</div><div class="iset-row-sub">バグ・要望・改善提案</div></div>
+        <div class="iset-arrow">›</div>
+      </div>
+      <div class="iset-row" onclick="openPrivacy()">
+        <span class="iset-icon" style="background:#6480B8">📋</span>
+        <div class="iset-row-body"><div class="iset-row-title">プライバシーポリシー</div></div>
+        <div class="iset-arrow">›</div>
+      </div>
+      <div class="iset-row" onclick="openPrivacy()" style="border:none">
+        <span class="iset-icon" style="background:#5A9E7C">📄</span>
+        <div class="iset-row-body"><div class="iset-row-title">利用規約</div></div>
+        <div class="iset-arrow">›</div>
+      </div>
+    </div>
+  </div>
+  <div class="iset-section">
+    <div class="iset-group">
+      <div class="iset-row" style="border:none;cursor:default">
+        <span class="iset-icon" style="background:#8A8A8A">ℹ️</span>
+        <div class="iset-row-body"><div class="iset-row-title">バージョン</div><div class="iset-row-sub">Irori v1.0.0</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin only (b.sho.isshiki&#64;gmail.com) -->
+  <div id="iset-admin-section" style="display:none">
+    <div class="iset-section">
+      <div class="iset-section-label" style="color:var(--yl)">⚡ システム管理者</div>
+      <div class="iset-group" style="background:linear-gradient(135deg,#2A1F1A,#1A1210);border:1.5px solid rgba(232,184,75,.25)">
+        <div class="iset-row" onclick="toggleMaintenance(true)" style="border-bottom:1px solid rgba(255,255,255,.08)">
+          <span class="iset-icon" style="background:#C94040">🔧</span>
+          <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#fff">メンテナンスON</div><div style="font-size:11px;color:rgba(255,255,255,.45);margin-top:2px">ONにすると管理者以外アクセス不可</div></div>
+        </div>
+        <div class="iset-row" onclick="toggleMaintenance(false)" style="border-bottom:1px solid rgba(255,255,255,.08)">
+          <span class="iset-icon" style="background:#5A9E7C">🔧</span>
+          <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#fff">メンテナンスOFF</div><div style="font-size:11px;color:rgba(255,255,255,.45);margin-top:2px">通常モードに戻す</div></div>
+        </div>
+        <div class="iset-row" onclick="genInviteCode()" style="border-bottom:1px solid rgba(255,255,255,.08)">
+          <span class="iset-icon" style="background:#6480B8">🔑</span>
+          <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#fff">招待コード発行</div><div style="font-size:11px;color:rgba(255,255,255,.45);margin-top:2px">新しいメンバーを招待</div></div>
+        </div>
+        <div class="iset-row" onclick="openModal('adminFeedbacks')" style="border:none">
+          <span class="iset-icon" style="background:#E8A040">📬</span>
+          <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#fff">フィードバック一覧</div><div style="font-size:11px;color:rgba(255,255,255,.45);margin-top:2px" id="fb-count-lbl">読み込み中...</div></div>
+          <div style="font-size:20px;color:rgba(255,255,255,.35)">›</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logout -->
+  <div style="padding:0 16px 30px">
+    <button onclick="doSignOut()" style="width:100%;padding:15px;background:var(--cd);border:none;border-radius:14px;font-family:'Zen Maru Gothic',sans-serif;font-size:15px;font-weight:700;color:var(--rd);cursor:pointer;box-shadow:var(--sh);margin-bottom:10px">ログアウト</button>
+    <button onclick="openDeleteAccount()" style="width:100%;padding:13px;background:transparent;border:1.5px solid rgba(201,64,64,.3);border-radius:14px;font-family:'Zen Maru Gothic',sans-serif;font-size:13px;font-weight:700;color:var(--rd);cursor:pointer">アカウント・データを削除</button>
+    <div style="text-align:center;font-size:10px;color:var(--t3);margin-top:12px">Irori v1.0 · 開発：一色翔</div>
+  </div>
+</div>
+</div>
+<!-- FAB -->
+<div class="fab-bg" id="fabBg" onclick="closeFab()"></div>
+<div class="fab-wrap">
+  <div class="fab-items" id="fabItems">
+    <div class="fab-item">
+      <div class="fab-item-lbl">予定を追加</div>
+      <button class="fab-item-btn" style="background:var(--ac)" onclick="closeFab();openModal('schedule')">📅</button>
+    </div>
+    <div class="fab-item">
+      <div class="fab-item-lbl">買い物を追加</div>
+      <button class="fab-item-btn" style="background:var(--gn)" onclick="closeFab();openModal('shop')">🛒</button>
+    </div>
+    <div class="fab-item">
+      <div class="fab-item-lbl">タスクを追加</div>
+      <button class="fab-item-btn" style="background:var(--bl)" onclick="closeFab();openModal('task')">✅</button>
+    </div>
+    <div class="fab-item">
+      <div class="fab-item-lbl">明日の予定</div>
+      <button class="fab-item-btn" style="background:var(--yl)" onclick="closeFab();openModal('tomorrow')">🌙</button>
+    </div>
+    <div class="fab-item">
+      <div class="fab-item-lbl">お薬を追加</div>
+      <button class="fab-item-btn" style="background:#8E6BB5" onclick="closeFab();openModal('medicine')">💊</button>
+    </div>
+  </div>
+  <button class="fab-main" id="fabBtn" onclick="toggleFab()">＋</button>
+</div>
+<div class="bnav">
+  <div class="ni active" id="ni-home" onclick="setPage('home',this)"><div class="ni-ic">👨‍👩‍👧</div><div class="ni-lb">家族</div></div>
+  <div class="ni" id="ni-todo" onclick="setPage('todo',this)"><div class="ni-ic">✅</div><div class="ni-lb">やること</div></div>
+  <div class="ni" id="ni-calendar" onclick="setPage('calendar',this)"><div class="ni-ic">📅</div><div class="ni-lb">予定</div></div>
+  <div class="ni" id="ni-status" onclick="setPage('status',this)"><div class="ni-ic">🙋</div><div class="ni-lb">じぶん</div></div>
+</div>
+<div class="overlay" id="modal" onclick="ocl(event)"><div class="sheet"><div class="handle"></div><div id="mc"></div></div></div>
+
+<script>
+
+// レンダリングデバウンス
+let _rAF=null;
+function queueRender(fn){
+  if(_rAF)cancelAnimationFrame(_rAF);
+  _rAF=requestAnimationFrame(()=>{_rAF=null;try{fn();}catch(e){console.warn('render err',e);}});
+}
+const FB_CFG={apiKey:"AIzaSyCsGjhymEzDf9XJyPvxvkbFbE7eURbo774",authDomain:"family-app-3393e.firebaseapp.com",projectId:"family-app-3393e",storageBucket:"family-app-3393e.firebasestorage.app",messagingSenderId:"708808816187",appId:"1:708808816187:web:fc119f5e93eb1957418e1e"};
+let ROOM='';  // set dynamically after room selection
+const ADMIN_EMAIL='b.sho.isshiki'+'@'+'gmail.com';
+let isAdmin=false,maintenanceMode=false,isRoomAdmin=false;
+const EMOJIS=['🧑','👩','👨','👧','👦','👵','👴','🧓','🐱','🐶','🐸','🦊','🐼','🌸','⭐','🎓','💼','🏃','🧘','🍀'];
+const TAGC={'学校':'#6480B8','仕事':'#5A9E7C','プライベート':'#D4663E','家族':'#E8A040','病院':'#8E6BB5','その他':'#8A8A8A'};
+const MOODS=['😄','😊','😐','😔','😤','🤒'];
+const DN=['日','月','火','水','木','金','土'];
+const COLS=['#D4663E','#5A9E7C','#6480B8','#E8A040','#8E6BB5','#C94040','#2196F3','#FF9800'];
+let db,auth,currentUser,myProfile;
+let members=[],state={status:{},mood:{},schedules:[],shopping:[],tasks:[],tomorrow:[],medicine:[],emergency:[],meals:{}};
+let notifs={trash:false,sched:false,return:false,task:false,med:false},notifHist=[],curM=null;
+let calMode='month',calY,calM,calWeek,calDay,calFilter=[],profEmoji='🧑',editPE='',lastDate='';
+const p2=n=>String(n).padStart(2,'0');
+function tday(){const d=new Date();return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());}
+function gm(uid){
+  const m=members.find(x=>x.uid===uid);
+  return m||{uid:uid||'',name:'?',emoji:'👤',color:'#999'};
+}
+function isMe(u){return currentUser&&u===currentUser.uid;}
+function canEdit(o){return currentUser&&o===currentUser.uid;}
+function nid(){return Date.now()+'-'+Math.random().toString(36).slice(2,6);}
+function ldtxt(t){const e=document.getElementById('ld-txt');if(e)e.textContent=t;}
+function init(){
+  try{const n=JSON.parse(localStorage.getItem('iedash_notif'));if(n)notifs=n;}catch{}
+  applySettings();
+  try{if(!firebase.apps.length)firebase.initializeApp(FB_CFG);db=firebase.firestore();auth=firebase.auth();}
+  catch(e){alert('Firebase error: '+e.message);return;}
+  auth.onAuthStateChanged(u=>{
+    if(u){currentUser=u;checkProfile(u);}
+    else{
+      // Check for redirect result first (GitHub Pages)
+      auth.getRedirectResult().then(result=>{
+        if(result&&result.user){currentUser=result.user;checkProfile(result.user);}
+        else{document.getElementById('loading').classList.add('hide');document.getElementById('login-screen').classList.remove('hide');}
+      }).catch(()=>{
+        document.getElementById('loading').classList.add('hide');document.getElementById('login-screen').classList.remove('hide');
+      });
+    }
+  });
+  // Safety net: if still loading after 8s, show login screen
+  setTimeout(()=>{
+    const ld=document.getElementById('loading');
+    if(ld&&!ld.classList.contains('hide')){
+      console.warn('Loading timeout - showing login screen');
+      const rBtn=document.getElementById('reload-btn');
+      if(rBtn)rBtn.style.display='block';
+      const ldTxt=document.getElementById('ld-txt');
+      if(ldTxt)ldTxt.textContent='読み込みに時間がかかっています...';
+      setTimeout(()=>{
+        ld.classList.add('hide');
+        document.getElementById('login-screen').classList.remove('hide');
+      },3000);
+    }
+  },8000);
+}
+function signInGoogle(){
+  ldtxt('ログイン中...');
+  document.getElementById('login-screen').classList.add('hide');
+  document.getElementById('loading').classList.remove('hide');
+  const provider=new firebase.auth.GoogleAuthProvider();
+  // Use redirect on GitHub Pages to avoid COOP issues
+  auth.signInWithPopup(provider).catch(e=>{
+    if(e.code==='auth/popup-blocked'||e.code==='auth/popup-closed-by-user'||e.message.includes('Cross-Origin')){
+      auth.signInWithRedirect(provider);return;
+    }
+    document.getElementById('loading').classList.add('hide');
+    document.getElementById('login-screen').classList.remove('hide');
+    alert('ログイン失敗: '+e.message);
+  });
+}
+async function checkProfile(u){
+  ldtxt('チェック中...');
+  isAdmin=(u.email===ADMIN_EMAIL);
+  // Check global maintenance mode
+  try{
+    const mDoc=await db.collection('iedash').doc('_app_meta').get();
+    if(mDoc.exists&&mDoc.data().maintenance&&!isAdmin){
+      const msg=mDoc.data().maintenanceMsg||'ただいまメンテナンス中です。\nしばらくお待ちください。';
+      document.getElementById('maint-msg').innerHTML=msg.replace(/\n/g,'<br>');
+      document.getElementById('loading').classList.add('hide');
+      document.getElementById('maintenance-screen').classList.remove('hide');
+      maintenanceMode=true;return;
+    }
+  }catch(e){console.warn('meta check failed',e);}
+  // Check if user has a saved room
+  const savedRoom=localStorage.getItem('iedash_room_'+u.uid);
+  if(savedRoom){
+    ROOM=savedRoom;
+    try{
+      await enterRoom(u);
+    }catch(e){
+      console.error('enterRoom failed',e);
+      document.getElementById('loading').classList.add('hide');
+      document.getElementById('room-screen').classList.remove('hide');
+      showRoomScreen(u);
+    }
+  }else{
+    document.getElementById('loading').classList.add('hide');
+    showRoomScreen(u);
+  }
+}
+function showRoomScreen(u){
+  // Show recently used rooms from localStorage
+  const allRooms=JSON.parse(localStorage.getItem('iedash_rooms_'+u.uid)||'[]');
+  const wrap=document.getElementById('rs-myrooms-wrap');
+  const list=document.getElementById('rs-myrooms');
+  if(allRooms.length){
+    wrap.style.display='block';
+    list.innerHTML=allRooms.map(r=>`<div class="rs-room-item" onclick="quickJoinRoom('${r.id}','${r.name}')">
+      <div style="font-size:24px">🏠</div>
+      <div><div class="rs-room-name">${r.name}</div><div class="rs-room-sub">コード: ${r.id}</div></div>
+      <div style="margin-left:auto;color:rgba(255,255,255,.4);font-size:18px">›</div>
+    </div>`).join('');
+  }
+  document.getElementById('room-screen').classList.remove('hide');
+}
+async function quickJoinRoom(roomId,roomName){
+  ROOM=roomId;
+  localStorage.setItem('iedash_room_'+currentUser.uid,roomId);
+  document.getElementById('room-screen').classList.add('hide');
+  document.getElementById('loading').classList.remove('hide');
+  await enterRoom(currentUser);
+}
+async function createRoom(){
+  const name=document.getElementById('rs-room-name').value.trim();
+  const errEl=document.getElementById('rs-create-err');
+  if(!name){errEl.textContent='ルーム名を入力してください';return;}
+  errEl.textContent='作成中...';
+  // Generate 6-digit invite code as room ID
+  const roomId=String(Math.floor(100000+Math.random()*900000));
+  try{
+    await db.collection('iedash').doc(roomId).set({
+      name,createdAt:new Date().toISOString(),
+      ownerUid:currentUser.uid,ownerEmail:currentUser.email,
+      memberCount:1
+    });
+    ROOM=roomId;isRoomAdmin=true;
+    saveRoomToHistory(roomId,name);
+    localStorage.setItem('iedash_room_'+currentUser.uid,roomId);
+    document.getElementById('room-screen').classList.add('hide');
+    document.getElementById('loading').classList.remove('hide');
+    await enterRoom(currentUser);
+    // Show invite code after boot
+    setTimeout(()=>showNewRoomCode(roomId,name),1200);
+  }catch(e){errEl.textContent='作成失敗: '+e.message;}
+}
+async function joinByCode(){
+  const code=document.getElementById('rs-inv-code').value.trim();
+  const errEl=document.getElementById('rs-join-err');
+  if(code.length!==6){errEl.textContent='6桁のコードを入力してください';return;}
+  errEl.textContent='確認中...';
+  try{
+    const doc=await db.collection('iedash').doc(code).get();
+    if(doc.exists){
+      ROOM=code;
+      const rname=doc.data().name||code;
+      saveRoomToHistory(code,rname);
+      localStorage.setItem('iedash_room_'+currentUser.uid,code);
+      document.getElementById('room-screen').classList.add('hide');
+      document.getElementById('loading').classList.remove('hide');
+      await enterRoom(currentUser);
+    }else{
+      errEl.textContent='コードが正しくありません';
+      document.getElementById('rs-inv-code').value='';
+    }
+  }catch(e){errEl.textContent='エラー: '+e.message;}
+}
+function saveRoomToHistory(id,name){
+  const key='iedash_rooms_'+currentUser.uid;
+  let rooms=JSON.parse(localStorage.getItem(key)||'[]');
+  rooms=rooms.filter(r=>r.id!==id);
+  rooms.unshift({id,name});
+  if(rooms.length>5)rooms=rooms.slice(0,5);
+  localStorage.setItem(key,JSON.stringify(rooms));
+}
+function saveMeals(mode){
+  const b=document.getElementById('meal-b').value.trim();
+  const l=document.getElementById('meal-l').value.trim();
+  const d2=document.getElementById('meal-d').value.trim();
+  const entry={breakfast:b,lunch:l,dinner:d2};
+  if(mode==='today'){
+    const overrides=JSON.parse(localStorage.getItem('iedash_meal_overrides_'+ROOM)||'{}');
+    overrides[tday()]=entry;
+    localStorage.setItem('iedash_meal_overrides_'+ROOM,JSON.stringify(overrides));
+    showToast('今日のごはんを保存しました');
+  }else if(mode==='tpl'){
+    const dow=parseInt(document.getElementById('meal-tpl-dow').value);
+    const tpl=JSON.parse(localStorage.getItem('iedash_meal_tpl_'+ROOM)||'{}');
+    tpl[dow]=entry;
+    localStorage.setItem('iedash_meal_tpl_'+ROOM,JSON.stringify(tpl));
+    showToast(DN7[dow]+'曜日のテンプレを保存しました');
+  }
+  closeModal();renderMeal();
+}
+function showMealTodayEdit(){
+  const meals=state.meals||{};
+  const overrides={'__today':meals['override_'+tday()]||{}};
+  const tpl={'__dow':meals['tpl_'+new Date().getDay()]||{}};
+  const today=tday(),dow=new Date().getDay();
+  const d=overrides[today]||tpl[dow]||{};
+  const mc=document.getElementById('mc');
+  mc.innerHTML='<div class="m-title">📝 今日のごはんを編集</div>'+
+    '<div style="font-size:12px;color:var(--t2);margin-bottom:12px">今日だけの内容を入力。曜日テンプレは変わりません。</div>'+
+    MEAL_SLOTS.map(sl=>'<div class="fg"><label class="fl">'+sl.label+'</label><input class="fi" id="meal-'+sl.key.slice(0,1)+'" value="'+(d[sl.key]||'')+'" placeholder="'+sl.placeholder+'"></div>').join('')+
+    '<button class="btn btn-o btn-full" onclick="saveMeals(\'today\')">今日だけ保存</button>'+
+    '<button class="btn btn-ghost btn-full" style="margin-top:6px" onclick="openModal(\'mealSettings\')">戻る</button>';
+  // don't call openOv again - already open
+}
+function openMealTplEditor(){
+  const tpl=JSON.parse(localStorage.getItem('iedash_meal_tpl_'+ROOM)||'{}');
+  const dow=new Date().getDay();
+  const d=tpl[dow]||{};
+  const mc=document.getElementById('mc');
+  mc.innerHTML='<div class="m-title">📅 曜日テンプレを編集</div>'+
+    '<div style="font-size:12px;color:var(--t2);margin-bottom:12px">曜日ごとの定番メニューを登録。毎週自動で表示されます。</div>'+
+    '<div class="fg"><label class="fl">曜日</label><select class="fi" id="meal-tpl-dow">'+
+      DN7.map((d2,i)=>'<option value="'+i+'"'+(i===dow?' selected':'')+'>'+d2+'曜日</option>').join('')+
+    '</select></div>'+
+    '<div id="tpl-fields">'+renderTplFields(d)+'</div>'+
+    '<div style="font-size:11px;color:var(--t2);margin-bottom:10px">曜日を変えると内容も切り替わります</div>'+
+    '<button class="btn btn-b btn-full" onclick="saveMeals(\'tpl\')">テンプレを保存</button>'+
+    '<button class="btn btn-ghost btn-full" style="margin-top:6px" onclick="closeModal()">キャンセル</button>';
+  document.getElementById('meal-tpl-dow').addEventListener('change',function(){
+    const tpl2_raw=state.meals||{};const tpl2={};for(let i=0;i<7;i++){const d=tpl2_raw['tpl_'+i];if(d)tpl2[i]=d;}
+    document.getElementById('tpl-fields').innerHTML=renderTplFields(tpl2[parseInt(this.value)]||{});
+  });
+  openOv();
+}
+function renderTplFields(d){
+  return MEAL_SLOTS.map(sl=>
+    '<div class="fg"><label class="fl">'+sl.label+'</label>'+
+    '<input class="fi" id="meal-'+sl.key.slice(0,1)+'" value="'+(d[sl.key]||'')+'" placeholder="'+sl.placeholder+'"></div>'
+  ).join('');
+}
+function cpCode(code){navigator.clipboard.writeText(code).then(()=>showToast('コピーしました！'));}
+function showNewRoomCode(roomId,roomName){
+  const mc=document.getElementById('mc');if(!mc)return;
+  mc.innerHTML='<div class="m-title">🎉 ルーム「'+roomName+'」を作成しました！</div>'+
+    '<div style="font-size:13px;color:var(--t2);margin-bottom:12px;line-height:1.7">このコードを家族に送ってください。<br>アプリを開いて「招待コードで参加」から入力すると参加できます。</div>'+
+    '<div class="inv-code-box"><div style="font-size:11px;color:var(--t2);margin-bottom:6px">招待コード（ルームID）</div>'+
+    '<div class="inv-code-num">'+roomId+'</div>'+
+    '<div class="inv-code-hint">このコードでいつでも参加できます</div></div>'+
+    '<button class="btn btn-b btn-full" onclick="cpCode(\''+roomId+'\')">📋 コードをコピー</button>'+
+    '<button class="btn btn-ghost btn-full" style="margin-top:6px" onclick="shareRoomCode(\''+roomId+'\',\''+roomName+'\')">📤 LINEなどでシェア</button>'+
+    '<button class="btn btn-o btn-full" style="margin-top:6px" onclick="closeModal()">はじめる！</button>';
+  openOv();
+}
+function shareRoomCode(code,name){
+  const text='いえダッシュ「'+name+'」に招待します！\nアプリを開いて招待コード【'+code+'】を入力してね\nhttps://endearing-bombolone-845ce5.netlify.app/';
+  if(navigator.share){navigator.share({title:'いえダッシュ招待',text});}
+  else{navigator.clipboard.writeText(text).then(()=>showToast('コピーしました！'));}
+}
+async function enterRoom(u){
+  // Check if user is room admin
+  try{
+    const roomDoc=await db.collection('iedash').doc(ROOM).get();
+    if(!roomDoc.exists){
+      // Room not found - clear saved room and go back to selection
+      localStorage.removeItem('iedash_room_'+u.uid);
+      document.getElementById('loading').classList.add('hide');
+      showRoomScreen(u);return;
+    }
+    isRoomAdmin=(roomDoc.data().ownerUid===u.uid)||(u.email===ADMIN_EMAIL);
+  }catch(e){console.warn('room check failed',e);}
+  // Check profile in this room
+  ldtxt('プロフィール確認中...');
+  try{
+    const d=await db.collection('iedash').doc(ROOM).collection('members').doc(u.uid).get();
+    if(d.exists){myProfile=d.data();boot();}
+    else{initPS(u);document.getElementById('loading').classList.add('hide');document.getElementById('profile-screen').classList.remove('hide');}
+  }catch(e){
+    console.error('profile fetch failed',e);
+    // Fallback: show profile setup
+    initPS(u);
+    document.getElementById('loading').classList.add('hide');
+    document.getElementById('profile-screen').classList.remove('hide');
+  }
+}
+function initPS(u){
+  profEmoji=EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+  document.getElementById('pc-eg').innerHTML=EMOJIS.map(e=>'<div class="pc-e '+(e===profEmoji?'sel':'')+'" onclick="selPE(\''+e+'\')">'+e+'</div>').join('');
+  const inp=document.getElementById('pc-name');if(u.displayName)inp.value=u.displayName.split(' ')[0];
+}
+function selPE(e){profEmoji=e;document.querySelectorAll('.pc-e').forEach(el=>el.classList.toggle('sel',el.textContent===e));}
+async function saveProfile(){
+  const name=document.getElementById('pc-name').value.trim();if(!name){document.getElementById('pc-name').focus();return;}
+  document.getElementById('profile-screen').classList.add('hide');document.getElementById('loading').classList.remove('hide');ldtxt('保存中...');
+  const color=COLS[Math.floor(Math.random()*COLS.length)];
+  myProfile={uid:currentUser.uid,name,emoji:profEmoji,color,email:currentUser.email||'',createdAt:new Date().toISOString()};
+  try{
+    await db.collection('iedash').doc(ROOM).collection('members').doc(currentUser.uid).set(myProfile);
+    await db.collection('iedash').doc(ROOM).collection('status').doc(currentUser.uid).set({home:true,ret:'',mood:''},{merge:true});
+    boot();
+  }catch(e){alert('保存失敗: '+e.message);document.getElementById('loading').classList.add('hide');document.getElementById('profile-screen').classList.remove('hide');}
+}
+function boot(){
+  try{
+    ldtxt('データ読み込み中...');curM=currentUser.uid;
+    const now=new Date();calY=now.getFullYear();calM=now.getMonth();
+    calWeek=new Date(now);calWeek.setDate(now.getDate()-now.getDay());
+    calDay=new Date(now);lastDate=tday();
+    updateDD();
+    setInterval(()=>{const t=tday();if(t!==lastDate){lastDate=t;updateDD();renderTrash();}},60000);
+    syncMealTpl().then(()=>renderMeal()).catch(()=>{});
+    listenAll();
+    try{renderTrash();}catch(e){}
+    try{renderFamStatus();}catch(e){}
+    try{renderMealTime();}catch(e){}
+    try{renderNotifToggles();}catch(e){}
+    try{renderBath();}catch(e){}
+    try{renderHomeSummary();}catch(e){}
+    checkTutorial();schedChecks();
+    // 位置情報の「X分前」表示を1分ごと更新
+    setInterval(()=>{if(state.locations&&Object.keys(state.locations).length)renderLocations(state.locations);},60000);
+    const mb=document.getElementById('myBtn');if(mb)mb.textContent=myProfile.emoji;
+    if(isAdmin)loadFbCount();
+  }catch(e){
+    console.error('boot error',e);
+  }finally{
+    // 必ずloading を消す
+    setTimeout(()=>{
+      const ld=document.getElementById('loading');
+      if(ld)ld.classList.add('hide');
+    },800);
+  }
+}
+function loadFbCount(){
+  db.collection('iedash').doc(ROOM).collection('feedbacks').get().then(s=>{
+    // Store count for display in settings
+    window._fbCount=s.size;
+  }).catch(()=>{});
+}
+function updateDD(){
+  const now=new Date();
+  const m=document.getElementById('hdrDateMain');
+  const s=document.getElementById('hdrDateSub');
+  const MON=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  const DOW=['日','月','火','水','木','金','土'];
+  if(m)m.textContent=MON[now.getMonth()]+now.getDate()+'日　'+DOW[now.getDay()]+'曜日';
+  if(s)s.textContent=now.getFullYear()+'年';
+}
+function renderHomeSummary(){
+  const el=document.getElementById('home-summary');if(!el)return;
+  const today=tday();
+  const bath=JSON.parse(localStorage.getItem('iedash_bath_'+ROOM)||'{}')[today]||{};
+  const shopTotal=state.shopping.filter(s=>!s.done).length;
+  const taskTotal=state.tasks.filter(s=>!s.done).length;
+  const todaySch=state.schedules.filter(s=>s.date===today).length;
+  const items=[];
+  if(todaySch>0)items.push({emoji:'📅',label:todaySch+'件の予定',color:'#6480B8'});
+  if(shopTotal>0)items.push({emoji:'🛒',label:shopTotal+'品',color:'#5A9E7C'});
+  if(taskTotal>0)items.push({emoji:'✅',label:taskTotal+'件',color:'#E8A040'});
+  const bathOk=bath.washed&&bath.filled;
+  const bathWash=bath.washed&&!bath.filled;
+  if(!bathOk)items.push({emoji:'🛁',label:bathWash?'洗い済':'未',color:bathWash?'#6480B8':'#C94040'});
+  el.innerHTML=items.map(it=>'<div style="display:flex;align-items:center;gap:3px;padding:3px 8px;border-radius:20px;background:'+it.color+'15;border:1px solid '+it.color+'30;font-size:11px;font-weight:700;color:'+it.color+'">'+it.emoji+' '+it.label+'</div>').join('');
+}
+function renderBath(){
+  const el=document.getElementById('bathStatus');if(!el)return;
+  const data=JSON.parse(localStorage.getItem('iedash_bath_'+ROOM)||'{}');
+  const today=tday();
+  const d=data[today]||{washed:false,filled:false};
+  // Color: both→green, washed only→blue, neither→red
+  const bothDone=d.washed&&d.filled;
+  const washedOnly=d.washed&&!d.filled;
+  const barColor=bothDone?'#5A9E7C':washedOnly?'#6480B8':'#C94040';
+  const barLabel=bothDone?'✅ 準備OK':'🚿 洗いのみ';
+  el.innerHTML=
+    '<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;padding:8px 10px;border-radius:10px;background:'+barColor+'18;border:1.5px solid '+barColor+'40">'+
+      '<div style="width:10px;height:10px;border-radius:50%;background:'+barColor+';flex-shrink:0"></div>'+
+      '<div style="font-size:13px;font-weight:700;color:'+barColor+'">'+(d.washed||d.filled?barLabel:'🔴 まだです')+'</div>'+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+
+      '<button type="button" onclick="togBath(\'washed\')" class="bath-chk'+(d.washed?' bath-chk-on bath-blue':'')+'">'+
+        '<span style="font-size:22px;pointer-events:none">'+(d.washed?'☑️':'🔲')+'</span>'+
+        '<span style="pointer-events:none">洗いました</span>'+
+      '</button>'+
+      '<button type="button" onclick="togBath(\'filled\')" class="bath-chk'+(d.filled?' bath-chk-on bath-green':'')+'">'+
+        '<span style="font-size:22px;pointer-events:none">'+(d.filled?'☑️':'🔲')+'</span>'+
+        '<span style="pointer-events:none">入れました</span>'+
+      '</button>'+
+    '</div>';
+}
+function togBath(key){
+  const data=JSON.parse(localStorage.getItem('iedash_bath_'+ROOM)||'{}');
+  const today=tday();
+  if(!data[today])data[today]={washed:false,filled:false};
+  data[today][key]=!data[today][key];
+  localStorage.setItem('iedash_bath_'+ROOM,JSON.stringify(data));
+  // Firestoreにも同期（家族間共有）
+  if(ROOM&&db){
+    db.collection('iedash').doc(ROOM).collection('bath').doc(today)
+      .set(data[today],{merge:true})
+      .catch(e=>console.warn('bath sync error',e));
+  }
+  renderBath();
+  const label=key==='washed'?'洗いました':'入れました';
+  const state=data[today][key]?'✅':'⬜';
+  showToast('🛁 '+label+' '+state);
+  addAct('🛁 お風呂「'+label+'」'+(data[today][key]?'チェック':'解除'));
+}
+function listenAll(){
+  db.collection('iedash').doc(ROOM).collection('members').onSnapshot(s=>{
+    members=s.docs.map(d=>d.data());
+    try{renderTabs();}catch(e){}
+    try{renderSG();}catch(e){}
+    try{renderSUPage();}catch(e){}
+    try{renderFamStatus();}catch(e){}
+    try{renderTodayFamGrid();}catch(e){}
+    try{renderMemberPanels();}catch(e){}
+  },e=>{console.error('members snap error',e);});
+  db.collection('iedash').doc(ROOM).collection('status').onSnapshot(s=>{state.status={};state.mood={};s.docs.forEach(d=>{const v=d.data();state.status[d.id]={home:v.home??false,ret:v.ret||''};if(v.mood)state.mood[d.id]=v.mood;});renderSG();renderSUPage();renderFamStatus();renderTodayFamGrid();},console.error);
+  db.collection('iedash').doc(ROOM).collection('schedules').onSnapshot(s=>{state.schedules=s.docs.map(d=>({id:d.id,...d.data()}));renderSch();if(document.getElementById('pg-calendar').classList.contains('active'))renderCal();},console.error);
+  db.collection('iedash').doc(ROOM).collection('shopping').onSnapshot(s=>{state.shopping=s.docs.map(d=>({id:d.id,...d.data()}));renderShop();renderHomeSummary();},console.error);
+  db.collection('iedash').doc(ROOM).collection('tasks').onSnapshot(s=>{state.tasks=s.docs.map(d=>({id:d.id,...d.data()}));renderTasks();},console.error);
+  db.collection('iedash').doc(ROOM).collection('tomorrow').onSnapshot(s=>{state.tomorrow=s.docs.map(d=>({id:d.id,...d.data()}));renderTmr();},console.error);
+  db.collection('iedash').doc(ROOM).collection('medicine').onSnapshot(s=>{state.medicine=s.docs.map(d=>({id:d.id,...d.data()}));renderMed();},console.error);
+  db.collection('iedash').doc(ROOM).collection('meals').onSnapshot(s=>{state.meals={};s.docs.forEach(d=>{state.meals[d.id]=d.data();});renderMeal();},console.error);
+  db.collection('iedash').doc(ROOM).collection('locations').onSnapshot(s=>{
+    state.locations={};s.docs.forEach(d=>{state.locations[d.id]=d.data();});
+    renderFamStatus();
+    const locEl=document.getElementById('locList');if(locEl)renderLocations(state.locations);
+  },console.error);
+  db.collection('iedash').doc(ROOM).collection('settings').doc('meal_times_today').onSnapshot(d=>{
+    if(d.exists){const v=d.data();if(!v.date||v.date===tday())state.mealTimeToday=v;else state.mealTimeToday={};}
+    else state.mealTimeToday={};
+    renderMealTime();
+  },console.error);
+  db.collection('iedash').doc(ROOM).collection('settings').doc('meal_times_tmpl').onSnapshot(d=>{
+    state.mealTimeTmpl=d.exists?(d.data().tmpl||{}):{};
+    renderMealTime();
+  },console.error);
+  db.collection('iedash').doc(ROOM).collection('emergency').onSnapshot(s=>{const recent=s.docs.map(d=>({id:d.id,...d.data()})).filter(x=>x.createdAt&&(Date.now()-new Date(x.createdAt).getTime())<300000);if(recent.length>0)showEmergencyAlert(recent[recent.length-1]);},console.error);
+
+  // お風呂状態のFirestore同期リスナー
+  try{
+    db.collection('iedash').doc(ROOM).collection('bath')
+      .onSnapshot(s=>{
+        const today=tday();
+        const cached=JSON.parse(localStorage.getItem('iedash_bath_'+ROOM)||'{}');
+        s.docs.forEach(d=>{
+          if(d.id===today)cached[today]=Object.assign(cached[today]||{washed:false,filled:false},d.data());
+        });
+        localStorage.setItem('iedash_bath_'+ROOM,JSON.stringify(cached));
+        try{renderBath();}catch(e){}
+      });
+  }catch(e){console.warn('bath listener error',e);}
+}
+function renderTabs(){
+  const el=document.getElementById('mtabs');if(!el)return;
+  el.innerHTML=members.map(m=>'<button class="mtab '+(m.uid===curM?'active':'')+' '+(m.uid===currentUser?.uid?'me':'')+'" onclick="switchM(\''+m.uid+'\')">'+m.emoji+' '+m.name+(m.uid===currentUser?.uid?' 👈':'')+'</button>').join('');
+  const t=document.getElementById('schTitle');if(t)t.textContent=gm(curM).name+'のスケジュール';
+}
+function switchM(u){curM=u;renderTabs();renderSch();}
+function quickToggleStatus(){
+  const me=state.status[currentUser.uid]||{home:false};
+  const newHome=!me.home;
+  db.collection('iedash').doc(ROOM).collection('status').doc(currentUser.uid).set(
+    {home:newHome,ret:me.ret||'',updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}
+  );
+  const label=newHome?'🏠 在宅':'🚶 外出中';
+  showToast(label+'に更新しました');
+  addAct(newHome?'🏠 帰宅しました':'🚶 外出しました');
+}
+function renderSG(){
+  const el=document.getElementById('sg');if(!el)return;
+  el.innerHTML=members.map(m=>{
+    const s=state.status[m.uid]||{home:false,ret:''},mood=state.mood[m.uid]||'',mine=isMe(m.uid);
+    return '<div class="sc '+(mine?'mine':'')+'" style="border-left-color:'+m.color+'" '+(mine?'onclick="quickTog()"':'')+'>'+
+      memberAvatar(m,36)+
+      '<div style="flex:1;min-width:0">'+
+        '<div class="sc-name">'+m.name+(mine?'<span style="font-size:9px;background:var(--yl);color:var(--br);padding:1px 5px;border-radius:4px;margin-left:4px">自分</span>':'')+'</div>'+
+        '<span class="sc-b '+(s.home?'hm':'out')+'">'+(s.home?'🟢 在宅':'🔴 外出')+'</span>'+
+        (s.ret&&!s.home?'<div class="ret-badge">⏰ 帰宅予定 '+s.ret+'</div>':'')+
+      '</div>'+
+      (mood?'<div class="sc-mood">'+mood+'</div>':'')+
+    '</div>';
+  }).join('');
+}
+function quickTog(){const c=state.status[currentUser.uid]||{home:false};setSt(!c.home);}
+function renderSch(){
+  const el=document.getElementById('schList');if(!el)return;
+  const td=tday(),items=state.schedules.filter(s=>s.member===curM&&s.date===td).sort((a,b)=>a.time.localeCompare(b.time));
+  if(!items.length){el.innerHTML='<div class="empty">今日の予定はありません</div>';return;}
+  el.innerHTML=items.map(s=>{
+    const mine=canEdit(s.ownerUid);
+    return '<div class="si" onclick="openModal(\'schedDet\',{id:\''+s.id+'\'})">'+
+      '<div class="si-time">'+s.time+'</div>'+
+      '<div class="si-dot" style="background:'+s.color+'"></div>'+
+      '<div class="si-body">'+
+        '<div class="si-txt">'+s.text+'</div>'+
+        (s.endTime?'<div class="si-end">〜 '+s.endTime+'</div>':'')+
+        '<div style="display:flex;align-items:center;gap:5px;margin-top:2px">'+
+          '<span class="si-tag" style="background:'+s.color+'22;color:'+s.color+'">'+s.tag+'</span>'+
+          (s.memo?'<span style="font-size:10px;color:var(--t3)">'+s.memo+'</span>':'')+
+        '</div>'+
+      '</div>'+
+      (mine?'<button class="del" onclick="event.stopPropagation();delSch(\''+s.id+'\')">✕</button>':'')+
+    '</div>';
+  }).join('');
+}
+function delSch(id){const s=state.schedules.find(x=>x.id===id);if(!s||!canEdit(s.ownerUid))return;if(!confirm('削除しますか？'))return;db.collection('iedash').doc(ROOM).collection('schedules').doc(id).delete().catch(console.error);}
+function getTrash(d){
+  const area=localStorage.getItem('iedash_trash_area')||'箕面市A-4地区';
+  const w=d.getDay(),t=[],n=Math.ceil(d.getDate()/7);
+  if(area==='箕面市A-4地区'||area==='箕面市A-1地区'){
+    if(w===1||w===4)t.push({name:'燃えるごみ',emoji:'🔥'});
+    if(w===3){
+      if(area==='箕面市A-4地区'){if(n===1||n===3)t.push({name:'かん・びん',emoji:'🥫'});if(n===2||n===4)t.push({name:'ペット・不燃',emoji:'♻️'});}
+      else{if(n===2||n===4)t.push({name:'かん・びん',emoji:'🥫'});if(n===1||n===3)t.push({name:'ペット・不燃',emoji:'♻️'});}
+    }
+  }else if(area==='箕面市B地区'){
+    if(w===2||w===5)t.push({name:'燃えるごみ',emoji:'🔥'});
+    if(w===4){if(n===1||n===3)t.push({name:'かん・びん',emoji:'🥫'});if(n===2||n===4)t.push({name:'ペット・不燃',emoji:'♻️'});}
+  }else if(area==='大阪市一般'){
+    if(w===1||w===4)t.push({name:'燃えるごみ',emoji:'🔥'});
+    if(w===3&&(n===1||n===3))t.push({name:'資源ごみ',emoji:'♻️'});
+  }
+  return t;
+}
+function renderTrash(){
+  // Update header label
+  const area=localStorage.getItem('iedash_trash_area')||'箕面市A-4地区';
+  const hdr=document.getElementById('trash-area-lbl');
+  if(hdr)hdr.textContent='🗑️ ゴミ出し（'+area+'）';
+  const today=new Date(),tmr=new Date(today);tmr.setDate(today.getDate()+1);
+  const td=getTrash(today),tm=getTrash(tmr),ne=null;
+  if(ne)ne.innerHTML=td.length?'<div class="notice n-td"><span style="font-size:24px">'+td[0].emoji+'</span><div><div class="ntxt">今日はゴミの日！'+td.map(x=>x.name).join('・')+'</div><div class="nsub">朝9時までに出してください</div></div></div>':
+    tm.length?'<div class="notice n-tm"><span style="font-size:24px">'+tm[0].emoji+'</span><div><div class="ntxt">明日はゴミの日！'+tm.map(x=>x.name).join('・')+'</div><div class="nsub">前日に準備しておきましょう</div></div></div>':'';
+  const st=new Date(today);st.setDate(today.getDate()-today.getDay());
+  const wk=Array.from({length:7},(_,i)=>{const d=new Date(st);d.setDate(st.getDate()+i);const tr=getTrash(d),isT=d.toDateString()===today.toDateString();return'<div class="wk-c '+(tr.length?'has':'')+' '+(isT?'tod':'')+'"><div class="wk-dn" style="'+(i===0?'color:var(--rd)':i===6?'color:var(--bl)':'')+'">'+DN[i]+'</div><div class="wk-ic">'+tr.map(x=>x.emoji).join('')+'</div></div>';}).join('');
+  const tc=document.getElementById('trashCard');if(!tc)return;
+  tc.innerHTML='<div style="font-size:11px;font-weight:700;color:var(--t3);margin-bottom:7px">今週のゴミ出し</div><div class="wk-row">'+wk+'</div><div class="tr-types"><div class="tr-row"><span>🔥 燃えるごみ</span><span class="tr-fr">毎週 月・木</span></div><div class="tr-row"><span>🥫 かん・びん</span><span class="tr-fr">第1・3水曜</span></div><div class="tr-row"><span>♻️ ペット・不燃・危険・大型</span><span class="tr-fr">第2・4水曜</span></div></div>';
+}
+function renderMed(){
+  const el=document.getElementById('medList');if(!el)return;
+  if(!state.medicine.length){el.innerHTML='<div class="empty">お薬が登録されていません</div>';return;}
+  const td=tday();
+  el.innerHTML=state.medicine.map(m=>{
+    const taken=m.taken&&m.taken[td],mine=canEdit(m.ownerUid);
+    return '<div class="med-item">'+
+      '<div class="med-ic">💊</div>'+
+      '<div style="flex:1">'+
+        '<div class="med-name">'+m.name+'<span style="font-size:10px;color:var(--t3);margin-left:6px">'+gm(m.member).emoji+' '+gm(m.member).name+'</span></div>'+
+        '<div class="med-time">'+m.times.join(' / ')+'</div>'+
+      '</div>'+
+      '<div class="med-chk '+(taken?'done':'')+'" onclick="togMed(\''+m.id+'\')"></div>'+
+      (mine?'<button class="del" onclick="delMed(\''+m.id+'\')">✕</button>':'')+
+    '</div>';
+  }).join('');
+}
+function togMed(id){
+  const m=state.medicine.find(x=>x.id===id);if(!m)return;
+  const td=tday(),taken=m.taken||{};taken[td]=!taken[td];
+  db.collection('iedash').doc(ROOM).collection('medicine').doc(id).update({taken}).catch(console.error);
+  if(!taken[td])return;addAct('💊 '+m.name+' 服用済み ✓');
+}
+function delMed(id){const m=state.medicine.find(x=>x.id===id);if(!m||!canEdit(m.ownerUid))return;db.collection('iedash').doc(ROOM).collection('medicine').doc(id).delete().catch(console.error);}
+function renderShop(){
+  const el=document.getElementById('shopList');if(!el)return;
+  if(!state.shopping.length){el.innerHTML='<div class="empty">リストは空です</div>';return;}
+  const sorted=[...state.shopping].sort((a,b)=>{if(a.done!==b.done)return a.done?1:-1;const p={'急ぎ':0,'普通':1,'なくなったら':2};return(p[a.priority]||1)-(p[b.priority]||1);});
+  el.innerHTML=sorted.map(item=>{const mine=canEdit(item.ownerUid);return'<div class="li"><div class="chk '+(item.done?'done':'')+'" onclick="togShop(\''+item.id+'\','+!item.done+')"></div><div class="li-txt '+(item.done?'done':'')+'" onclick="openModal(\'shopDet\',{id:\''+item.id+'\'})">'+item.text+'</div>'+(item.priority==='急ぎ'?'<span class="tag tag-urg">🔴 急ぎ</span>':'')+(mine?'<button class="del" onclick="delShop(\''+item.id+'\')">✕</button>':'')+' </div>';}).join('');
+}
+function togShop(id,done){
+  const ref=db.collection('iedash').doc(ROOM).collection('shopping').doc(id);
+  ref.update({done:done}).catch(console.error);
+  renderHomeSummary();
+}
+function delShop(id){db.collection('iedash').doc(ROOM).collection('shopping').doc(id).delete().catch(console.error);}
+function clearDoneShop(){state.shopping.filter(x=>x.done&&canEdit(x.ownerUid)).forEach(x=>delShop(x.id));}
+function renderTasks(){
+  const el=document.getElementById('taskList');if(!el)return;
+  if(!state.tasks.length){el.innerHTML='<div class="empty">タスクはありません</div>';return;}
+  const td=tday();
+  const sorted=[...state.tasks].sort((a,b)=>{if(a.done!==b.done)return a.done?1:-1;if(a.due&&b.due)return a.due.localeCompare(b.due);return a.due?-1:b.due?1:0;});
+  el.innerHTML=sorted.map(t=>{const ov=t.due&&t.due<td&&!t.done,dueT=t.due===td&&!t.done,mine=canEdit(t.ownerUid);return'<div class="li"><div class="chk-sq '+(t.done?'done':'')+'" onclick="togTask(\''+t.id+'\','+!t.done+')"></div><div class="li-txt '+(t.done?'done':'')+'" onclick="openModal(\'taskDet\',{id:\''+t.id+'\'})">'+t.text+'</div><div class="tag">'+t.assign+'</div>'+(ov?'<span class="tag tag-ov">⚠️ 期限切れ</span>':'')+(dueT?'<span class="tag tag-due">今日まで</span>':'')+(t.due&&!ov&&!dueT?'<span class="tag tag-due">'+t.due.slice(5).replace('-','/')+'</span>':'')+(mine?'<button class="del" onclick="delTask(\''+t.id+'\')">✕</button>':'')+' </div>';}).join('');
+}
+function togTask(id,done){const t=state.tasks.find(x=>x.id===id);db.collection('iedash').doc(ROOM).collection('tasks').doc(id).update({done}).then(()=>{if(done&&t)addAct('✅「'+t.text+'」完了！');}).catch(console.error);}
+function delTask(id){db.collection('iedash').doc(ROOM).collection('tasks').doc(id).delete().catch(console.error);}
+function clearDoneTask(){state.tasks.filter(x=>x.done&&canEdit(x.ownerUid)).forEach(x=>delTask(x.id));}
+function renderTmr(){
+  const el=document.getElementById('tmrList');if(!el)return;
+  if(!state.tomorrow.length){el.innerHTML='<div style="text-align:center;padding:9px;font-size:11px;color:rgba(255,255,255,.35)">まだ入力なし</div>';return;}
+  el.innerHTML=state.tomorrow.map(t=>{const m=gm(t.member),mine=canEdit(t.ownerUid);return'<div class="tmr-item"><span style="font-size:20px;width:24px;text-align:center">'+m.emoji+'</span><div style="flex:1"><div class="tmr-name">'+m.name+'</div><div class="tmr-plan">'+t.plan+'</div></div>'+(mine?'<button style="background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;font-size:14px" onclick="delTmr(\''+t.id+'\')">✕</button>':'')+' </div>';}).join('');
+}
+function delTmr(id){db.collection('iedash').doc(ROOM).collection('tomorrow').doc(id).delete().catch(console.error);}
+// ─── EMERGENCY ───
+async function sendEmergency(){
+  if(!confirm('🚨 家族全員に緊急通知を送りますか？'))return;
+  await db.collection('iedash').doc(ROOM).collection('emergency').add({
+    from:currentUser.uid,fromName:myProfile.name,fromEmoji:myProfile.emoji,
+    message:myProfile.name+'から緊急連絡があります！',
+    createdAt:new Date().toISOString()
+  });
+  addAct('🚨 緊急連絡を送信しました');
+}
+function showEmergencyAlert(e){
+  if(isMe(e.from))return;
+  const key='emg_shown_'+e.id;
+  if(localStorage.getItem(key))return;
+  localStorage.setItem(key,'1');
+  if('Notification'in window&&Notification.permission==='granted')
+    new Notification('🚨 緊急連絡！',{body:e.message,icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="%23C94040"/><text y="130" x="96" text-anchor="middle" font-size="110">🚨</text></svg>'});
+  const d=document.createElement('div');
+  d.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(201,64,64,.95);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:#fff;font-family:Zen Maru Gothic,sans-serif;padding:24px;text-align:center';
+  d.innerHTML='<div style="font-size:72px">🚨</div><div style="font-size:24px;font-weight:700">緊急連絡！</div><div style="font-size:18px">'+e.fromEmoji+' '+e.fromName+'からのメッセージ</div><div style="font-size:15px;opacity:.85;line-height:1.7">すぐに連絡を取ってください</div><button onclick="this.parentNode.remove()" style="background:#fff;color:#C94040;border:none;border-radius:14px;padding:14px 32px;font-family:Zen Maru Gothic,sans-serif;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px">確認しました</button>';
+  document.body.appendChild(d);
+}
+// ─── CALENDAR ───
+function setCalMode(m){calMode=m;['month','week','day'].forEach(v=>document.getElementById('cvt-'+v).classList.toggle('active',v===m));renderCal();}
+function calDelta(d){
+  if(calMode==='month'){calM+=d;if(calM>11){calM=0;calY++;}if(calM<0){calM=11;calY--;}}
+  else if(calMode==='week'){calWeek=new Date(calWeek);calWeek.setDate(calWeek.getDate()+d*7);}
+  else if(calMode==='day'){calDay=new Date(calDay);calDay.setDate(calDay.getDate()+d);}
+  renderCal();
+}
+function renderCal(){
+  const frow=document.getElementById('frow');
+  frow.innerHTML=members.map(m=>'<div class="fc '+(calFilter.length===0||calFilter.includes(m.uid)?'active':'')+'" style="background:'+m.color+'22;color:'+m.color+'" onclick="togCF(\''+m.uid+'\')">'+m.emoji+' '+m.name+'</div>').join('');
+  if(calMode==='month')renderMonthCal();
+  else if(calMode==='week')renderWeekCal();
+  else renderDayCal();
+}
+function togCF(u){calFilter=calFilter.includes(u)?calFilter.filter(x=>x!==u):[...calFilter,u];renderCal();}
+function filteredSch(){return state.schedules.filter(s=>calFilter.length===0||calFilter.includes(s.member));}
+function renderMonthCal(){
+  const mn=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  document.getElementById('calTitle').textContent=calY+'年 '+mn[calM];
+  const today=new Date(),first=new Date(calY,calM,1),last=new Date(calY,calM+1,0);
+  // Header row
+  let html='<div class="gcal-grid">'+DN.map((d,i)=>'<div class="gcal-dh'+(i===0?' s':i===6?' sat':'')+'" >'+d+'</div>').join('');
+  // Leading empty cells
+  for(let i=0;i<first.getDay();i++){const pd=new Date(calY,calM,-first.getDay()+i+1);html+='<div class="gcal-cell gcal-other"><div class="gcal-dn">'+pd.getDate()+'</div></div>';}
+  // Day cells
+  for(let d=1;d<=last.getDate();d++){
+    const dt=new Date(calY,calM,d),dow=dt.getDay(),ds=calY+'-'+p2(calM+1)+'-'+p2(d),isT=dt.toDateString()===today.toDateString();
+    const sc=filteredSch().filter(s=>s.date===ds),tr=getTrash(dt);
+    const trStr=tr.length?'<span style="font-size:9px;margin-left:2px;opacity:.8">'+tr.map(x=>x.emoji).join('')+'</span>':'';
+    html+='<div class="gcal-cell'+(isT?' gcal-today':'')+(dow===0?' gcal-sun':dow===6?' gcal-sat':'')+'" onclick="jumpToDay('+calY+','+calM+','+d+')">'+
+      '<div style="display:flex;align-items:center;justify-content:center;margin-bottom:2px">'+
+        '<div class="gcal-dn'+(isT?' gcal-dn-today':'')+'">'+(isT?'<span>'+d+'</span>':d)+'</div>'+
+        trStr+
+      '</div>'+
+      sc.slice(0,3).map(s=>'<div class="gcal-evt-pill" style="background:'+s.color+'20;color:'+s.color+';border-left:3px solid '+s.color+'">'+s.text.slice(0,8)+'</div>').join('')+
+      (sc.length>3?'<div class="gcal-more">+'+(sc.length-3)+'件</div>':'')+
+    '</div>';
+  }
+  html+='</div>';
+  const evts=renderEvtList(calY+'-'+p2(calM+1));
+  document.getElementById('calBody').innerHTML=html+'<div class="evtlist" style="margin-top:8px">'+evts+'</div>';
+}
+function jumpToDay(y,m,d){calMode='day';calDay=new Date(y,m,d);['month','week','day'].forEach(v=>document.getElementById('cvt-'+v).classList.toggle('active',v==='day'));renderCal();}
+function renderWeekCal(){
+  const start=new Date(calWeek),end=new Date(start);end.setDate(start.getDate()+6);
+  const today=new Date();
+  document.getElementById('calTitle').textContent=(start.getMonth()+1)+'/'+start.getDate()+'〜'+(end.getMonth()+1)+'/'+end.getDate();
+  const days=Array.from({length:7},(_,i)=>{const d=new Date(start);d.setDate(start.getDate()+i);return d;});
+  const PXPH=44,SH=6,NHOURS=18;
+  let head='<div style="display:flex;align-items:center"><div style="width:36px;flex-shrink:0"></div>';
+  days.forEach((d,i)=>{
+    const isT=d.toDateString()===today.toDateString();
+    head+='<div style="flex:1;text-align:center"><div class="wcal-dh '+(i===0?'s':i===6?'sat':'')+'">'+DN[i]+'</div><div class="wcal-dnum '+(isT?'today':'')+'" onclick="jumpToDay('+d.getFullYear()+','+d.getMonth()+','+d.getDate()+')">'+d.getDate()+'</div></div>';
+  });
+  head+='</div>';
+  let body='<div style="position:relative;height:'+(NHOURS*PXPH)+'px">';
+  for(let i=0;i<=NHOURS;i++){
+    const top=i*PXPH;
+    body+='<div style="position:absolute;top:'+top+'px;left:0;right:0;display:flex;pointer-events:none"><div style="width:36px;font-size:9px;color:var(--t3);text-align:right;padding-right:4px;flex-shrink:0;margin-top:-6px">'+(i>0?p2(SH+i):'')+'</div><div style="flex:1;border-top:1px solid var(--wm)"></div></div>';
+  }
+  const ciT=days.findIndex(d=>d.toDateString()===today.toDateString());
+  if(ciT>=0){
+    const nt=(today.getHours()+today.getMinutes()/60-SH)*PXPH;
+    if(nt>=0&&nt<=NHOURS*PXPH)
+      body+='<div style="position:absolute;top:'+nt+'px;left:calc(36px + '+ciT/7*100+'%);width:calc('+(100/7)+'% - 2px);height:2px;background:var(--ac);z-index:4;pointer-events:none"></div>';
+  }
+  days.forEach((d,ci)=>{
+    const ds=d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
+    filteredSch().filter(s=>s.date===ds).sort((a,b)=>a.time.localeCompare(b.time)).forEach(s=>{
+      const sp=(s.time||'0:0').split(':'),sh2=parseInt(sp[0]),sm=parseInt(sp[1]||0);
+      const sMin=(sh2-SH)*60+sm;
+      const ep=(s.endTime||s.time).split(':'),eh=parseInt(ep[0]),em2=parseInt(ep[1]||0);
+      const dur=Math.max((eh-SH)*60+em2-sMin,45);
+      const top=sMin/60*PXPH,ht=Math.max(dur/60*PXPH,20);
+      body+='<div onclick="openModal(\'schedDet\',{id:\''+s.id+'\'})" style="position:absolute;top:'+top+'px;left:calc(36px + '+ci/7*100+'% + 1px);width:calc('+(100/7)+'% - 3px);height:'+ht+'px;background:'+(s.color||'var(--ac)')+';border-radius:5px;padding:2px 4px;cursor:pointer;z-index:2;overflow:hidden"><div style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+s.time+' '+s.text+'</div></div>';
+    });
+  });
+  body+='</div>';
+  document.getElementById('calBody').innerHTML='<div class="card wcal" style="padding:9px">'+head+body+'</div>';
+}
+function renderDayCal(){
+  const today=new Date();
+  document.getElementById('calTitle').textContent=(calDay.getMonth()+1)+'/'+(calDay.getDate())+'（'+DN[calDay.getDay()]+'）';
+  const ds=calDay.getFullYear()+'-'+p2(calDay.getMonth()+1)+'-'+p2(calDay.getDate());
+  const isT=calDay.toDateString()===today.toDateString();
+  const tr=getTrash(calDay),dayEvts=filteredSch().filter(s=>s.date===ds).sort((a,b)=>a.time.localeCompare(b.time));
+  let html='<div class="dcal-head"><div><div class="dcal-date">'+(isT?'今日 ':'')+calDay.getFullYear()+'年'+(calDay.getMonth()+1)+'月'+calDay.getDate()+'日</div><div class="dcal-day">'+DN[calDay.getDay()]+'曜日</div></div></div>';
+  if(tr.length)html+='<div class="dcal-trash" style="margin-bottom:9px">'+tr.map(x=>x.emoji+' '+x.name).join('　')+'</div>';
+  html+='<div class="dcal-timeline">';
+  for(let h=6;h<23;h++){
+    const evts=dayEvts.filter(s=>parseInt(s.time.split(':')[0])===h);
+    html+='<div class="dcal-row"><div class="dcal-t">'+p2(h)+':00</div><div class="dcal-slot">'+evts.map(s=>'<div class="dcal-evt" style="background:'+s.color+'" onclick="openModal(\'schedDet\',{id:\''+s.id+'\'})">'+s.time+' '+s.text+'</div>').join('')+'</div></div>';
+  }
+  html+='</div>';
+  if(!dayEvts.length)html+='<div class="empty" style="margin-top:10px">この日の予定はありません</div>';
+  document.getElementById('calBody').innerHTML=html;
+}
+function renderEvtList(pre){
+  const sc=filteredSch().filter(s=>s.date.startsWith(pre));
+  if(!sc.length)return'<div class="empty">この月の予定はありません</div>';
+  const byD={};sc.forEach(s=>{if(!byD[s.date])byD[s.date]=[];byD[s.date].push(s);});
+  return Object.keys(byD).sort().map(date=>{
+    const d=new Date(date+'T00:00:00'),lbl=(d.getMonth()+1)+'/'+d.getDate()+'（'+DN[d.getDay()]+'）';
+    const items=byD[date].sort((a,b)=>a.time.localeCompare(b.time)).map(s=>{
+      const m=gm(s.member);
+      return'<div class="ei" onclick="openModal(\'schedDet\',{id:\''+s.id+'\'})"><div class="eic" style="background:'+s.color+'"></div><div class="eit">'+s.time+'</div><div class="eitxt">'+s.text+'</div><div class="eiwho">'+m.emoji+'</div>'+(canEdit(s.ownerUid)?'<button class="eidel" onclick="event.stopPropagation();delSch(\''+s.id+'\')">✕</button>':'')+'</div>';
+    }).join('');
+    return'<div class="edg"><div class="edl">'+lbl+'</div>'+items+'</div>';
+  }).join('');
+}
+// ─── STATUS PAGE ───
+function renderNhistStatus(){
+  const el=document.getElementById('nhist-status');if(!el)return;
+  // Only show home/away activities
+  const acts=notifHist.filter(h=>h.msg.includes('帰宅')||h.msg.includes('外出'));
+  if(!acts.length){el.innerHTML='<div class="empty">まだ履歴なし</div>';return;}
+  el.innerHTML=acts.map(h=>'<div class="nh"><div class="nh-txt">'+h.msg+'<div class="nh-t">'+h.time+'</div></div></div>').join('');
+}
+function renderSUPage(){
+  const myCard=document.getElementById('myStatusCard');
+  if(myCard&&currentUser){
+    const m=gm(currentUser.uid);
+    const s=state.status[currentUser.uid]||{home:true,ret:''};
+    const mood=state.mood[currentUser.uid]||'';
+    const lastUp=s.updatedAt?new Date(s.updatedAt).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'}):'未設定';
+    myCard.innerHTML=
+      '<div style="display:flex;align-items:center;margin-bottom:12px">'
+      +'<span style="font-size:28px">'+m.emoji+'</span>'
+      +'<span style="font-size:15px;font-weight:700;margin-left:8px">'+m.name+'</span>'
+      +'<span style="font-size:9px;background:var(--yl);color:var(--br);padding:1px 6px;border-radius:5px;margin-left:6px">自分</span>'
+      +'</div>'
+      +'<div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:10px">'
+      +'<span class="sc-b '+(s.home?'hm':'out')+'" style="font-size:13px;padding:6px 14px">'+(s.home?'🟢 在宅中':'🔴 外出中')+'</span>'
+      +(s.ret?'<span style="font-size:12px;color:var(--t2)">帰宅予定 '+s.ret+'</span>':'')
+      +(mood?'<span style="font-size:22px">'+mood+'</span>':'')
+      +'</div>'
+      +'<div style="font-size:11px;color:var(--t3);margin-bottom:12px">最終更新：'+lastUp+'</div>'
+      +'<button class="btn btn-o" style="font-size:13px;padding:9px 20px" onclick="openStatusEdit()">✏️ 編集する</button>';
+  }
+  const el=document.getElementById('suCards');if(!el)return;
+  el.innerHTML=members.filter(m=>m.uid!==currentUser?.uid).map(m=>{
+    const s=state.status[m.uid]||{home:false,ret:''},mood=state.mood[m.uid]||'',mine=isMe(m.uid);
+    if(mine)return'<div class="su-c" style="border:2px solid var(--yl)"><div style="display:flex;align-items:center;margin-bottom:8px"><span style="font-size:24px">'+m.emoji+'</span><span style="font-size:14px;font-weight:700;margin-left:7px">'+m.name+'</span><span class="su-me">自分</span></div><div class="su-btns"><button class="su-btn '+(s.home?'hmon':'')+'" onclick="setSt(true)">🏠 在宅</button><button class="su-btn '+(!s.home?'outon':'')+'" onclick="setSt(false)">🚶 外出</button></div><div class="ret-row"><span class="ret-lbl">帰宅時間</span><input class="ret-inp" type="time" value="'+(s.ret||'')+'" onchange="setRet(this.value)"></div><div class="mood-sec"><div class="mood-lbl">今日の気分</div><div class="mood-row">'+MOODS.map(e=>'<button class="mood-btn '+(mood===e?'on':'')+'" onclick="setMood(\''+e+'\')">'+e+'</button>').join('')+'</div></div></div>';
+    else return'<div class="su-c"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:24px">'+m.emoji+'</span><span style="font-size:14px;font-weight:700">'+m.name+'</span></div><span style="font-size:10px;color:var(--t3);background:var(--wm);padding:2px 9px;border-radius:6px">閲覧のみ</span></div><div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap"><span class="sc-b '+(s.home?'hm':'out')+'" style="font-size:12px;padding:5px 11px">'+(s.home?'🟢 在宅中':'🔴 外出中')+'</span>'+(s.ret?'<span style="font-size:12px;color:var(--t2)">帰宅予定 '+s.ret+'</span>':'')+(mood?'<span style="font-size:22px;pointer-events:none">'+mood+'</span>':'')+'</div><div style="font-size:11px;color:var(--t3);margin-top:8px">※ '+m.name+'の端末からのみ更新できます</div></div>';
+  }).join('');
+}
+let _toastTimer=null;
+function showToast(msg){
+  const t=document.getElementById('statusToast');if(!t)return;
+  if(_toastTimer){clearTimeout(_toastTimer);_toastTimer=null;}
+  t.textContent=msg;t.classList.add('show');
+  _toastTimer=setTimeout(()=>{t.classList.remove('show');_toastTimer=null;},2000);
+}
+function draftSt(home){
+  window._draftHome=home;
+  document.getElementById('btn-home')?.classList.toggle('sel-home',home);
+  document.getElementById('btn-out')?.classList.toggle('sel-out',!home);
+}
+function draftMood(e){
+  window._draftMood=window._draftMood===e?'':e;
+  document.querySelectorAll('.mood-btn2').forEach(b=>b.classList.toggle('on',b.id==='mood-'+e&&window._draftMood===e));
+}
+function saveMyStatus(){
+  var home=window._draftHome!==undefined?window._draftHome:true;
+  var retEl=document.getElementById('draft-ret');
+  var ret=retEl?retEl.value:'';
+  var mood=window._draftMood||'';
+  var u=currentUser.uid;
+  var btn=document.getElementById('status-save-btn');
+  if(btn){btn.disabled=true;btn.textContent='保存中...';}
+  db.collection('iedash').doc(ROOM).collection('status').doc(u)
+    .set({home:home,ret:ret,mood:mood,updatedAt:new Date().toISOString()},{merge:true})
+    .then(function(){
+      var emoji=home?'🏠':'🚶';
+      var action=home?'が帰宅しました':'が外出しました';
+      addAct(emoji+' '+myProfile.name+action);
+      showToast('✅ 更新しました');
+      // 位置情報を取得して保存（shareLocationと同じ処理）
+      if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(function(pos){
+          var lat=pos.coords.latitude,lng=pos.coords.longitude;
+          fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lng+'&format=json&accept-language=ja')
+            .then(function(r){return r.json();}).then(function(j){
+              var area=j.address&&(j.address.neighbourhood||j.address.suburb||j.address.city)||'';
+              var place=(j.address&&j.address.road||'')+(area?' '+area:'');
+              db.collection('iedash').doc(ROOM).collection('locations').doc(u)
+                .set({uid:u,lat:lat,lng:lng,place:place,ts:Date.now(),status:home?'home':'out'});
+            }).catch(function(){
+              db.collection('iedash').doc(ROOM).collection('locations').doc(u)
+                .set({uid:u,lat:lat,lng:lng,place:'',ts:Date.now(),status:home?'home':'out'});
+            });
+        },function(){});
+      }
+      setTimeout(function(){renderSUPage();},300);
+    }).catch(function(e){
+      showToast('更新失敗: '+e.message);
+      if(btn){btn.disabled=false;btn.textContent='更新する';}
+    });
+}
+function setSt(home){
+  const u=currentUser.uid,c=state.status[u]||{};
+  db.collection('iedash').doc(ROOM).collection('status').doc(u)
+    .set({home,ret:c.ret||''},{merge:true})
+    .then(()=>{
+      const emoji=home?'🏠':'🚶';
+      const action=home?'が帰宅しました':'が外出しました';
+      const msg=emoji+' '+myProfile.name+action;
+      addAct(msg);
+      showToast(msg);
+      // Write status_events for family notification
+      db.collection('iedash').doc(ROOM).collection('status_events').add({
+        uid:u,name:myProfile.name,emoji:myProfile.emoji,
+        action:home?'home':'out',ts:Date.now(),
+        text:msg
+      }).catch(()=>{});
+      // Get location silently
+      if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(pos=>{
+          const{latitude:lat,longitude:lng}=pos.coords;
+          fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lng+'&format=json&accept-language=ja')
+            .then(r=>r.json()).then(j=>{
+              const area=j.address?.neighbourhood||j.address?.suburb||j.address?.city_district||j.address?.city||'';
+              const place=(j.address?.road||'')+(area?' '+area:'');
+              db.collection('iedash').doc(ROOM).collection('locations').doc(u)
+                .set({uid:u,lat,lng,place,ts:Date.now(),status:home?'home':'out'});
+              // Push notification to self (other family members see via Firestore listener)
+              if(Notification.permission==='granted')
+                new Notification(msg,{body:place||''});
+            }).catch(()=>{
+              db.collection('iedash').doc(ROOM).collection('locations').doc(u)
+                .set({uid:u,lat,lng,place:'',ts:Date.now(),status:home?'home':'out'});
+            });
+        },()=>{});
+      } else if(Notification.permission==='granted'){
+        new Notification(msg,{body:''});
+      }
+    }).catch(console.error);
+}
+function setRet(v){const u=currentUser.uid,c=state.status[u]||{};db.collection('iedash').doc(ROOM).collection('status').doc(u).set({home:c.home||false,ret:v},{merge:true}).catch(console.error);}
+function setMood(e){const u=currentUser.uid,c=state.mood[u]||'',nm=c===e?'':e;db.collection('iedash').doc(ROOM).collection('status').doc(u).set({mood:nm},{merge:true}).then(()=>{if(nm)addAct(nm+' '+myProfile.name+'の気分：'+nm);}).catch(console.error);}
+// ─── NOTIFICATIONS ───
+async function reqPerm(){if(!('Notification'in window))return false;if(Notification.permission==='granted')return true;return(await Notification.requestPermission())==='granted';}
+function renderNotifToggles(){['trash','sched','return','task','med'].forEach(k=>{const el=document.getElementById('tgl-'+k);if(el)el.classList.toggle('on',!!notifs[k]);});}
+async function toggleNotif(key){if(!notifs[key]){const ok=await reqPerm();if(!ok){alert('通知を許可してください');return;}}notifs[key]=!notifs[key];localStorage.setItem('iedash_notif',JSON.stringify(notifs));renderNotifToggles();}
+function schedChecks(){setInterval(()=>{
+  const now=new Date(),h=now.getHours(),min=now.getMinutes();
+  if(h===20&&min===0&&notifs.trash){const t=getTrash(new Date(Date.now()+86400000));if(t.length)sendN('🗑️ 明日はゴミの日！',t.map(x=>x.name).join('・'));}
+  if(h===21&&min===0&&notifs.task){const u=state.tasks.filter(t=>!t.done);if(u.length)sendN('✅ 未完了タスク',u.length+'件残っています');}
+  if(notifs.sched){const td=tday();state.schedules.filter(s=>s.member===currentUser?.uid&&s.date===td).forEach(s=>{const[sh,sm]=s.time.split(':').map(Number),ah=sm<30?sh-1:sh,am=(sm-30+60)%60;if(h===ah&&min===am)sendN('📅 30分後：'+s.text,s.time+'〜');});}
+  if(notifs.med){state.medicine.forEach(m=>{const td=tday();if(m.taken&&m.taken[td])return;m.times.forEach(t=>{const[mh,mm]=t.split(':').map(Number);if(h===mh&&min===mm)sendN('💊 お薬の時間！',m.name+' を飲みましょう');});});}
+  if(notifs.return){members.forEach(m=>{const s=state.status[m.uid];if(s?.ret&&!s.home){const[rh,rm]=s.ret.split(':').map(Number);if(h===rh&&min===rm)sendN('🏠 '+m.name+'の帰宅予定時刻',s.ret);}});}
+},60000);}
+async function sendN(title,body){if(!('Notification'in window)||Notification.permission!=='granted')return;try{new Notification(title,{body});}catch{}addAct('📨 '+title);}
+function addAct(msg){notifHist.unshift({msg,time:new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})});if(notifHist.length>30)notifHist.pop();renderNhist();}
+function renderNhist(){const el=document.getElementById('nhist');if(!el)return;if(!notifHist.length){el.innerHTML='<div class="empty">まだ履歴なし</div>';return;}el.innerHTML=notifHist.map(h=>'<div class="nh"><div class="nh-txt">'+h.msg+'<div class="nh-t">'+h.time+'</div></div></div>').join('');}
+// ─── MODALS ───
+function openPrivacy(){
+  document.getElementById('privacyOverlay').classList.add('open');
+}
+// Meal helpers
+const MEAL_SLOTS=[
+  {key:'breakfast',label:'🌅 朝',placeholder:'トースト、おにぎり...'},
+  {key:'lunch',label:'☀️ 昼',placeholder:'カレー、パスタ...'},
+  {key:'dinner',label:'🌙 夜',placeholder:'鍋、炒め物...'},
+];
+const DN7=['日','月','火','水','木','金','土'];
+// Meal sync: templates stored in Firestore, today overrides in localStorage
+async function syncMealTpl(){
+  if(!ROOM||!db)return;
+  const doc=await db.collection('iedash').doc(ROOM).collection('settings').doc('meal_tpl').get();
+  if(doc.exists){
+    localStorage.setItem('iedash_meal_tpl_'+ROOM, JSON.stringify(doc.data().tpl||{}));
+  }
+}
+async function saveMealTplToFirestore(tpl){
+  if(!ROOM||!db)return;
+  await db.collection('iedash').doc(ROOM).collection('settings').doc('meal_tpl').set({tpl,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  localStorage.setItem('iedash_meal_tpl_'+ROOM, JSON.stringify(tpl));
+}
+function getMealForToday(){
+  // Today override → weekday template → empty
+  const today=tday();
+  const overrides=JSON.parse(localStorage.getItem('iedash_meal_overrides_'+ROOM)||'{}');
+  if(overrides[today])return{data:overrides[today],source:'today'};
+  const dow=new Date().getDay();
+  const tpl=JSON.parse(localStorage.getItem('iedash_meal_tpl_'+ROOM)||'{}');
+  if(tpl[dow]&&Object.values(tpl[dow]).some(v=>v))return{data:tpl[dow],source:'tpl',dow};
+  return{data:{},source:'none'};
+}
+function renderMeal(){renderMealTime();
+  const el=document.getElementById('mealDisplay');if(!el)return;
+  const {data,source,dow}=getMealForToday();
+  const hasAny=Object.values(data).some(v=>v);
+  let badge='';
+  if(source==='today')badge='<span style="font-size:10px;background:rgba(212,102,62,.15);color:var(--ac);padding:2px 8px;border-radius:6px;font-weight:700">今日</span>';
+  else if(source==='tpl')badge='<span style="font-size:10px;background:rgba(100,128,184,.15);color:var(--bl);padding:2px 8px;border-radius:6px;font-weight:700">'+DN7[dow]+'曜テンプレ</span>';
+  const hdr=document.getElementById('meal-badge');if(hdr)hdr.innerHTML=badge;
+  if(!hasAny){el.innerHTML='<div class="empty" style="padding:8px 0">未設定　<span style="font-size:11px;color:var(--ac);text-decoration:underline;cursor:pointer" onclick="openModal(\'mealSettings\')">設定する</span></div>';return;}
+  el.innerHTML=MEAL_SLOTS.map(sl=>{
+    const v=data[sl.key]||'';
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--wm)">'+
+      '<div style="font-size:13px;font-weight:700">'+sl.label+'</div>'+
+      '<div style="font-size:13px;color:'+(v?'var(--tx)':'var(--t3)')+'">'+( v||'—')+'</div>'+
+    '</div>';
+  }).join('');
+}
+function openModal(type,data={}){
+  if(type==='status_update'){
+    // 家族タブ「自分」パネルタップ → じぶんタブへ移動してopenStatusEdit
+    setPage('status', document.getElementById('ni-status'));
+    setTimeout(openStatusEdit, 100);
+    return;
+  }
+  if(type==='mealSettings'){
+    const overrides=JSON.parse(localStorage.getItem('iedash_meal_overrides_'+ROOM)||'{}');
+    const tpl=JSON.parse(localStorage.getItem('iedash_meal_tpl_'+ROOM)||'{}');
+    const today=tday();
+    const dow=new Date().getDay();
+    // Priority: today override > tpl > empty
+    const d=overrides[today]||tpl[dow]||{};
+    const mc=document.getElementById('mc');
+    mc.innerHTML='<div class="m-title">🍽️ 今日のごはん</div>'+
+      '<div style="display:flex;gap:8px;margin-bottom:14px">'+
+        '<button class="btn btn-o" style="flex:1;font-size:12px" onclick="showMealTodayEdit()">📝 今日だけ編集</button>'+
+        '<button class="btn btn-b" style="flex:1;font-size:12px" onclick="openMealTplEditor()">📅 曜日テンプレ</button>'+
+      '</div>'+
+      '<div style="font-size:11px;color:var(--t2);background:var(--wm);border-radius:10px;padding:10px;line-height:1.7">'+
+        '<b>今日（'+DN7[dow]+'曜日）の内容：</b><br>'+
+        (d.breakfast?'🌅 朝：'+d.breakfast+'<br>':'')+
+        (d.lunch?'☀️ 昼：'+d.lunch+'<br>':'')+
+        (d.dinner?'🌙 夜：'+d.dinner:'未設定')+
+      '</div>'+
+      '<button class="btn btn-ghost btn-full" style="margin-top:10px" onclick="closeModal()">閉じる</button>';
+    openOv();return;
+  }
+  const mc=document.getElementById('mc');
+  if(type==='schedule'){
+    mc.innerHTML='<div class="m-title">📅 予定を追加</div>'+
+      '<div class="fg">'+
+        '<label class="fl">👥 誰の予定？（複数選択で合同予定）</label>'+
+        '<div class="mpick" id="mpick" style="margin-bottom:6px"></div>'+
+        '<div style="display:flex;gap:6px">'+
+          '<button class="btn btn-ghost" style="font-size:11px;flex:1" id="modeJoint" onclick="setSchMode(\'joint\')">👥 各自の予定として登録</button>'+
+          '<button class="btn btn-ghost" style="font-size:11px;flex:1" id="modeCopy" onclick="setSchMode(\'copy\')">📋 全員に同じ予定をコピー</button>'+
+        '</div>'+
+        '<div id="modeHint" style="font-size:10px;color:var(--t3);margin-top:5px;padding:5px 8px;background:var(--wm);border-radius:8px"></div>'+
+      '</div>'+
+      '<div class="fg"><label class="fl">日付</label><input class="fi" type="date" id="s-date" value="'+tday()+'"></div>'+
+      '<div class="fr"><div class="fg"><label class="fl">開始</label><input class="fi" type="time" id="s-time" value="09:00"></div><div class="fg"><label class="fl">終了（任意）</label><input class="fi" type="time" id="s-end"></div></div>'+
+      '<div class="fg"><label class="fl">カテゴリ</label><select class="fi" id="s-tag">'+Object.keys(TAGC).map(t=>'<option>'+t+'</option>').join('')+'</select></div>'+
+      '<div class="fg"><label class="fl">内容</label><input class="fi" type="text" id="s-txt" placeholder="家族旅行、病院、学校..."></div>'+
+      '<div class="fg"><label class="fl">メモ（任意）</label><input class="fi" type="text" id="s-memo" placeholder="場所・持ち物など"></div>'+
+      '<button class="btn btn-o btn-full" onclick="addSch()">追加する</button>'; buildMPick();
+  }else if(type==='schedDet'){
+    const s=state.schedules.find(x=>x.id===data.id);if(!s)return;
+    const m=gm(s.member),mine=canEdit(s.ownerUid);
+    mc.innerHTML='<div class="m-title">📅 予定の詳細</div>'+
+      '<div class="dr"><div class="dl">誰</div><div class="dv">'+m.emoji+' '+m.name+'</div></div>'+
+      '<div class="dr"><div class="dl">日付</div><div class="dv">'+s.date+'</div></div>'+
+      '<div class="dr"><div class="dl">時間</div><div class="dv">'+s.time+(s.endTime?' 〜 '+s.endTime:'')+'</div></div>'+
+      '<div class="dr"><div class="dl">カテゴリ</div><div class="dv"><span style="background:'+s.color+'22;color:'+s.color+';padding:2px 9px;border-radius:7px;font-size:12px">'+s.tag+'</span></div></div>'+
+      '<div class="dr"><div class="dl">内容</div><div class="dv" style="font-weight:600">'+s.text+'</div></div>'+
+      (s.memo?'<div class="dr"><div class="dl">メモ</div><div class="dv">'+s.memo+'</div></div>':'')+
+      (mine?'<div class="cfr"><button class="btn btn-ghost btn-full" onclick="openModal(\'editSch\',{id:\''+s.id+'\'})">✏️ 編集</button><button class="btn btn-r btn-full" onclick="delSch(\''+s.id+'\');closeModal()">🗑️ 削除</button></div>':'<div class="lock-msg">🔒 '+m.name+'の予定は'+m.name+'のみ編集できます</div>')+
+      '<button class="gcal-btn" onclick="addToGcal(\''+s.id+'\')"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66 2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Googleカレンダーに追加</button>';
+  }else if(type==='editSch'){
+    const s=state.schedules.find(x=>x.id===data.id);if(!s||!canEdit(s.ownerUid))return;
+    mc.innerHTML='<div class="m-title">✏️ 予定を編集</div>'+
+      '<div class="fg"><label class="fl">日付</label><input class="fi" type="date" id="s-date" value="'+s.date+'"></div>'+
+      '<div class="fr"><div class="fg"><label class="fl">開始</label><input class="fi" type="time" id="s-time" value="'+s.time+'"></div><div class="fg"><label class="fl">終了</label><input class="fi" type="time" id="s-end" value="'+(s.endTime||'')+'"></div></div>'+
+      '<div class="fg"><label class="fl">カテゴリ</label><select class="fi" id="s-tag">'+Object.keys(TAGC).map(t=>'<option '+(t===s.tag?'selected':'')+'>'+t+'</option>').join('')+'</select></div>'+
+      '<div class="fg"><label class="fl">内容</label><input class="fi" type="text" id="s-txt" value="'+s.text+'"></div>'+
+      '<div class="fg"><label class="fl">メモ</label><input class="fi" type="text" id="s-memo" value="'+(s.memo||'')+'"></div>'+
+      '<button class="btn btn-o btn-full" onclick="updSch(\''+s.id+'\')">保存する</button>';
+  }else if(type==='shop'){
+    mc.innerHTML='<div class="m-title">🛒 買い物をお願い</div>'+
+      '<div class="fg"><label class="fl">商品名</label><input class="fi" type="text" id="sh-txt" placeholder="牛乳、洗剤..."></div>'+
+      '<div class="fr"><div class="fg"><label class="fl">数量（任意）</label><input class="fi" type="text" id="sh-qty" placeholder="2本、Lサイズ"></div><div class="fg"><label class="fl">優先度</label><select class="fi" id="sh-pri"><option>普通</option><option>急ぎ</option><option>なくなったら</option></select></div></div>'+
+      '<div class="fg"><label class="fl">お願いする人</label><select class="fi" id="sh-req">'+members.map(m=>'<option>'+m.name+'</option>').join('')+'</select></div>'+
+      '<button class="btn btn-g btn-full" onclick="addShop()">追加する</button>';
+  }else if(type==='shopDet'){
+    const item=state.shopping.find(x=>x.id===data.id);if(!item)return;const mine=canEdit(item.ownerUid);
+    mc.innerHTML='<div class="m-title">🛒 買い物詳細</div>'+
+      '<div class="dr"><div class="dl">商品</div><div class="dv">'+item.text+'</div></div>'+
+      '<div class="dr"><div class="dl">お願い先</div><div class="dv">'+item.requester+'</div></div>'+
+      '<div class="dr"><div class="dl">優先度</div><div class="dv">'+item.priority+'</div></div>'+
+      '<div class="cfr"><button class="btn btn-g btn-full" onclick="togShop(\''+item.id+'\','+!item.done+');closeModal()">'+(item.done?'未購入に戻す':'購入済みにする')+'</button>'+(mine?'<button class="btn btn-r btn-full" onclick="delShop(\''+item.id+'\');closeModal()">削除</button>':'')+' </div>';
+  }else if(type==='task'){
+    mc.innerHTML='<div class="m-title">✅ タスクをお願い</div>'+
+      '<div class="fg"><label class="fl">内容</label><input class="fi" type="text" id="tk-txt" placeholder="お風呂掃除、ゴミ出し..."></div>'+
+      '<div class="fr"><div class="fg"><label class="fl">担当</label><select class="fi" id="tk-who">'+members.map(m=>'<option>'+m.name+'</option>').join('')+'</select></div><div class="fg"><label class="fl">締切日（任意）</label><input class="fi" type="date" id="tk-due"></div></div>'+
+      '<div class="fg"><label class="fl">メモ（任意）</label><input class="fi" type="text" id="tk-memo" placeholder="詳細・注意事項"></div>'+
+      '<button class="btn btn-b btn-full" onclick="addTask()">追加する</button>';
+  }else if(type==='taskDet'){
+    const t=state.tasks.find(x=>x.id===data.id);if(!t)return;const mine=canEdit(t.ownerUid);
+    mc.innerHTML='<div class="m-title">✅ タスク詳細</div>'+
+      '<div class="dr"><div class="dl">内容</div><div class="dv" style="font-weight:600">'+t.text+'</div></div>'+
+      '<div class="dr"><div class="dl">担当</div><div class="dv">'+t.assign+'</div></div>'+
+      '<div class="dr"><div class="dl">締切</div><div class="dv">'+(t.due||'未設定')+'</div></div>'+
+      (t.memo?'<div class="dr"><div class="dl">メモ</div><div class="dv">'+t.memo+'</div></div>':'')+
+      '<div class="cfr"><button class="btn btn-b btn-full" onclick="togTask(\''+t.id+'\','+!t.done+');closeModal()">'+(t.done?'未完了に戻す':'完了にする')+'</button>'+(mine?'<button class="btn btn-r btn-full" onclick="delTask(\''+t.id+'\');closeModal()">削除</button>':'')+' </div>';
+  }else if(type==='tomorrow'){
+    mc.innerHTML='<div class="m-title">🌙 明日の予定</div>'+
+      '<div class="fg"><label class="fl">内容</label><input class="fi" type="text" id="tm-plan" placeholder="お休み、出張、学校..."></div>'+
+      '<div style="font-size:11px;color:var(--t2);background:var(--wm);border-radius:9px;padding:8px 11px;margin-bottom:10px">'+(myProfile?myProfile.emoji+' '+myProfile.name:'あなた')+'の明日の予定として登録されます</div>'+
+      '<button class="btn btn-dark btn-full" onclick="addTmr()">追加する</button>';
+  }else if(type==='medicine'){
+    mc.innerHTML='<div class="m-title">💊 お薬を追加</div>'+
+      '<div class="fg"><label class="fl">お薬の名前</label><input class="fi" type="text" id="med-name" placeholder="血圧の薬、サプリメント..."></div>'+
+      '<div class="fg"><label class="fl">誰のお薬</label><select class="fi" id="med-who">'+members.map(m=>'<option value="'+m.uid+'">'+m.emoji+' '+m.name+'</option>').join('')+'</select></div>'+
+      '<div class="fg"><label class="fl">服用時間（複数可）</label>'+
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px" id="med-times-list"></div>'+
+        '<div style="display:flex;gap:7px"><input class="fi" type="time" id="med-time-inp" style="flex:1"><button class="btn btn-ghost" onclick="addMedTime()">＋ 追加</button></div>'+
+      '</div>'+
+      '<button class="btn btn-full" style="background:#8E6BB5;color:#fff" onclick="addMed()">登録する</button>';
+    window._medTimes=[];
+  }else if(type==='settings'){
+    // Load room name
+    db.collection('iedash').doc(ROOM).get().then(d=>{
+      const el=document.getElementById('room-name-lbl');
+      if(el&&d.exists)el.textContent=d.data().name||ROOM;
+    }).catch(()=>{});
+    if(isAdmin&&typeof window._fbCount!=='undefined'){
+      // will update label after render
+      setTimeout(()=>{const el=document.getElementById('fb-count-lbl');if(el)el.textContent=window._fbCount+'件のフィードバック';},50);
+    }
+    const fs=localStorage.getItem('iedash_fs')||'mid',dk=document.body.classList.contains('dark'),elder=document.body.classList.contains('elder');
+    mc.innerHTML='<div class="m-title">⚙️ 設定</div>'+
+      '<div class="set-sec"><div class="set-sec-title">👤 プロフィール</div>'+
+        '<div class="set-row"><div><div class="set-lbl">'+(myProfile?.emoji)+' '+(myProfile?.name)+'</div><div class="set-sub">'+(currentUser?.email||'')+'</div></div><button class="btn btn-ghost" onclick="openModal(\'editProfile\')">編集</button></div>'+
+      '</div>'+
+      '<div class="set-sec"><div class="set-sec-title">🏠 ルーム</div>'+
+        '<div class="set-row"><div><div class="set-lbl" id="room-name-lbl">読み込み中...</div><div class="set-sub">招待コード: '+ROOM+'</div></div>'+
+          '<button class="btn btn-ghost" style="font-size:11px" onclick="cpCode(ROOM)">コピー</button></div>'+
+        '<div class="set-row" style="border:none;padding:6px 0"><div><div class="set-lbl">家族を招待</div><div class="set-sub">コードを送って参加してもらう</div></div>'+
+          '<button class="btn btn-b" style="font-size:11px" onclick="shareRoomCode(ROOM, document.getElementById(\'room-name-lbl\')?.textContent||ROOM)">シェア</button></div>'+
+      '</div>'+
+      '<div class="set-sec"><div class="set-sec-title">🔤 文字サイズ</div>'+
+        '<div class="set-row" style="border:none;padding:6px 0"><div class="fs-btns">'+
+          '<button class="fs-btn '+(fs==='small'?'active':'')+'" onclick="setFs(\'small\')">小</button>'+
+          '<button class="fs-btn '+(fs==='mid'?'active':'')+'" onclick="setFs(\'mid\')">中</button>'+
+          '<button class="fs-btn '+(fs==='large'?'active':'')+'" onclick="setFs(\'large\')">大</button>'+
+        '</div></div>'+
+      '</div>'+
+      '<div class="set-sec"><div class="set-sec-title">♿ アクセシビリティ</div>'+
+        '<div class="set-row"><div><div class="set-lbl">おじいちゃん・おばあちゃんモード</div><div class="set-sub">ボタン・文字を特大サイズに</div></div><div class="tgl '+(elder?'on':'')+'" onclick="toggleElder()"></div></div>'+
+        '<div class="set-row" style="border:none"><div><div class="set-lbl">🌙 ダークモード</div></div><div class="tgl '+(dk?'on':'')+'" id="tgl-dark" onclick="toggleDark()"></div></div>'+
+      '</div>'+
+      '<div class="set-sec"><div class="set-sec-title">🔔 通知</div>'+
+        '<div class="set-row"><div><div class="set-lbl">🗑️ ゴミ出し前日</div></div><div class="tgl '+(notifs.trash?'on':'')+'" onclick="toggleNotif(\'trash\')"></div></div>'+
+        '<div class="set-row"><div><div class="set-lbl">📅 予定リマインダー</div></div><div class="tgl '+(notifs.sched?'on':'')+'" onclick="toggleNotif(\'sched\')"></div></div>'+
+        '<div class="set-row"><div><div class="set-lbl">💊 お薬リマインダー</div></div><div class="tgl '+(notifs.med?'on':'')+'" onclick="toggleNotif(\'med\')"></div></div>'+
+        '<div class="set-row" style="border:none"><div><div class="set-lbl">✅ タスク締切</div></div><div class="tgl '+(notifs.task?'on':'')+'" onclick="toggleNotif(\'task\')"></div></div>'+
+      '</div>'+
+      '<div class="set-sec"><div class="set-sec-title">💬 フィードバック</div>'+
+        '<div class="set-row" style="border:none;padding:6px 0"><div><div class="set-lbl">気になったことを教える</div><div class="set-sub">バグ・要望・改善提案など</div></div><button class="btn btn-o" onclick="closeModal();setTimeout(openFeedback,100)">送る</button></div>'+
+      '</div>'+
+      (isRoomAdmin?'<div class="admin-sec"><div class="admin-title">⚡ '+(isAdmin?'システム管理者':'ルーム管理者')+'</div>'+
+        '<div class="admin-row"><div><div class="admin-lbl">🔧 メンテナンスモード</div><div class="admin-sub">ONにすると管理者以外アクセス不可</div></div>'+
+          '<div style="display:flex;gap:6px"><button class="btn" style="background:#5A9E7C;color:#fff;font-size:11px" onclick="toggleMaintenance(true)">ON</button>'+
+          '<button class="btn btn-ghost" style="font-size:11px" onclick="toggleMaintenance(false)">OFF</button></div>'+
+        '</div>'+
+        '<div class="admin-row"><div><div class="admin-lbl">🔑 招待コード発行</div><div class="admin-sub">新しいメンバーを招待</div></div>'+
+          '<button class="btn btn-b" style="font-size:11px" onclick="genInviteCode()">発行</button>'+
+        '</div>'+
+        '<div class="admin-row" style="border:none"><div><div class="admin-lbl">📬 フィードバック一覧</div><div class="admin-sub" id="fb-count-lbl">読み込み中...</div></div>'+
+          '<button class="btn btn-ghost" style="font-size:11px" onclick="openModal(\'adminFeedbacks\')">見る</button>'+
+        '</div>'+
+      '</div>':'')+'<button class="btn btn-ghost btn-full" style="margin-top:6px" onclick="switchRoom()">🔄 別のルームに切り替え</button>'+
+      '<button class="btn btn-r btn-full" style="margin-top:6px" onclick="doSignOut()">ログアウト</button>';
+  }else if(type==='adminFeedbacks'){
+    mc.innerHTML='<div class="m-title">📬 フィードバック一覧</div><div id="admin-fb-list"><div class="empty">読み込み中...</div></div>';
+    openOv();loadAdminFeedbacks();return;
+  }else if(type==='privacy'){
+    mc.innerHTML=`<div class="m-title">📋 プライバシーポリシー・利用規約</div>
+<div style="font-size:12px;line-height:1.9;color:var(--t2);max-height:60vh;overflow-y:auto">
+
+<div style="font-weight:700;color:var(--tx);margin:10px 0 4px">いえダッシュについて</div>
+いえダッシュは、家族間での情報共有を目的とした非営利のウェブアプリです。
+開発者：一色翔（b.sho.isshiki&#64;gmail.com）
+
+<div style="font-weight:700;color:var(--tx);margin:10px 0 4px">収集する情報</div>
+・Googleアカウントのメールアドレス・表示名（ログイン認証のみに使用）<br>
+・ユーザーが入力した情報（予定・タスク・メモ・名前・絵文字など）<br>
+・位置情報（外出・帰宅ボタンを押したときのみ、任意で取得）<br>
+・デバイスのローカルストレージ（設定・ルームIDの保存）
+
+<div style="font-weight:700;color:var(--tx);margin:10px 0 4px">情報の利用目的</div>
+収集した情報は、同じルームに参加した家族メンバーとの情報共有のみに使用します。
+第三者への提供・販売は一切行いません。広告は表示されません。
+
+<div style="font-weight:700;color:var(--tx);margin:10px 0 4px">データの保管</div>
+データはGoogle Firebase（Firestore）に保存されます。
+ルームを削除するか、管理者にご連絡いただければデータを削除できます。
+
+<div style="font-weight:700;color:var(--tx);margin:10px 0 4px">位置情報について</div>
+位置情報は在宅状況の更新時のみ取得します。常時追跡は行いません。
+取得した位置情報はルームメンバーのみが閲覧できます。
+
+<div style="font-weight:700;color:var(--tx);margin:10px 0 4px">利用規約</div>
+・本アプリは現状提供（as-is）であり、動作を保証するものではありません<br>
+・個人・家族での利用を目的としており、商用利用はご遠慮ください<br>
+・法令に違反する目的での利用は禁止します<br>
+・開発者は本アプリの利用により生じた損害について責任を負いません
+
+<div style="font-weight:700;color:var(--tx);margin:10px 0 4px">お問い合わせ</div>
+b.sho.isshiki&#64;gmail.com
+
+<div style="font-size:10px;color:var(--t3);margin-top:12px">最終更新：2026年3月</div>
+</div>
+<button class="btn btn-ghost btn-full" style="margin-top:12px" onclick="closeModal()">閉じる</button>`;
+    openOv();return;
+  }else if(type==='editProfile'){
+    editPE=myProfile?.emoji||'🧑';
+    mc.innerHTML='<div class="m-title">✏️ プロフィール編集</div>'+
+      '<div class="fg"><label class="fl">アイコン</label><div class="eg">'+EMOJIS.map(e=>'<div class="eo '+(e===editPE?'sel':'')+'" onclick="selPE2(\''+e+'\')">'+e+'</div>').join('')+'</div></div>'+
+      '<div class="fg"><label class="fl">名前</label><input class="fi" id="ep-name" value="'+(myProfile?.name||'')+'"></div>'+
+      '<button class="btn btn-o btn-full" onclick="saveEditProfile()">保存する</button>';
+  }
+  openOv();
+}
+function addMedTime(){const inp=document.getElementById('med-time-inp');if(!inp.value)return;if(!window._medTimes)window._medTimes=[];window._medTimes.push(inp.value);document.getElementById('med-times-list').innerHTML=window._medTimes.map(t=>'<span style="background:var(--wm);padding:3px 9px;border-radius:8px;font-size:12px;font-weight:700">'+t+'</span>').join('');inp.value='';}
+function addMed(){
+  const name=document.getElementById('med-name').value.trim();
+  const who=document.getElementById('med-who').value;
+  const times=window._medTimes||[];
+  if(!name||!times.length){alert('名前と服用時間を入力してください');return;}
+  const id=nid();
+  db.collection('iedash').doc(ROOM).collection('medicine').doc(id).set({id,ownerUid:currentUser.uid,member:who,name,times,taken:{},createdAt:new Date().toISOString()}).catch(console.error);
+  closeModal();addAct('💊 お薬「'+name+'」を追加');
+}
+let selMembers=[],schMode='joint';
+function buildMPick(){
+  if(!selMembers.length)selMembers=[currentUser.uid];
+  const el=document.getElementById('mpick');if(!el)return;
+  el.innerHTML=members.map(m=>{
+    const sel=selMembers.includes(m.uid);
+    return'<button class="mpick-btn '+(sel?'sel':'')+'" style="color:'+m.color+';border-color:'+(sel?m.color:'var(--wm)')+'" onclick="togMP(\''+m.uid+'\')">'+m.emoji+' '+m.name+'</button>';
+  }).join('');
+  updateModeHint();
+}
+function togMP(uid){
+  if(selMembers.includes(uid)&&selMembers.length>1)selMembers=selMembers.filter(x=>x!==uid);
+  else if(!selMembers.includes(uid))selMembers.push(uid);
+  buildMPick();
+}
+function setSchMode(mode){
+  schMode=mode;
+  document.getElementById('modeJoint')?.classList.toggle('btn-o',mode==='joint');
+  document.getElementById('modeJoint')?.classList.toggle('btn-ghost',mode!=='joint');
+  document.getElementById('modeCopy')?.classList.toggle('btn-b',mode==='copy');
+  document.getElementById('modeCopy')?.classList.toggle('btn-ghost',mode!=='copy');
+  updateModeHint();
+}
+function updateModeHint(){
+  const el=document.getElementById('modeHint');if(!el)return;
+  const n=selMembers.length,names=selMembers.map(u=>gm(u).name).join('・');
+  if(n<=1){el.textContent='自分の予定として登録します';return;}
+  if(schMode==='copy')el.textContent='📋 '+names+'全員のカレンダーに同じ予定をコピーします（それぞれ独立した予定）';
+  else el.textContent='👥 '+names+'の合同予定として登録します（カレンダーにカラーで区別表示）';
+}
+function addSch(){
+  const date=document.getElementById('s-date').value,time=document.getElementById('s-time').value;
+  const endTime=document.getElementById('s-end').value,txt=document.getElementById('s-txt').value.trim();
+  const tag=document.getElementById('s-tag').value,memo=document.getElementById('s-memo').value.trim();
+  if(!txt)return;
+  const targets=selMembers.length?selMembers:[currentUser.uid];
+  const isJoint=targets.length>1&&schMode==='joint';
+  const batch=db.batch();
+  targets.forEach(uid=>{
+    const ref=db.collection('iedash').doc(ROOM).collection('schedules').doc();
+    batch.set(ref,{
+      ownerUid:currentUser.uid,member:uid,date,time,endTime,text:txt,tag,memo,
+      color:TAGC[tag]||'#999',
+      joint:isJoint,
+      jointMembers:isJoint?targets:[],
+      copied:schMode==='copy'&&targets.length>1,
+      createdAt:new Date().toISOString()
+    });
+  });
+  batch.commit().then(()=>{
+    const who=targets.map(u=>gm(u).name).join('・');
+    const mode=isJoint?'（合同）':schMode==='copy'?'（コピー）':'';
+    addAct('📅「'+txt+'」を'+who+'に追加'+mode);
+    // notify family if joint/copy involving others
+    if(targets.some(u=>u!==currentUser.uid)){
+      db.collection('iedash').doc(ROOM).collection('status_events').add({
+        uid:currentUser.uid,name:myProfile.name,emoji:myProfile.emoji,
+        action:'schedule',ts:Date.now(),
+        text:'📅 '+myProfile.name+'が「'+txt+'」（'+who+'）を追加しました'
+      }).catch(()=>{});
+    }
+    closeModal();selMembers=[currentUser.uid];schMode='joint';
+  }).catch(console.error);
+}
+function updSch(id){
+  const tag=document.getElementById('s-tag').value;
+  db.collection('iedash').doc(ROOM).collection('schedules').doc(id).update({date:document.getElementById('s-date').value,time:document.getElementById('s-time').value,endTime:document.getElementById('s-end').value,tag,text:document.getElementById('s-txt').value.trim(),memo:document.getElementById('s-memo').value.trim(),color:TAGC[tag]||'#999'}).then(()=>closeModal()).catch(console.error);
+}
+function addShop(){
+  const txt=document.getElementById('sh-txt').value.trim(),qty=document.getElementById('sh-qty').value.trim();
+  const req=document.getElementById('sh-req').value,pri=document.getElementById('sh-pri').value;
+  if(!txt)return;
+  db.collection('iedash').doc(ROOM).collection('shopping').add({ownerUid:currentUser.uid,text:txt+(qty?' ('+qty+')':''),requester:req,priority:pri,done:false,createdAt:new Date().toISOString()}).then(()=>{addAct('🛒「'+txt+'」を追加');closeModal();}).catch(console.error);
+}
+function addTask(){
+  const txt=document.getElementById('tk-txt').value.trim(),assign=document.getElementById('tk-who').value;
+  const due=document.getElementById('tk-due').value,memo=document.getElementById('tk-memo').value.trim();
+  if(!txt)return;
+  db.collection('iedash').doc(ROOM).collection('tasks').add({ownerUid:currentUser.uid,text:txt,assign,due,memo,done:false,createdAt:new Date().toISOString()}).then(()=>{addAct('✅「'+txt+'」タスクを追加');closeModal();}).catch(console.error);
+}
+function addTmr(){
+  const plan=document.getElementById('tm-plan').value.trim();if(!plan)return;
+  const existing=state.tomorrow.find(t=>t.member===currentUser.uid);
+  if(existing)db.collection('iedash').doc(ROOM).collection('tomorrow').doc(existing.id).delete();
+  db.collection('iedash').doc(ROOM).collection('tomorrow').add({ownerUid:currentUser.uid,member:currentUser.uid,plan,createdAt:new Date().toISOString()}).then(()=>closeModal()).catch(console.error);
+}
+function selPE2(e){editPE=e;document.querySelectorAll('.eo').forEach(el=>el.classList.toggle('sel',el.textContent===e));}
+async function saveEditProfile(){
+  const name=document.getElementById('ep-name').value.trim();if(!name)return;
+  const emoji=editPE||myProfile.emoji;
+  await db.collection('iedash').doc(ROOM).collection('members').doc(currentUser.uid).update({name,emoji});
+  myProfile={...myProfile,name,emoji};updateDD();closeModal();addAct('✏️ プロフィールを更新');
+}
+function setFs(size){localStorage.setItem('iedash_fs',size);document.body.classList.remove('fs-small','fs-mid','fs-large','fs-xl');if(size!=='mid')document.body.classList.add('fs-'+size);renderSettingsFsButtons();}
+function renderSettingsFsButtons(){
+  const fs=localStorage.getItem('iedash_fs')||'mid';
+  ['small','mid','large','xl'].forEach(s=>{
+    const el=document.getElementById('fs-btn-'+s);
+    if(el)el.classList.toggle('active',fs===s);
+  });
+}
+function toggleElder(){
+  const on=document.body.classList.toggle('elder');
+  localStorage.setItem('iedash_elder',on?'1':'0');
+  const btn=document.getElementById('tgl-elder');
+  if(btn)btn.classList.toggle('on',on);
+}
+function toggleDark(){const dk=document.body.classList.toggle('dark');localStorage.setItem('iedash_dark',dk?'1':'0');const tgl=document.getElementById('tgl-dark');if(tgl)tgl.classList.toggle('on',dk);}
+// ── LOCATION ──────────────────────────
+function listenLocations(){
+  db.collection('iedash').doc(ROOM).collection('locations').onSnapshot(snap=>{
+    const locs={};snap.docs.forEach(d=>{locs[d.id]=d.data();});
+    renderLocations(locs);
+  },e=>console.error('loc',e));
+}
+function _agoText(ts){
+  if(!ts)return '不明';
+  const ago=Math.round((Date.now()-ts)/60000);
+  if(ago<1)return 'たった今';
+  if(ago<60)return ago+'分前';
+  if(ago<1440)return Math.round(ago/60)+'時間前';
+  return Math.round(ago/1440)+'日前';
+}
+function renderLocations(locs){
+  const el=document.getElementById('locList');if(!el)return;
+  // 自分も含めた全メンバー（位置情報あり）
+  const rows=members.map(m=>({m,loc:locs[m.uid]})).filter(x=>x.loc&&x.loc.lat);
+  if(!rows.length){
+    el.innerHTML='<div class="empty" style="padding:12px 0">まだ誰も共有していません<br><span style="font-size:11px;color:var(--t3)">「共有する」を押すと位置が表示されます</span></div>';
+    return;
+  }
+  el.innerHTML=rows.map(({m,loc})=>{
+    const mapsUrl='https://www.google.com/maps?q='+loc.lat+','+loc.lng;
+    const agoTxt=_agoText(loc.ts);
+    const mine=isMe(m.uid);
+    const stColor=loc.status==='home'?'var(--gn)':'var(--ac)';
+    const stLabel=loc.status==='home'?'🏠 在宅':'🚶 外出中';
+    return '<div class="loc-row" style="'+(mine?'background:rgba(212,102,62,.06);border:1.5px solid rgba(212,102,62,.2);border-radius:12px;padding:10px;margin-bottom:6px':'')+'">'
+      +'<div style="position:relative;margin-right:10px">'
+        +memberAvatar(m,36)
+        +'<div style="position:absolute;bottom:-2px;right:-2px;width:11px;height:11px;border-radius:50%;background:'+stColor+';border:2px solid var(--cd)"></div>'
+      +'</div>'
+      +'<div style="flex:1;min-width:0">'
+        +'<div style="display:flex;align-items:center;gap:5px">'
+          +'<span style="font-size:13px;font-weight:700">'+m.name+'</span>'
+          +(mine?'<span style="font-size:9px;background:var(--yl);color:var(--br);padding:1px 5px;border-radius:4px;font-weight:700">自分</span>':'')
+        +'</div>'
+        +'<div style="font-size:12px;color:var(--t2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(loc.place||'📍 位置共有中')+'</div>'
+        +'<div style="display:flex;align-items:center;gap:8px;margin-top:3px">'
+          +'<span style="font-size:10px;color:var(--t3)">🕐 '+agoTxt+'</span>'
+          +'<span style="font-size:10px;font-weight:700;color:'+stColor+'">'+stLabel+'</span>'
+        +'</div>'
+      +'</div>'
+      +'<div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">'
+        +'<a href="'+mapsUrl+'" target="_blank" style="text-decoration:none">'
+          +'<button class="btn btn-b" style="font-size:11px;padding:6px 12px">🗺️ 地図</button>'
+        +'</a>'
+        +(mine?'<button class="btn btn-ghost" style="font-size:10px;padding:4px 8px" onclick="clearMyLocation()">消去</button>':'')
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+function clearMyLocation(){
+  db.collection('iedash').doc(ROOM).collection('locations').doc(currentUser.uid).delete()
+    .then(()=>addAct('📍 位置情報を消去')).catch(console.error);
+}
+// ── REQUEST LOCATION FOR VIEWING ──────
+function viewLocation(uid){
+  const m=gm(uid);
+  // Just open the stored location in maps
+  db.collection('iedash').doc(ROOM).collection('locations').doc(uid).get().then(doc=>{
+    if(!doc.exists||!doc.data().lat){alert(m.name+'の位置情報はまだ共有されていません');return;}
+    const{lat,lng,place}=doc.data();
+    window.open('https://www.google.com/maps?q='+lat+','+lng,'_blank');
+  });
+}
+// ── GOOGLE CALENDAR ────────────────────
+function addToGcal(id){
+  const s=state.schedules.find(x=>x.id===id);if(!s)return;
+  const dt=s.date.replace(/-/g,'');
+  const pad=n=>String(n).padStart(2,'0');
+  const[sh,sm]=(s.time||'09:00').split(':').map(Number);
+  const[eh,em]=s.endTime?s.endTime.split(':').map(Number):[sh+1,sm];
+  const start=dt+'T'+pad(sh)+pad(sm)+'00';
+  const end=dt+'T'+pad(eh)+pad(em)+'00';
+  const url='https://calendar.google.com/calendar/render?action=TEMPLATE'+
+    '&text='+encodeURIComponent(s.text)+
+    '&dates='+start+'/'+end+
+    '&details='+encodeURIComponent((s.memo||'')+'\n\nいえダッシュから追加');
+  window.open(url,'_blank');
+  addAct('📅「'+s.text+'」をGoogleカレンダーに追加');
+}
+
+// ── STATUS EVENTS LISTENER (family departure/arrival notifications) ──
+let lastEvtTs=Date.now();
+function listenStatusEvents(){
+  db.collection('iedash').doc(ROOM).collection('status_events')
+    .orderBy('ts','desc').limit(10)
+    .onSnapshot(snap=>{
+      snap.docChanges().forEach(change=>{
+        if(change.type==='added'){
+          const d=change.doc.data();
+          // Only notify if: it's not me, and it's a new event (after boot)
+          if(d.uid!==currentUser.uid && d.ts>lastEvtTs){
+            if(Notification.permission==='granted')
+              new Notification(d.text||d.emoji+' '+d.name+' '+(d.action==='home'?'が帰宅':'が外出'),{body:''});
+            showToast(d.text||d.emoji+' '+d.name+(d.action==='home'?'が帰宅':'が外出'));
+            addAct(d.text||d.emoji+' '+d.name+(d.action==='home'?'が帰宅しました':'が外出しました'));
+          }
+        }
+      });
+      lastEvtTs=Date.now();
+    },()=>{});
+}
+
+// ── iCAL FEED MANAGEMENT ─────────────────────────────────
+let icalFeeds=[];
+function loadIcalFeeds(){
+  try{icalFeeds=JSON.parse(localStorage.getItem('iedash_ical')||'[]');}catch{icalFeeds=[];}
+}
+function saveIcalFeeds(){localStorage.setItem('iedash_ical',JSON.stringify(icalFeeds));}
+function addIcalFeed(){
+  const name=document.getElementById('ical-name').value.trim();
+  const url=document.getElementById('ical-url').value.trim();
+  if(!name||!url){alert('名前とURLを入力してください');return;}
+  if(!url.includes('.ics')&&!url.includes('ical')){if(!confirm('URLにicsが含まれていません。続けますか？'))return;}
+  const colors=['#D4663E','#5A9E7C','#6480B8','#E8A040','#8E6BB5'];
+  const color=colors[icalFeeds.length%colors.length];
+  icalFeeds.push({id:Date.now()+'',name,url,color,enabled:true});
+  saveIcalFeeds();
+  document.getElementById('ical-name').value='';
+  document.getElementById('ical-url').value='';
+  renderIcalFeeds();
+  fetchIcalEvents();
+}
+function delIcalFeed(id){
+  icalFeeds=icalFeeds.filter(f=>f.id!==id);saveIcalFeeds();
+  renderIcalFeeds();renderIcalEvts();
+}
+function togIcalFeed(id){
+  const f=icalFeeds.find(x=>x.id===id);if(f)f.enabled=!f.enabled;
+  saveIcalFeeds();renderIcalFeeds();renderIcalEvts();
+}
+function renderIcalFeeds(){
+  const el=document.getElementById('icalFeeds');if(!el)return;
+  if(!icalFeeds.length){el.innerHTML='<div class="empty">まだ登録されていません</div>';return;}
+  el.innerHTML='<div class="card">'+icalFeeds.map(f=>`
+    <div class="ical-item">
+      <div class="ical-dot" style="background:${f.color}"></div>
+      <div style="flex:1"><div class="ical-name">${f.name}</div><div class="ical-sub">${f.url.slice(0,40)}...</div></div>
+      <div class="tgl ${f.enabled?'on':''}" onclick="togIcalFeed('${f.id}')" style="margin-right:6px"></div>
+      <button class="btn btn-ghost" style="font-size:10px" onclick="delIcalFeed('${f.id}')">削除</button>
+    </div>`).join('')+'</div>';
+}
+
+// iCal parser (basic VEVENT extraction)
+function parseIcal(text){
+  const events=[];
+  const blocks=text.split('BEGIN:VEVENT');
+  blocks.slice(1).forEach(block=>{
+    const get=key=>{const m=block.match(new RegExp(key+'[^:]*:([^\r\n]+)'));return m?m[1].trim():'';}
+    const dtstart=get('DTSTART');
+    const dtend=get('DTEND');
+    const summary=get('SUMMARY').replace(/\n/g,' ');
+    const location=get('LOCATION');
+    if(!dtstart||!summary)return;
+    // Parse date: YYYYMMDD or YYYYMMDDTHHmmssZ
+    const parseDate=s=>{
+      s=s.replace(/Z$/,'');
+      if(s.length===8)return s.slice(0,4)+'-'+s.slice(4,6)+'-'+s.slice(6,8);
+      return s.slice(0,4)+'-'+s.slice(4,6)+'-'+s.slice(6,8);
+    };
+    const parseTime=s=>{
+      if(s.length<=8)return '';
+      const t=s.replace(/Z$/,'');
+      return t.slice(9,11)+':'+t.slice(11,13);
+    };
+    events.push({date:parseDate(dtstart),time:parseTime(dtstart),end:dtstart.length>8?parseTime(dtend):'',text:summary,location});
+  });
+  return events;
+}
+
+let icalEventsCache={};
+async function fetchIcalEvents(){
+  for(const feed of icalFeeds){
+    if(!feed.enabled)continue;
+    try{
+      // Use a CORS proxy since iCal URLs are cross-origin
+      const proxyUrl='https://api.allorigins.win/raw?url='+encodeURIComponent(feed.url);
+      const r=await fetch(proxyUrl);
+      const text=await r.text();
+      icalEventsCache[feed.id]={events:parseIcal(text),color:feed.color,name:feed.name};
+    }catch(e){
+      console.warn('iCal fetch failed for',feed.name,e);
+      icalEventsCache[feed.id]={events:[],color:feed.color,name:feed.name};
+    }
+  }
+  renderIcalEvts();
+}
+function renderIcalEvts(){
+  const el=document.getElementById('icalEvts');if(!el)return;
+  if(calMode==='gcal'){el.innerHTML='';return;}// shown in gcalPanel
+  const all=[];
+  Object.values(icalEventsCache).forEach(({events,color,name})=>{
+    if(!icalFeeds.find(f=>f.color===color&&f.enabled))return;
+    events.forEach(e=>all.push({...e,icalColor:color,icalSrc:name}));
+  });
+  if(!all.length)return;
+  // Show next 7 days of iCal events
+  const today=new Date(),end=new Date(today);end.setDate(today.getDate()+7);
+  const upcoming=all.filter(e=>{
+    const d=new Date(e.date+'T00:00:00');return d>=today&&d<=end;
+  }).sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
+  if(!upcoming.length){el.innerHTML='';return;}
+  el.innerHTML='<div class="sec-title" style="margin:10px 0 6px">🔗 外部カレンダー（今後7日）</div>'+
+    upcoming.map(e=>`<div class="ei" style="border-left:3px solid ${e.icalColor}">
+      <div class="eic" style="background:${e.icalColor}"></div>
+      <div class="eit">${e.time||'終日'}</div>
+      <div style="flex:1"><div class="eitxt">${e.text}</div><div style="font-size:10px;color:var(--t3)">${e.icalSrc}${e.location?' · '+e.location:''}</div></div>
+    </div>`).join('');
+}
+
+// ── INVITE CODE ──────────────────────────────────────
+async function submitInviteCode(){
+  const code=document.getElementById('inv-inp').value.trim();
+  const errEl=document.getElementById('inv-err');
+  if(code.length!==6){errEl.textContent='6桁のコードを入力してください';return;}
+  errEl.textContent='確認中...';
+  try{
+    const doc=await db.collection('iedash').doc('__invites__').collection('codes').doc(code).get();
+    if(doc.exists&&doc.data().active){
+      localStorage.setItem('iedash_inv_ok','1');
+      document.getElementById('invite-screen').classList.add('hide');
+      document.getElementById('loading').classList.remove('hide');
+      checkProfile(currentUser);
+    }else{
+      errEl.textContent='コードが正しくないか、期限切れです';
+      document.getElementById('inv-inp').value='';
+    }
+  }catch(e){errEl.textContent='エラーが発生しました。もう一度お試しください';}
+}
+function skipInviteAdmin(){
+  // Hidden: admin can bypass invite screen
+  if(isAdmin){
+    localStorage.setItem('iedash_inv_ok','1');
+    document.getElementById('invite-screen').classList.add('hide');
+    document.getElementById('loading').classList.remove('hide');
+    checkProfile(currentUser);
+  }
+}
+function maintAdminLogin(){
+  // Show login from maintenance screen
+  document.getElementById('maintenance-screen').classList.add('hide');
+  document.getElementById('login-screen').classList.remove('hide');
+}
+
+// ── ADMIN FUNCTIONS ───────────────────────────────────
+async function toggleMaintenance(on){
+  const msg=on?prompt('メンテナンスメッセージを入力（空でデフォルト）:'):'';
+  if(on&&msg===null)return;// cancelled
+  await db.collection('iedash').doc('_app_meta').set({
+    maintenance:on,
+    maintenanceMsg:msg||'ただいまメンテナンス中です。\nしばらくお待ちください。',
+    updatedAt:new Date().toISOString(),
+    updatedBy:currentUser.email
+  },{merge:true});
+  addAct(on?'🔧 メンテナンスモード ON':'✅ メンテナンスモード OFF');
+  alert(on?'メンテナンスモードをONにしました。\n管理者以外はアクセスできません。':'メンテナンスモードを解除しました。');
+  openModal('settings');
+}
+async function genInviteCode(){
+  const code=String(Math.floor(100000+Math.random()*900000));
+  const expDays=parseInt(prompt('有効期限（日数）を入力:')||'7');
+  const exp=new Date();exp.setDate(exp.getDate()+expDays);
+  await db.collection('iedash').doc('__invites__').collection('codes').doc(code).set({
+    code,active:true,
+    createdAt:new Date().toISOString(),
+    expiresAt:exp.toISOString(),
+    createdBy:currentUser.email
+  });
+  // Show code
+  const mc=document.getElementById('mc');if(!mc)return;
+  mc.innerHTML+='<div class="inv-code-box"><div style="font-size:12px;color:var(--t2);margin-bottom:6px">新しい招待コード</div>'+
+    '<div class="inv-code-num">'+code+'</div>'+
+    '<div class="inv-code-hint">有効期限：'+expDays+'日間</div></div>'+
+    '<button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="cpCode(\''+code+'\')">📋 コピー</button>';
+  addAct('🔑 招待コード '+code+' を発行');
+}
+async function loadAdminFeedbacks(){
+  const mc=document.getElementById('mc');if(!mc)return;
+  const snap=await db.collection('iedash').doc(ROOM).collection('feedbacks').orderBy('createdAt','desc').limit(50).get();
+  if(snap.empty){mc.querySelector('#admin-fb-list').innerHTML='<div class="empty">フィードバックはまだありません</div>';return;}
+  mc.querySelector('#admin-fb-list').innerHTML=snap.docs.map(d=>{
+    const f=d.data();const m=members.find(x=>x.uid===f.uid)||{emoji:'👤',name:f.name||'不明'};
+    const catLbl={bug:'🐛 バグ',request:'✨ 要望',other:'💬 その他'}[f.category]||f.category;
+    const catCls='fb-type-'+(f.category||'other');
+    const dt=new Date(f.createdAt).toLocaleDateString('ja-JP',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    return'<div class="fb-item">'+
+      '<div class="fb-hdr">'+
+        '<span style="font-size:18px">'+m.emoji+'</span>'+
+        '<span class="fb-name">'+m.name+'</span>'+
+        '<span class="fb-cat '+catCls+'">'+catLbl+'</span>'+
+        '<span class="fb-time">'+dt+'</span>'+
+      '</div>'+
+      '<div class="fb-body">'+f.body+'</div>'+
+      (f.contact?'<div style="font-size:10px;color:var(--t3);margin-top:4px">返信先: '+f.contact+'</div>':'')+
+    '</div>';
+  }).join('');
+}
+
+// ── FEEDBACK ─────────────────────────────────────────
+function openFeedback(){
+  const mc=document.getElementById('mc');if(!mc)return;
+  mc.innerHTML='<div class="m-title">💬 フィードバック</div>'+
+    '<div style="font-size:12px;color:var(--t2);margin-bottom:12px;line-height:1.7">気になったこと・改善してほしいこと・バグ報告など、なんでも教えてください！</div>'+
+    '<div class="fg"><label class="fl">種類</label>'+
+      '<div style="display:flex;gap:7px;margin-bottom:4px">'+
+        '<button class="btn btn-ghost fb-cat-btn active" data-cat="bug" onclick="selFbCat(this,\'bug\')">🐛 バグ</button>'+
+        '<button class="btn btn-ghost fb-cat-btn" data-cat="request" onclick="selFbCat(this,\'request\')">✨ 要望</button>'+
+        '<button class="btn btn-ghost fb-cat-btn" data-cat="other" onclick="selFbCat(this,\'other\')">💬 その他</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="fg"><label class="fl">内容（詳しく書いてね）</label>'+
+      '<textarea class="fi" id="fb-body" rows="5" placeholder="例：スケジュールを追加しようとするとエラーになる。\n\n例：買い物リストに写真を添付できると便利" style="resize:vertical;min-height:120px"></textarea>'+
+    '</div>'+
+    '<div class="fg"><label class="fl">返信先メールアドレス（任意）</label>'+
+      '<input class="fi" type="email" id="fb-contact" placeholder="返信が必要な場合のみ"></div>'+
+    '<button class="btn btn-o btn-full" onclick="submitFeedback()">送信する</button>';
+  window._fbCat='bug';
+  openOv();
+}
+function selFbCat(el,cat){
+  window._fbCat=cat;
+  document.querySelectorAll('.fb-cat-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.cat===cat);
+    b.style.background=b.dataset.cat===cat?'var(--ac)':'';
+    b.style.color=b.dataset.cat===cat?'#fff':'';
+  });
+}
+async function submitFeedback(){
+  const body=document.getElementById('fb-body').value.trim();
+  const contact=document.getElementById('fb-contact').value.trim();
+  if(!body){document.getElementById('fb-body').focus();return;}
+  const btn=document.querySelector('#mc .btn-o');if(btn){btn.textContent='送信中...';btn.disabled=true;}
+  await db.collection('iedash').doc(ROOM).collection('feedbacks').add({
+    uid:currentUser.uid,name:myProfile?.name||'',emoji:myProfile?.emoji||'👤',
+    category:window._fbCat||'other',body,contact,
+    createdAt:new Date().toISOString()
+  });
+  document.getElementById('mc').innerHTML='<div style="text-align:center;padding:20px">'+
+    '<div style="font-size:48px;margin-bottom:12px">🙏</div>'+
+    '<div style="font-size:16px;font-weight:700;margin-bottom:8px">ありがとうございます！</div>'+
+    '<div style="font-size:13px;color:var(--t2);line-height:1.7">フィードバックを受け取りました。<br>改善に活かします！</div>'+
+    '<button class="btn btn-o btn-full" style="margin-top:16px" onclick="closeModal()">閉じる</button>'+
+  '</div>';
+  addAct('💬 フィードバックを送信しました');
+}
+
+function switchRoom(){
+  closeModal();
+  localStorage.removeItem('iedash_room_'+currentUser.uid);
+  ROOM='';
+  document.getElementById('room-screen').classList.remove('hide');
+  showRoomScreen(currentUser);
+}
+
+function applySettings(){
+  const fs=localStorage.getItem('iedash_fs')||'mid';
+  if(fs&&fs!=='mid')document.body.classList.add('fs-'+fs);
+  if(localStorage.getItem('iedash_dark')==='1')document.body.classList.add('dark');
+  if(localStorage.getItem('iedash_elder')==='1'){document.body.classList.add('elder');setTimeout(()=>{const b=document.getElementById('tgl-elder');if(b)b.classList.add('on');},0);}
+}
+function doSignOut(){if(!confirm('ログアウトしますか？'))return;auth.signOut().then(function(){localStorage.removeItem('iedash_room_'+(currentUser&&currentUser.uid||''));showToast('ログアウトしました');setTimeout(function(){location.reload();},800);}).catch(function(err){showToast('ログアウト失敗: '+err.message);});}
+function openOv(){document.getElementById('modal').classList.add('open');}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function ocl(e){if(e.target===document.getElementById('modal'))closeModal();}
+function setPage(name,el){
+  document.querySelectorAll('.pg').forEach(p=>{p.classList.remove('active');p.style.cssText='';});
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  const pgEl=document.getElementById('pg-'+name);
+  if(pgEl)pgEl.classList.add('active');
+  if(el)el.classList.add('active');
+  else{const ni=document.getElementById('ni-'+name);if(ni)ni.classList.add('active');}
+  document.querySelector('.scroll').scrollTop=0;
+  if(name==='settings')initSettingsPage();
+  if(name==='calendar'){renderCal();renderTodayFamGrid();}
+  if(name==='status'){renderSUPage();renderNhistStatus();}
+  if(name==='home'){renderFamStatus();renderTrash();}
+  if(name==='todo'){renderShop();renderTasks();renderBath();}
+}
+function initSettingsPage(){
+  const elderOn=document.body.classList.contains('elder');
+  const tglEl=document.getElementById('tgl-elder');
+  if(tglEl)tglEl.classList.toggle('on',elderOn);
+  // Profile card
+  if(myProfile){
+    const av=document.getElementById('iset-avatar');
+    const nm=document.getElementById('iset-name');
+    const em=document.getElementById('iset-email');
+    if(av)av.textContent=myProfile.emoji;
+    if(nm)nm.textContent=myProfile.name;
+    if(em)em.textContent=currentUser?.email||'';
+  }
+  // Room name
+  db.collection('iedash').doc(ROOM).get().then(d=>{
+    const nm=document.getElementById('iset-room-name');
+    const cd=document.getElementById('iset-room-code');
+    if(nm&&d.exists)nm.textContent=d.data().name||ROOM;
+    if(cd)cd.textContent='招待コード: '+ROOM;
+  }).catch(()=>{});
+  // Trash area
+  const area=localStorage.getItem('iedash_trash_area')||'箕面市A-4地区';
+  const lbl=document.getElementById('iset-trash-area-lbl');
+  if(lbl)lbl.textContent=area;
+  // Notif toggles
+  renderNotifToggles();
+  // Font size buttons
+  renderSettingsFsButtons();
+  // Dark/elder toggles
+  const dk=document.getElementById('tgl-dark');
+  const el2=document.getElementById('tgl-elder');
+  if(dk)dk.classList.toggle('on',document.body.classList.contains('dark'));
+  if(el2)el2.classList.toggle('on',document.body.classList.contains('elder'));
+  // Admin section (only b.sho.isshiki&#64;gmail.com)
+  const adminSec=document.getElementById('iset-admin-section');
+  if(adminSec)adminSec.style.display=isAdmin?'block':'none';
+  // Feedback count for admin
+  if(isAdmin)loadFbCount();
+}
+function openEditProfile(){openModal('editProfile');}
+function showRoomInvite(){
+  db.collection('iedash').doc(ROOM).get().then(d=>{
+    const name=d.exists?d.data().name||ROOM:ROOM;
+    showNewRoomCode(ROOM,name);
+  }).catch(()=>showNewRoomCode(ROOM,ROOM));
+}
+function openTrashAreaPicker(){
+  const AREAS=[
+    {label:'箕面市 A-4地区（石丸3丁目）',id:'箕面市A-4地区'},
+    {label:'箕面市 A-1地区',id:'箕面市A-1地区'},
+    {label:'箕面市 B地区',id:'箕面市B地区'},
+    {label:'大阪市（月・木：燃えるごみ）',id:'大阪市一般'},
+    {label:'その他（手動設定）',id:'custom'},
+  ];
+  const cur=localStorage.getItem('iedash_trash_area')||'箕面市A-4地区';
+  const mc=document.getElementById('mc');
+  mc.innerHTML='<div class="m-title">🗺️ ゴミ出し地域を選ぶ</div>'+
+    '<div style="font-size:12px;color:var(--t2);margin-bottom:12px">地域によってゴミ収集日が変わります。</div>'+
+    AREAS.map(a=>{
+      const check=cur===a.id?'<span style="color:var(--ac);font-size:18px">✓</span>':'';
+      return '<div class="iset-pick-row" onclick="setTrashArea(\''+a.id+'\',\''+a.label+'\')"><div>'+a.label+'</div>'+check+'</div>';
+    }).join('')+
+    '<button class="btn btn-ghost btn-full" style="margin-top:10px" onclick="closeModal()">閉じる</button>';
+  openOv();
+}
+function setTrashArea(id,label){
+  localStorage.setItem('iedash_trash_area',id);
+  const lbl=document.getElementById('iset-trash-area-lbl');
+  if(lbl)lbl.textContent=label;
+  const hdr=document.getElementById('trash-area-lbl');
+  if(hdr)hdr.textContent='🗑️ ゴミ出し（'+label+'）';
+  renderTrash();
+  closeModal();
+  showToast('地域を更新しました');
+}
+applySettings();init();
+
+function toggleFab(){
+  const btn=document.getElementById('fabBtn');
+  const items=document.getElementById('fabItems');
+  const bg=document.getElementById('fabBg');
+  const open=btn.classList.toggle('open');
+  items.classList.toggle('open',open);
+  bg.classList.toggle('open',open);
+}
+function closeFab(){
+  document.getElementById('fabBtn')?.classList.remove('open');
+  document.getElementById('fabItems')?.classList.remove('open');
+  document.getElementById('fabBg')?.classList.remove('open');
+}
+
+function renderFamStatus(){renderMemberPanels();
+  const el=document.getElementById('famStatusGrid');if(!el)return;
+  if(!members.length){el.innerHTML='<div class="empty">メンバーがいません</div>';return;}
+  el.innerHTML=members.map(m=>{
+    const s=state.status[m.uid]||{home:true,ret:''},mood=state.mood[m.uid]||'';
+    const mine=isMe(m.uid);
+    const home=s.home!==false;
+    const loc=state.locations&&state.locations[m.uid];
+    const locTxt=!home&&loc&&loc.place?loc.place:'';
+    const retTxt=s.ret?'帰宅予定 '+s.ret:'';
+    return '<div class="fam-sc'+(mine?' mine':'')+'" style="border-left:3px solid '+m.color+'" onclick="'+(mine?'openMyStatusModal()':'')+'">'
+      +memberAvatar(m,32)
+      +'<div style="flex:1;min-width:0">'
+        +'<div class="fam-sc-name">'+m.name+'</div>'
+        +'<div class="fam-sc-st '+(home?'home':'out')+'">'+(home?'🏠 在宅':'🚶 外出中')+(retTxt?' · '+retTxt:'')+'</div>'
+        +(locTxt?'<div class="fam-sc-loc">📍 '+locTxt+'</div>':'')
+      +'</div>'
+      +(mood?'<div class="fam-sc-mood">'+mood+'</div>':'')
+      +'</div>';
+  }).join('');
+}
+
+function openMyStatusModal(){
+  openModal('status_update');
+}
+
+function renderTodayFamGrid(){
+  const el=document.getElementById('todayFamGrid');if(!el)return;
+  const td=tday();
+  el.innerHTML=members.map(m=>{
+    const evts=state.schedules.filter(s=>s.member===m.uid&&s.date===td).sort((a,b)=>a.time.localeCompare(b.time));
+    const s=state.status[m.uid]||{};
+    const home=s.home!==false;
+    return '<div class="today-fam-box" style="border-top:3px solid '+m.color+'">'
+      +'<div class="tfb-name">'+m.emoji+' '+m.name+'</div>'
+      +(evts.length
+        ? evts.map(e=>'<div class="tfb-evt">'+e.time+(e.endTime?'–'+e.endTime:'')+' '+e.text+'</div>').join('')
+        : '<div class="tfb-empty">'+(home?'🏠 在宅':'🚶 外出中')+'</div>'
+      )
+      +'</div>';
+  }).join('');
+}
+
+function shareLocation(){
+  if(!navigator.geolocation){showToast('位置情報が使えません');return;}
+  const u=currentUser?.uid;if(!u)return;
+  showToast('📍 取得中...');
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const{latitude:lat,longitude:lng}=pos.coords;
+    const st=state.status[u]||{};
+    const status=st.home?'home':'out';
+    fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lng+'&format=json&accept-language=ja')
+      .then(r=>r.json()).then(j=>{
+        const area=j.address?.neighbourhood||j.address?.suburb||j.address?.city||'';
+        const place=(j.address?.road||'')+(area?' '+area:'');
+        const locData={uid:u,lat,lng,place,ts:Date.now(),status};
+        db.collection('iedash').doc(ROOM).collection('locations').doc(u)
+          .set(locData)
+          .then(()=>{
+            // 即座にローカルstateを更新→再描画
+            if(!state.locations)state.locations={};
+            state.locations[u]=locData;
+            renderLocations(state.locations);
+            showToast('📍 共有しました');
+          }).catch(console.error);
+      }).catch(()=>{
+        // 住所取得失敗でも位置だけ共有
+        const locData={uid:u,lat,lng,place:'',ts:Date.now(),status};
+        db.collection('iedash').doc(ROOM).collection('locations').doc(u)
+          .set(locData)
+          .then(()=>{
+            if(!state.locations)state.locations={};
+            state.locations[u]=locData;
+            renderLocations(state.locations);
+            showToast('📍 共有しました（住所取得失敗）');
+          }).catch(console.error);
+      });
+  },()=>showToast('位置情報をオンにしてください'));
+}
+
+function renderMemberPanels(){
+  const el=document.getElementById('memberPanels');if(!el)return;
+  const td=tday();
+  el.innerHTML=members.map(m=>{
+    const evts=(state.schedules||[]).filter(s=>s.member===m.uid&&s.date===td).sort((a,b)=>a.time.localeCompare(b.time));
+    const st=state.status[m.uid]||{};
+    const ret=st.ret||'';
+    const firstEvt=evts[0];
+    return '<div class="mbr-panel" style="border-top-color:'+m.color+'">'
+      +'<div class="mbr-pname"><span>'+m.emoji+'</span>'+m.name+'</div>'
+      +'<div class="mbr-prow"><span class="mbr-plbl">📅</span>'
+        +(firstEvt?firstEvt.time+' '+firstEvt.text:'<span style="color:var(--t3)">予定なし</span>')
+      +'</div>'
+      +'<div class="mbr-prow"><span class="mbr-plbl">🏠</span>'
+        +(ret?'帰宅 '+ret:'<span style="color:var(--t3)">未設定</span>')
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function renderMealTime(){
+  const el=document.getElementById('mealTimeDisplay');if(!el)return;
+  const dow=new Date().getDay();
+  const LABELS=['🌅朝','☀️昼','🌙夜'];
+  const keys=['breakfast','lunch','dinner'];
+  const tmpl=(state.mealTimeTmpl&&state.mealTimeTmpl[dow])||{};
+  const today=state.mealTimeToday||{};
+  el.innerHTML=keys.map((k,i)=>{
+    const t=today[k]||tmpl[k]||'';
+    const meal=getMealForToday().data[k]||'';
+    return '<div class="meal-time-badge" onclick="openMealTimeModal()">'
+      +'<div class="mtb-lbl">'+LABELS[i]+'</div>'
+      +'<div class="mtb-time">'+(t||'--:--')+'</div>'
+      +(meal?'<div class="mtb-menu">'+meal+'</div>':'')
+      +'</div>';
+  }).join('');
+}
+
+function openMealTimeModal(){
+  const dow=new Date().getDay();
+  const DN2=['日','月','火','水','木','金','土'];
+  const tmpl=(state.mealTimeTmpl&&state.mealTimeTmpl[dow])||{};
+  const today=state.mealTimeToday||{};
+  const mc=document.getElementById('mc');if(!mc)return;
+  document.getElementById('modal').classList.add('open');
+  mc.innerHTML='<div class="m-title">🍽️ ご飯の時間設定</div>'
+    +'<div style="font-size:12px;color:var(--t2);margin-bottom:12px">今日（'+DN2[dow]+'曜日）の設定</div>'
+    +'<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">'
+    +['朝食','昼食','夕食'].map((lbl,i)=>{
+      const key=['breakfast','lunch','dinner'][i];
+      return '<div style="display:flex;align-items:center;gap:8px">'
+        +'<span style="width:60px;font-size:13px;font-weight:700">'+lbl+'</span>'
+        +'<input type="time" class="fi" id="mtime-'+key+'" value="'+(today[key]||tmpl[key]||'')+'" style="flex:1">'
+        +'</div>';
+    }).join('')
+    +'</div>'
+    +'<button class="btn btn-o btn-full" style="margin-bottom:8px" onclick="saveMealTimeToday()">今日に適用</button>'
+    +'<div style="font-size:12px;font-weight:700;color:var(--t2);margin:12px 0 8px">📅 テンプレ（曜日ごとに保存）</div>'
+    +'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px">'
+    +DN2.map((d,i)=>'<button onclick="selectTmplDay('+i+')" id="tmpl-day-btn-'+i+'" class="btn btn-ghost" style="min-width:36px;font-size:12px'+(i===dow?';background:var(--ac);color:#fff':'')+'">'+(i===dow?'<b>'+d+'</b>':d)+'</button>').join('')
+    +'</div>'
+    +'<div id="tmpl-day-editor"></div>'
+    +'<button class="btn btn-b btn-full" onclick="saveMealTimeTmpl()">テンプレに保存</button>';
+  selectTmplDay(dow);
+}
+
+let _tmplDayEdit=new Date().getDay();
+function selectTmplDay(i){
+  _tmplDayEdit=i;
+  document.querySelectorAll('[id^="tmpl-day-btn-"]').forEach((b,idx)=>{
+    b.style.background=idx===i?'var(--ac)':'';
+    b.style.color=idx===i?'#fff':'';
+  });
+  const tmpl=(state.mealTimeTmpl&&state.mealTimeTmpl[i])||{};
+  const ed=document.getElementById('tmpl-day-editor');if(!ed)return;
+  ed.innerHTML='<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">'
+    +['朝食','昼食','夕食'].map((lbl,j)=>{
+      const key=['breakfast','lunch','dinner'][j];
+      return '<div style="display:flex;align-items:center;gap:8px">'
+        +'<span style="width:60px;font-size:12px">'+lbl+'</span>'
+        +'<input type="time" class="fi" id="tmpl-'+key+'" value="'+(tmpl[key]||'')+'" style="flex:1">'
+        +'</div>';
+    }).join('')
+    +'</div>';
+}
+
+async function saveMealTimeToday(){
+  const t={
+    breakfast:document.getElementById('mtime-breakfast')?.value||'',
+    lunch:document.getElementById('mtime-lunch')?.value||'',
+    dinner:document.getElementById('mtime-dinner')?.value||'',
+    date:tday()
+  };
+  state.mealTimeToday=t;
+  try{
+    await db.collection('iedash').doc(ROOM).collection('settings').doc('meal_times_today').set(t);
+    renderMealTime();showToast('✅ 今日の時間を同期しました');
+  }catch(e){showToast('保存に失敗しました');}
+}
+
+async function saveMealTimeTmpl(){
+  const tmpl=JSON.parse(JSON.stringify(state.mealTimeTmpl||{}));
+  tmpl[_tmplDayEdit]={
+    breakfast:document.getElementById('tmpl-breakfast')?.value||'',
+    lunch:document.getElementById('tmpl-lunch')?.value||'',
+    dinner:document.getElementById('tmpl-dinner')?.value||''
+  };
+  state.mealTimeTmpl=tmpl;
+  try{
+    await db.collection('iedash').doc(ROOM).collection('settings').doc('meal_times_tmpl').set({tmpl});
+    renderMealTime();showToast('✅ テンプレを同期しました');
+  }catch(e){showToast('保存に失敗しました');}
+}
+
+function startTutorial(){_tutIdx=0;document.getElementById('tutOverlay').classList.add('open');renderTutStep();}
+function renderTutStep(){
+  const step=TUT_STEPS[_tutIdx],total=TUT_STEPS.length;
+  document.getElementById('tutIcon').textContent=step.icon;
+  document.getElementById('tutTitle').textContent=step.title;
+  const bd=document.getElementById('tutBody');bd.style.whiteSpace='pre-line';bd.textContent=step.body;
+  document.getElementById('tutProgress').style.width=((_tutIdx+1)/total*100)+'%';
+  document.getElementById('tutNext').textContent=_tutIdx===total-1?'はじめる！':'次へ →';
+  const dots=document.getElementById('tutDots');
+  dots.innerHTML=Array.from({length:total},(_,i)=>'<div style="width:7px;height:7px;border-radius:50%;background:'+(i===_tutIdx?'var(--ac)':'var(--wm)')+'"></div>').join('');
+}
+function tutNext(){if(_tutIdx<TUT_STEPS.length-1){_tutIdx++;renderTutStep();}else closeTutorial();}
+function closeTutorial(){document.getElementById('tutOverlay').classList.remove('open');localStorage.setItem('iedash_tut_done','1');}
+function checkTutorial(){if(!localStorage.getItem('iedash_tut_done'))setTimeout(startTutorial,800);}
+
+// ══ スワイプ切り替え ══
+(function(){
+  const TABS=['home','todo','calendar','status'];
+  let sx=0,sy=0,moving=false,locked=false;
+  function curIdx(){return TABS.findIndex(t=>document.getElementById('pg-'+t)?.classList.contains('active'));}
+  document.addEventListener('touchstart',e=>{
+    sx=e.touches[0].clientX;
+    sy=e.touches[0].clientY;
+    moving=false;locked=false;
+  },{passive:true});
+  document.addEventListener('touchmove',e=>{
+    if(locked)return;
+    const dx=e.touches[0].clientX-sx;
+    const dy=e.touches[0].clientY-sy;
+    // 縦スクロール中はロック
+    if(Math.abs(dy)>10){locked=true;return;}
+    // 横スワイプ検出：縦より横が大きく、かつ15px以上
+    if(!moving&&Math.abs(dx)>Math.abs(dy)*1.5&&Math.abs(dx)>20){moving=true;}
+  },{passive:true});
+  document.addEventListener('touchend',e=>{
+    if(!moving)return;
+    const dx=e.changedTouches[0].clientX-sx;
+    const dy_te=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dy_te)>Math.abs(dx)*0.7)return;
+    if(Math.abs(dx)<40)return;  // 40pxで反応
+    const i=curIdx();
+    if(dx<0&&i<TABS.length-1)setPage(TABS[i+1],null);
+    else if(dx>0&&i>0)setPage(TABS[i-1],null);
+    moving=false;
+  });
+})();
+
+function memberAvatar(m,size){
+  const sz=size||36;
+  if(m.photoBase64){
+    return '<img src="'+m.photoBase64+'" style="width:'+sz+'px;height:'+sz+'px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid '+m.color+'">';
+  }
+  return '<div style="width:'+sz+'px;height:'+sz+'px;border-radius:50%;background:'+m.color+'22;border:2px solid '+m.color+'44;display:flex;align-items:center;justify-content:center;font-size:'+(sz*0.55)+'px;flex-shrink:0">'+m.emoji+'</div>';
+}
+
+function handlePhotoSelect(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const canvas=document.createElement('canvas');
+      canvas.width=128;canvas.height=128;
+      const ctx=canvas.getContext('2d');
+      const s=Math.min(img.width,img.height);
+      const sx=(img.width-s)/2,sy=(img.height-s)/2;
+      ctx.drawImage(img,sx,sy,s,s,0,0,128,128);
+      const b64=canvas.toDataURL('image/jpeg',0.72);
+      const wrap=document.querySelector('.prof-photo-wrap');
+      if(wrap){wrap.innerHTML='<img src="'+b64+'" class="prof-photo"><div class="photo-edit-badge">📷</div>';}
+      window._pendingPhoto=b64;
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeProfilePhoto(){
+  window._pendingPhoto='__remove__';
+  const wrap=document.querySelector('.prof-photo-wrap');
+  if(wrap&&myProfile){wrap.innerHTML=memberAvatar(myProfile,72)+'<div class="photo-edit-badge">📷</div>';}
+}
+
+function _setDraftHome(v){window._draftHome=v;var h=document.getElementById('sb-home'),o=document.getElementById('sb-out');if(!h||!o)return;if(v){h.classList.add('hmon');o.classList.remove('outon');}else{o.classList.add('outon');h.classList.remove('hmon');}}
+function _setDraftMood(v){window._draftMood=v;document.querySelectorAll('#edit-mood-row .mood-btn').forEach(function(b){b.classList.toggle('on',b.textContent===v);});}
+function openStatusEdit(){
+  var myCard=document.getElementById('myStatusCard');if(!myCard||!currentUser)return;
+  var em=gm(currentUser.uid);
+  var ss=state.status[currentUser.uid]||{home:true,ret:''};
+  var cm=state.mood[currentUser.uid]||'';
+  window._draftHome=(ss.home!==undefined?ss.home:true);
+  window._draftMood=cm;
+  var h='<div style="display:flex;align-items:center;margin-bottom:14px">';
+  h+='<span style="font-size:28px">'+em.emoji+'</span>';
+  h+='<span style="font-size:15px;font-weight:700;margin-left:8px">'+em.name+'</span>';
+  h+='<span style="font-size:9px;background:var(--yl);color:var(--br);padding:1px 6px;border-radius:5px;margin-left:6px">自分</span></div>';
+  h+='<div class="su-btns">';
+  h+='<button id="sb-home" class="su-btn '+(ss.home?'hmon':'')+'" onclick="_setDraftHome(true)">🏠 在宅</button>';
+  h+='<button id="sb-out" class="su-btn '+(!ss.home?'outon':'')+'" onclick="_setDraftHome(false)">🚶 外出</button>';
+  h+='</div>';
+  h+='<div class="ret-row"><span class="ret-lbl">帰宅予定</span>';
+  h+='<input class="ret-inp" id="draft-ret" type="time" value="'+(ss.ret||'')+'"></div>';
+  h+='<div class="mood-sec"><div class="mood-lbl">今日の気分</div>';
+  h+='<div class="mood-row" id="edit-mood-row">';
+  MOODS.forEach(function(mv){
+    h+='<button class="mood-btn '+(cm===mv?'on':'')+'" onclick="_setDraftMood('+JSON.stringify(mv)+')">'+mv+'</button>';
+  });
+  h+='</div></div>';
+  h+='<div style="display:flex;gap:8px;margin-top:14px">';
+  h+='<button class="btn btn-ghost" style="flex:1;padding:10px" onclick="renderSUPage()">キャンセル</button>';
+  h+='<button id="status-save-btn" class="btn btn-o" style="flex:2;padding:10px;font-size:14px;font-weight:700" onclick="saveMyStatus()">更新する</button>';
+  h+='</div>';
+  myCard.innerHTML=h;
+}
+function openDeleteAccount(){
+  var mc=document.getElementById('mc');if(!mc)return;
+  var h='<div class="m-title" style="color:var(--rd)">⚠️ アカウント削除</div>';
+  h+='<div style="background:rgba(201,64,64,.08);border:1.5px solid rgba(201,64,64,.25);border-radius:12px;padding:12px;margin-bottom:14px;font-size:12px;line-height:1.9">';
+  h+='削除されるデータ：<br>・プロフィール・ステータス<br>・あなたの予定・タスク・買い物<br>・位置情報<br>';
+  h+='<b style="color:var(--rd)">この操作は取り消せません。</b></div>';
+  h+='<div class="fg"><label class="fl">確認のため「削除する」と入力してください</label>';
+  h+='<input class="fi" id="del-confirm-inp" placeholder="削除する"></div>';
+  h+='<button style="background:var(--rd);color:#fff;padding:13px;font-size:14px;font-weight:700;border-radius:12px;border:none;margin-top:8px;width:100%;cursor:pointer" onclick="execDeleteAccount()">完全に削除する</button>';
+  h+='<button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="closeModal()">キャンセル</button>';
+  mc.innerHTML=h;openOv();
+}
+async function execDeleteAccount(){
+  var inp=document.getElementById('del-confirm-inp');
+  if(!inp||inp.value!=='削除する'){showToast('「削除する」と入力してください');return;}
+  if(!currentUser||!ROOM){showToast('ログインしてください');return;}
+  showToast('削除中...');closeModal();
+  try{
+    var dUid=currentUser.uid;
+    var bat=db.batch();
+    ['members','status','locations'].forEach(function(col){bat.delete(db.collection('iedash').doc(ROOM).collection(col).doc(dUid));});
+    var dSchs=await db.collection('iedash').doc(ROOM).collection('schedules').where('member','==',dUid).get();
+    dSchs.docs.forEach(function(dd){bat.delete(dd.ref);});
+    await bat.commit();
+    ['iedash_room_'+dUid,'iedash_elder','iedash_dark','iedash_tut_done'].forEach(function(k){localStorage.removeItem(k);});
+    await currentUser.delete();
+    location.reload();
+  }catch(ex){
+    if(ex.code==='auth/requires-recent-login'){
+      showToast('再ログインが必要です。ログアウト後に再ログインしてください');
+    }else{showToast('削除失敗: '+ex.message);}
+  }
+}
+function showGcalComingSoon(){
+  var mc=document.getElementById('mc');if(!mc)return;
+  var h='<div class="m-title">🔗 外部カレンダー連携</div>';
+  h+='<div style="text-align:center;padding:20px 0">';
+  h+='<div style="font-size:48px;margin-bottom:12px">🚧</div>';
+  h+='<div style="font-size:16px;font-weight:700;color:var(--br);margin-bottom:8px">実装準備中</div>';
+  h+='<div style="font-size:13px;color:var(--t2);line-height:1.7">GoogleカレンダーやiCalとの連携機能を<br>準備しています。もうしばらくお待ちください。</div></div>';
+  h+='<button class="btn btn-ghost btn-full" onclick="closeModal()">閉じる</button>';
+  mc.innerHTML=h;openOv();
+}
+</script>
+<!-- ══ チュートリアル ══ -->
+<div id="tutOverlay" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(20,10,5,.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center">
+  <div style="background:var(--cd);border-radius:24px;margin:20px;max-width:380px;width:100%;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.3)">
+    <div style="height:5px;background:var(--wm);position:relative">
+      <div id="tutProgress" style="height:100%;background:var(--ac);border-radius:5px;transition:width .3s"></div>
+    </div>
+    <div style="padding:24px">
+      <div id="tutIcon" style="font-size:48px;text-align:center;margin-bottom:12px"></div>
+      <div id="tutTitle" style="font-size:18px;font-weight:800;color:var(--tx);text-align:center;margin-bottom:8px"></div>
+      <div id="tutBody" style="font-size:13px;color:var(--t2);line-height:1.8;text-align:center;min-height:80px"></div>
+      <div id="tutImgArea" style="margin:12px 0;text-align:center;min-height:40px"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px 20px">
+      <button id="tutSkip" onclick="closeTutorial()" style="background:none;border:none;color:var(--t3);font-size:12px;cursor:pointer;padding:8px">スキップ</button>
+      <div id="tutDots" style="display:flex;gap:6px"></div>
+      <button id="tutNext" onclick="tutNext()" style="background:var(--ac);color:#fff;border:none;border-radius:12px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer">次へ →</button>
+    </div>
+  </div>
+</div>
+</body></html>
