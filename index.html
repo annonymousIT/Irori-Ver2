@@ -1,5 +1,4 @@
-<!DOCTYP
-      <button id="app-refresh-btn" onclick="appRefresh()" style="background:rgba(255,255,255,.13);border:none;border-radius:9px;color:#fff;font-size:17px;padding:5px 8px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent"><span id="refresh-icon" style="display:inline-block">🔄</span></button>E html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -695,6 +694,7 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 </div>
       <button class="ibtn" id="myBtn" onclick="openEditProfile()">👤</button>
       <button class="gear-btn" onclick="setPage('settings',null)">⚙️</button>
+      <button id="app-refresh-btn" onclick="appRefresh()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:20px;padding:4px 6px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;line-height:1;display:flex;align-items:center;justify-content:center;" title="更新"><span id="refresh-icon">🔄</span></button>
     </div>
   </div>
 </div>
@@ -925,10 +925,14 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
   </div>
   <div class="iset-section">
     <div class="iset-group">
+      <div class="iset-row" onclick="startTutorial()" style="cursor:pointer">
+        <span class="iset-icon" style="background:var(--ac)">📖</span>
+        <div class="iset-row-body"><div class="iset-row-title">使い方ガイド</div><div class="iset-row-sub">アプリの基本操作を確認</div></div>
+        <span class="iset-arrow">›</span>
+      </div>
       <div class="iset-row" style="border:none;cursor:default">
         <span class="iset-icon" style="background:#8A8A8A">ℹ️</span>
-    <div onclick="startTutorial()" class="iset-row" style="cursor:pointer"><span style="font-size:18px">📖</span><div class="iset-label">使い方ガイド</div><span class="iset-arrow">›</span></div>
-        <div class="iset-row-body"><div class="iset-row-title">バージョン</div><div class="iset-row-sub">Irori v1.0.0</div></div>
+        <div class="iset-row-body"><div class="iset-row-title">バージョン</div><div class="iset-row-sub">Irori v1.5.0</div></div>
       </div>
     </div>
   </div>
@@ -1003,17 +1007,38 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 <div class="overlay" id="modal" onclick="ocl(event)"><div class="sheet"><div class="handle"></div><div id="mc"></div></div></div>
 
 <script>
+function normalizeCalUrl(url){
+  // embed形式 → ical形式
+  var em=url.match(/calendar\.google\.com\/calendar\/embed\?src=([^&]+)/);
+  if(em){
+    var src=decodeURIComponent(em[1]);
+    var enc=encodeURIComponent(src);
+    return 'https://calendar.google.com/calendar/ical/'+enc+'/public/basic.ics';
+  }
+  // すでにical形式
+  if(url.includes('calendar.google.com/calendar/ical'))return url;
+  // r/basic.ics がない場合補完
+  if(url.includes('calendar.google.com')&&!url.includes('.ics')){
+    var m2=url.match(/\/ical\/([^/]+)/);
+    if(m2)return 'https://calendar.google.com/calendar/ical/'+m2[1]+'/public/basic.ics';
+  }
+  return url;
+}
 
 // ━━ Tutorial ━━
 var TUTO_STEPS=[{title:'🏠 Iroriへようこそ！',body:'家族みんなの今を一目で確認できるアプリです。\nまず基本的な使い方を紹介します！',target:null,pos:'center'},{title:'👪 家族タブ',body:'在宅状況・ご飯・ゴミ出しなど\n家族全員の情報をここで確認できます。',target:'#ni-home',pos:'top'},{title:'✅ やることタブ',body:'買い物リスト・タスク・お風呂の状況を\n管理できます。',target:'#ni-todo',pos:'top'},{title:'📅 予定タブ',body:'家族の予定を月・週・日で確認。\nGoogleカレンダーの連携もできます。',target:'#ni-calendar',pos:'top'},{title:'🙋 じぶんタブ',body:'自分の在宅・外出・帰宅時間などを\n更新して家族にシェアしましょう。',target:'#ni-status',pos:'top'},{title:'➕ 追加ボタン',body:'右下のボタンから予定・買い物・タスクを\nサッと追加できます。',target:'#fabBtn',pos:'top'},{title:'🔄 更新ボタン',body:'右上の🔄ボタンで最新情報に更新できます。',target:'#app-refresh-btn',pos:'bottom'},{title:'🎉 準備完了！',body:'これでIroriの基本はバッチリ！\n毎日の家族コミュニケーションに\n役立ててください😊',target:null,pos:'center'}];
 var _tStep=0,_tActive=false;
-function startTutorial(){_tStep=0;_tActive=true;localStorage.setItem('iedash_tuto_'+ROOM,'0');_showTStep();}
-function _showTStep(){var ov=document.getElementById('tuto-overlay');var hl=document.getElementById('tuto-hl');if(!ov)return;if(_tStep>=TUTO_STEPS.length){endTutorial();return;}var s=TUTO_STEPS[_tStep];ov.classList.add('active');if(s.target&&hl){var el2=document.querySelector(s.target);if(el2){var r=el2.getBoundingClientRect();hl.style.cssText='display:block;left:'+(r.left-6)+'px;top:'+(r.top-6)+'px;width:'+(r.width+12)+'px;height:'+(r.height+12)+'px';setTimeout(function(){el2.scrollIntoView({block:'nearest',behavior:'smooth'});},100);}else{hl.style.display='none';}}else if(hl){hl.style.display='none';}var prog=TUTO_STEPS.map(function(_x,i){return '<div class="tuto-dot'+(i===_tStep?' on':'')+'"></div>';}).join('');var isLast=(_tStep===TUTO_STEPS.length-1);var cs='left:16px;right:16px;';if(s.pos==='top'){cs+='bottom:80px;'}else if(s.pos==='bottom'){cs+='top:80px;'}else{cs+='top:50%;transform:translateY(-50%)';}ov.innerHTML='<div class="tuto-backdrop"></div>'+'<div class="tuto-card" style="'+cs+'">'+'<div class="tuto-progress">'+prog+'</div>'+'<div class="tuto-title">'+s.title+'</div>'+'<div class="tuto-body">'+s.body.replace(/\n/g,'<br>')+'</div>'+'<div class="tuto-btns">'+'<button class="tuto-btn tuto-btn-skip" onclick="endTutorial()">スキップ</button>'+'<button class="tuto-btn tuto-btn-next" onclick="_nextT()">'+(isLast?'完了 🎉':'次へ →')+'</button>'+'</div></div>';}
+function startTutorial(){_tStep=0;_tActive=true;localStorage.setItem('iedash_tuto_'+ROOM,'0');// グローバルに公開してinnerHTML内のonclickで呼べるようにする
+window.tutoNext=function(){_tStep++;if(_tStep<TUTO_STEPS.length){_showTStep();}else{endTutorial();}}
+window.tutoSkip=function(){endTutorial();}
+_showTStep();}
+function _showTStep(){var ov=document.getElementById('tuto-overlay');var hl=document.getElementById('tuto-hl');if(!ov)return;if(_tStep>=TUTO_STEPS.length){endTutorial();return;}var s=TUTO_STEPS[_tStep];ov.classList.add('active');if(s.target&&hl){var el2=document.querySelector(s.target);if(el2){var r=el2.getBoundingClientRect();hl.style.cssText='display:block;left:'+(r.left-6)+'px;top:'+(r.top-6)+'px;width:'+(r.width+12)+'px;height:'+(r.height+12)+'px';setTimeout(function(){el2.scrollIntoView({block:'nearest',behavior:'smooth'});},100);}else{hl.style.display='none';}}else if(hl){hl.style.display='none';}var prog=TUTO_STEPS.map(function(_x,i){return '<div class="tuto-dot'+(i===_tStep?' on':'')+'"></div>';}).join('');var isLast=(_tStep===TUTO_STEPS.length-1);var cs='left:16px;right:16px;';if(s.pos==='top'){cs+='bottom:80px;'}else if(s.pos==='bottom'){cs+='top:80px;'}else{cs+='top:50%;transform:translateY(-50%)';}ov.innerHTML='<div class="tuto-backdrop"></div>'+'<div class="tuto-card" style="'+cs+'">'+'<div class="tuto-progress">'+prog+'</div>'+'<div class="tuto-title">'+s.title+'</div>'+'<div class="tuto-body">'+s.body.replace(/\n/g,'<br>')+'</div>'+'<div class="tuto-btns">'+'<button class="tuto-btn tuto-btn-skip" onclick="tutoSkip()">スキップ</button>'+'<button class="tuto-btn tuto-btn-next" onclick="tutoNext()">'+(isLast?'完了 🎉':'次へ →')+'</button>'+'</div></div>';}
 function _nextT(){_tStep++;if(_tStep<TUTO_STEPS.length){_showTStep();}else{endTutorial();}}
+window._nextT=_nextT;
 function endTutorial(){_tActive=false;var ov=document.getElementById('tuto-overlay');if(ov){ov.classList.remove('active');ov.innerHTML='';}var hl=document.getElementById('tuto-hl');if(hl)hl.style.display='none';localStorage.setItem('iedash_tuto_'+ROOM,'1');}
 function _checkTuto(){if(!localStorage.getItem('iedash_tuto_'+ROOM))setTimeout(startTutorial,1000);}
 
-function appRefresh(){const ic=document.getElementById('refresh-icon');if(ic)ic.style.animation='spin .7s linear infinite';showToast('🔄 更新中...');[renderTabs,renderSG,renderBath,renderMeal,renderMealTime,renderTrash,renderCal].forEach(function(fn){try{fn();}catch(e){}});fetchIcalEvents().then(function(){try{renderCal();}catch(e){}}).catch(function(){});setTimeout(function(){if(ic)ic.style.animation='';showToast('✅ 更新しました');},1200);}
+function appRefresh(){var ic=document.getElementById('refresh-icon');if(ic){ic.style.transition='none';ic.style.animation='spin .7s linear infinite';}showToast('🔄 更新中...');[renderTabs,renderSG,renderBath,renderMeal,renderMealTime,renderTrash,renderCal].forEach(function(fn){try{fn();}catch(e){}});try{fetchIcalEvents().then(function(){try{renderCal();}catch(e){}}).catch(function(){});}catch(e){}setTimeout(function(){if(ic)ic.style.animation='';showToast('✅ 更新しました');},1200);}
 
 // レンダリングデバウンス
 let _rAF=null;
@@ -2402,18 +2427,21 @@ function loadIcalFeeds(){
 }
 function saveIcalFeeds(){localStorage.setItem('iedash_ical',JSON.stringify(icalFeeds));}
 function addIcalFeed(){
-  const name=document.getElementById('ical-name').value.trim();
-  const url=document.getElementById('ical-url').value.trim();
-  if(!name||!url){alert('名前とURLを入力してください');return;}
-  if(!url.includes('.ics')&&!url.includes('ical')){if(!confirm('URLにicsが含まれていません。続けますか？'))return;}
-  const colors=['#D4663E','#5A9E7C','#6480B8','#E8A040','#8E6BB5'];
-  const color=colors[icalFeeds.length%colors.length];
-  icalFeeds.push({id:Date.now()+'',name,url,color,enabled:true});
+  var name=document.getElementById('ical-name').value.trim();
+  var rawUrl=document.getElementById('ical-url').value.trim();
+  if(!name||!rawUrl){showToast('⚠️ 名前とURLを入力してください');return;}
+  var url=normalizeCalUrl(rawUrl);
+  // Google embedURL → iCal変換完了の通知
+  if(url!==rawUrl)showToast('🔗 GoogleカレンダーURLを変換しました');
+  var colors=['#D4663E','#5A9E7C','#6480B8','#E8A040','#8E6BB5'];
+  var color=colors[icalFeeds.length%colors.length];
+  icalFeeds.push({id:Date.now()+'',name:name,url:url,color:color,enabled:true});
   saveIcalFeeds();
   document.getElementById('ical-name').value='';
   document.getElementById('ical-url').value='';
-  renderIcalFeeds();
-  fetchIcalEvents();
+  showGcalComingSoon();
+  fetchIcalEvents().then(function(){try{renderCal();}catch(e){}}).catch(function(){});
+  showToast('✅ カレンダーを追加しました');
 }
 function delIcalFeed(id){
   icalFeeds=icalFeeds.filter(f=>f.id!==id);saveIcalFeeds();
