@@ -547,6 +547,7 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 #tuto-overlay{position:fixed;inset:0;z-index:9990;pointer-events:none}#tuto-overlay.active{pointer-events:auto}.tuto-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9990}.tuto-card{position:fixed;z-index:9995;background:#fff;border-radius:20px;padding:20px;max-width:320px;width:calc(100% - 32px);box-shadow:0 8px 40px rgba(0,0,0,.25)}.tuto-title{font-size:16px;font-weight:700;color:var(--br);margin-bottom:8px}.tuto-body{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:16px}.tuto-btns{display:flex;gap:8px}.tuto-btn{flex:1;padding:10px;border-radius:12px;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation}.tuto-btn-skip{background:var(--wm);color:var(--t2)}.tuto-btn-next{background:var(--ac);color:#fff}.tuto-progress{display:flex;gap:4px;justify-content:center;margin-bottom:14px}.tuto-dot{width:6px;height:6px;border-radius:50%;background:var(--wm)}.tuto-dot.on{background:var(--ac)}#tuto-hl{position:fixed;z-index:9993;border-radius:14px;box-shadow:0 0 0 3000px rgba(0,0,0,.55),0 0 0 3px var(--ac),0 0 12px rgba(212,102,62,.6);pointer-events:none;transition:all .3s ease}
 </style>
 <script>if('serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(s){s.unregister();});});caches.keys().then(function(k){k.forEach(function(n){caches.delete(n);});});}</script>
+<script src="https://apis.google.com/js/api.js"></script>
 </head>
 <body>
 <div id="loading" style="position:fixed;inset:0;z-index:9999;background:var(--br);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
@@ -1007,6 +1008,124 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 <div class="overlay" id="modal" onclick="ocl(event)"><div class="sheet"><div class="handle"></div><div id="mc"></div></div></div>
 
 <script>
+window._openCalApiPage=function(){window.open('https://console.cloud.google.com/apis/library/calendar-json.googleapis.com?project=family-app-3393e');};
+window._pickCol=function(el,col){
+  document.querySelectorAll('[data-col]').forEach(function(e){e.style.border='3px solid transparent';e.classList.remove('selected');});
+  el.style.border='3px solid var(--br)';el.classList.add('selected');
+};
+
+// ━━ Google Calendar 連携 ━━
+var _gcalToken=null;
+var _gcalCalendars=[];
+
+function openGcalLink(){
+  // Google Calendar OAuth - Firebase authのcredentialを再利用
+  // まずFirebaseでCalendar scopeを要求
+  var provider=new firebase.auth.GoogleAuthProvider();
+  provider.addScope('https://www.googleapis.com/auth/calendar.readonly');
+  auth.currentUser.getIdToken(true).catch(function(){});
+
+  // signInWithPopupでcalendar scopeを追加取得
+  auth.signInWithPopup(provider).then(function(result){
+    var credential=result.credential;
+    _gcalToken=credential.accessToken;
+    _fetchGcalList(_gcalToken);
+  }).catch(function(e){
+    if(e.code==='auth/popup-blocked'||e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request'){
+      showToast('⚠️ ポップアップがブロックされました。ブラウザの設定を確認してください');
+    }else if(e.code==='auth/user-cancelled'){
+      showToast('キャンセルしました');
+    }else{
+      showToast('⚠️ '+e.message);
+    }
+  });
+}
+
+function _fetchGcalList(token){
+  showToast('📅 カレンダー一覧を取得中...');
+  fetch('https://www.googleapis.com/calendar/v3/users/me/calendarList?maxResults=50',{
+    headers:{Authorization:'Bearer '+token}
+  }).then(function(r){return r.json();})
+  .then(function(data){
+    if(data.error){
+      if(data.error.code===403){
+        _showCalApiSetupModal();
+      }else if(data.error.code===401){
+        _gcalToken=null;
+        showToast('⚠️ 再認証が必要です。もう一度お試しください');
+      }else{
+        showToast('⚠️ '+data.error.message);
+      }
+      return;
+    }
+    _gcalCalendars=data.items||[];
+    _showGcalSelectModal();
+  }).catch(function(e){
+    showToast('⚠️ カレンダー取得失敗: '+e.message);
+  });
+}
+function _showCalApiSetupModal(){
+  var mc=document.getElementById('mc');if(!mc)return;
+  var h='<div class="m-title">⚙️ 初回設定が必要です</div>';
+  h+='<div style="background:rgba(228,180,75,.1);border:1.5px solid rgba(228,180,75,.4);border-radius:12px;padding:14px;margin-bottom:16px">';
+  h+='<div style="font-size:13px;font-weight:700;color:var(--yl);margin-bottom:8px">📋 Google Calendar APIを有効化</div>';
+  h+='<div style="font-size:12px;color:var(--t2);line-height:2">';
+  h+='① 下のボタンからGoogle Cloudを開く<br>';
+  h+='② 「有効にする」ボタンをクリック<br>';
+  h+='③ このアプリに戻って再度試す</div></div>';
+  h+='<div style="font-size:12px;color:var(--t2);line-height:1.8;margin-bottom:16px">※ 初回のみ必要な作業です（無料）</div>';
+  h+='<button class="btn btn-o btn-full" style="margin-bottom:8px" onclick="_openCalApiPage()">Google Cloud Consoleを開く</button>';
+  h+='<button class="btn btn-ghost btn-full" onclick="showGcalComingSoon()">戻る</button>';
+  mc.innerHTML=h;openOv();
+}
+
+function _showGcalSelectModal(){
+  var mc=document.getElementById('mc');if(!mc)return;
+  var cals=_gcalCalendars;
+  var h='<div class="m-title">📅 カレンダーを選択</div>';
+  h+='<div style="font-size:12px;color:var(--t2);margin-bottom:14px">追加したいカレンダーを選んでください</div>';
+  if(cals.length===0){
+    h+='<div style="text-align:center;padding:20px;color:var(--t2)">カレンダーが見つかりませんでした</div>';
+  }else{
+    h+='<div style="max-height:320px;overflow-y:auto;margin-bottom:12px" id="gcal-list">';
+    cals.forEach(function(cal,i){
+      var col=cal.backgroundColor||'#4285F4';
+      var isAdded=icalFeeds.some(function(f){return f.id==='gcal_'+cal.id;});
+      h+='<label style="display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;margin-bottom:6px;background:var(--wm);cursor:'+(isAdded?'default':'pointer')+';opacity:'+(isAdded?'0.5':'1')+'">';
+      h+='<input type="checkbox" name="gcal-pick" value="'+i+'" '+(isAdded?'checked disabled':'')+' style="width:18px;height:18px;accent-color:'+col+';flex-shrink:0">';
+      h+='<div style="width:14px;height:14px;border-radius:50%;background:'+col+';flex-shrink:0"></div>';
+      h+='<div style="flex:1"><div style="font-size:13px;font-weight:700">'+cal.summary+'</div>';
+      if(isAdded)h+='<div style="font-size:11px;color:var(--gn)">✓ 追加済み</div>';
+      h+='</div></label>';
+    });
+    h+='</div>';
+  }
+  h+='<button class="btn btn-o btn-full" onclick="_addSelectedGcals()" style="margin-bottom:8px">選択して追加</button>';
+  h+='<button class="btn btn-ghost btn-full" onclick="closeModal()">閉じる</button>';
+  mc.innerHTML=h;openOv();
+}
+window._addSelectedGcals=function(){
+  var checked=document.querySelectorAll('[name=gcal-pick]:checked:not(:disabled)');
+  if(checked.length===0){showToast('⚠️ カレンダーを選んでください');return;}
+  var added=0;
+  checked.forEach(function(cb){
+    var idx=parseInt(cb.value);
+    var cal=_gcalCalendars[idx];
+    if(!cal)return;
+    var col=cal.backgroundColor||'#4285F4';
+    if(!icalFeeds.some(function(f){return f.id==='gcal_'+cal.id;})){
+      // gcalId + token で登録（API経由でプライベートカレンダーも取得可能）
+      icalFeeds.push({id:'gcal_'+cal.id,name:cal.summary,url:'gcal://'+cal.id,color:col,enabled:true,gcalId:cal.id,token:_gcalToken});
+      added++;
+    }
+  });
+  if(added===0){showToast('選択されたカレンダーはすでに追加済みです');return;}
+  saveIcalFeeds();
+  showToast('✅ '+added+'件のカレンダーを連携しました！');
+  fetchIcalEvents().then(function(){try{renderCal();}catch(e){}}).catch(function(){});
+  showGcalComingSoon();
+  renderCalFilter();
+};
 function normalizeCalUrl(url){
   // embed形式 → ical形式
   var em=url.match(/calendar\.google\.com\/calendar\/embed\?src=([^&]+)/);
@@ -2426,20 +2545,41 @@ function loadIcalFeeds(){
   try{icalFeeds=JSON.parse(localStorage.getItem('iedash_ical')||'[]');}catch{icalFeeds=[];}
 }
 function saveIcalFeeds(){localStorage.setItem('iedash_ical',JSON.stringify(icalFeeds));}
-function addIcalFeed(){
-  var name=document.getElementById('ical-name').value.trim();
-  var rawUrl=document.getElementById('ical-url').value.trim();
-  if(!name||!rawUrl){showToast('⚠️ 名前とURLを入力してください');return;}
+function addIcalFeed(){addIcalFeedManual();}
+
+function _refreshFeedList(){
+  var sec=document.getElementById('gcal-list-section');if(!sec)return;
+  var feeds=icalFeeds||[];
+  if(feeds.length===0){sec.innerHTML='<div style="text-align:center;padding:8px;color:var(--t2);font-size:13px">まだ登録されていません</div>';return;}
+  sec.innerHTML=feeds.map(function(f,i){
+    return '<div style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--wm);border-radius:10px;margin-bottom:6px">'
+    +'<div style="width:12px;height:12px;border-radius:50%;background:'+f.color+';flex-shrink:0"></div>'
+    +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+f.name+'</div>'
+    +'<div style="font-size:10px;color:var(--t2);">'+(f.gcalId?'📅 Google Calendar':'🔗 iCal')+'</div></div>'
+    +'<label style="font-size:12px;cursor:pointer;display:flex;align-items:center;gap:3px">'
+    +'<input type="checkbox" '+(f.enabled?'checked':'')+' onchange="togIcalFeed('+i+',this.checked)" style="width:16px;height:16px"> 表示</label>'
+    +'<button onclick="delIcalFeed('+i+')" style="background:none;border:none;color:#C94040;font-size:18px;cursor:pointer;padding:0 4px">🗑</button>'
+    +'</div>';
+  }).join('');
+}
+function addIcalFeedManual(){
+  var nameEl=document.getElementById('ical-name-inp')||document.getElementById('ical-name');
+  var urlEl=document.getElementById('ical-url-inp')||document.getElementById('ical-url');
+  if(!nameEl||!urlEl){showToast('⚠️ フォームが見つかりません');return;}
+  var name=nameEl.value.trim();
+  var rawUrl=urlEl.value.trim();
+  if(!name||!rawUrl){showToast('⚠️ カレンダー名とURLを入力してください');return;}
   var url=normalizeCalUrl(rawUrl);
-  // Google embedURL → iCal変換完了の通知
-  if(url!==rawUrl)showToast('🔗 GoogleカレンダーURLを変換しました');
-  var colors=['#D4663E','#5A9E7C','#6480B8','#E8A040','#8E6BB5'];
-  var color=colors[icalFeeds.length%colors.length];
+  if(url!==rawUrl)showToast('🔗 Google URLを自動変換しました');
+  var selCol=document.querySelector('[data-col].selected');
+  var color=selCol?selCol.dataset.col:'#D4663E';
   icalFeeds.push({id:Date.now()+'',name:name,url:url,color:color,enabled:true});
   saveIcalFeeds();
-  document.getElementById('ical-name').value='';
-  document.getElementById('ical-url').value='';
-  showGcalComingSoon();
+  if(nameEl)nameEl.value='';
+  if(urlEl)urlEl.value='';
+  // モーダル内の登録済み一覧を更新（モーダルは閉じない）
+  var sec=document.getElementById('gcal-list-section');
+  if(sec)_refreshFeedList();
   fetchIcalEvents().then(function(){try{renderCal();}catch(e){}}).catch(function(){});
   showToast('✅ カレンダーを追加しました');
 }
@@ -2492,20 +2632,46 @@ function parseIcal(text){
 
 let icalEventsCache={};
 async function fetchIcalEvents(){
-  for(const feed of icalFeeds){
-    if(!feed.enabled)continue;
-    try{
-      // Use a CORS proxy since iCal URLs are cross-origin
-      const proxyUrl='https://api.allorigins.win/raw?url='+encodeURIComponent(feed.url);
-      const r=await fetch(proxyUrl);
-      const text=await r.text();
-      icalEventsCache[feed.id]={events:parseIcal(text),color:feed.color,name:feed.name};
-    }catch(e){
-      console.warn('iCal fetch failed for',feed.name,e);
-      icalEventsCache[feed.id]={events:[],color:feed.color,name:feed.name};
+  var promises=(icalFeeds||[]).filter(function(f){return f.enabled;}).map(function(feed){
+    // Google Calendar API直接取得（tokenがある場合）
+    var tok=feed.token||_gcalToken;
+    if(feed.gcalId&&tok){
+      var now=new Date();
+      var min=new Date(now.getFullYear(),now.getMonth()-1,1).toISOString();
+      var max=new Date(now.getFullYear(),now.getMonth()+3,1).toISOString();
+      return fetch('https://www.googleapis.com/calendar/v3/calendars/'+encodeURIComponent(feed.gcalId)+'/events?timeMin='+encodeURIComponent(min)+'&timeMax='+encodeURIComponent(max)+'&singleEvents=true&maxResults=100',{
+        headers:{Authorization:'Bearer '+tok}
+      }).then(function(r){return r.json();})
+      .then(function(data){
+        if(data.error){
+          // tokenが切れた場合はiCal fallback
+          return _fetchIcalProxy(feed);
+        }
+        var evts=(data.items||[]).map(function(e){
+          return {
+            title:e.summary||'(無題)',
+            start:e.start&&(e.start.dateTime||e.start.date),
+            end:e.end&&(e.end.dateTime||e.end.date),
+            allDay:!!(e.start&&e.start.date&&!e.start.dateTime),
+            uid:e.id
+          };
+        });
+        icalEventsCache[feed.id]={events:evts,color:feed.color,name:feed.name};
+      }).catch(function(){return _fetchIcalProxy(feed);});
     }
-  }
-  renderIcalEvts();
+    return _fetchIcalProxy(feed);
+  });
+  return Promise.all(promises).then(function(){renderIcalEvts();});
+}
+function _fetchIcalProxy(feed){
+  var proxyUrl='https://api.allorigins.win/raw?url='+encodeURIComponent(feed.url);
+  return fetch(proxyUrl).then(function(r){return r.text();})
+  .then(function(text){
+    icalEventsCache[feed.id]={events:parseIcal(text),color:feed.color,name:feed.name};
+  }).catch(function(e){
+    console.warn('iCal fetch failed',feed.name,e);
+    icalEventsCache[feed.id]={events:[],color:feed.color,name:feed.name};
+  });
 }
 function renderIcalEvts(){
   const el=document.getElementById('icalEvts');if(!el)return;
@@ -3115,7 +3281,59 @@ async function execDeleteAccount(){
     }else{showToast('削除失敗: '+ex.message);}
   }
 }
-function showGcalComingSoon(){var mc=document.getElementById('mc');if(!mc)return;var feeds=icalFeeds||[];var h='<div class="m-title">📅 外部カレンダー連携</div>';h+='<div style="background:rgba(212,102,62,.1);border:1.5px solid rgba(212,102,62,.3);border-radius:12px;padding:12px;margin-bottom:14px">';h+='<div style="font-size:13px;font-weight:700;color:var(--ac);margin-bottom:6px">📌 Googleカレンダーの追加方法</div>';h+='<div style="font-size:12px;color:var(--t2);line-height:1.9">① Googleカレンダーを開く<br>② カレンダーの⋮→「設定と共有」<br>③ 「カレンダーURL (iCal)」をコピー<br>④ 下のフォームにペーストして追加</div></div>';if(feeds.length>0){h+='<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px">📋 登録済み</div>';feeds.forEach(function(f,i){h+='<div style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--wm);border-radius:10px;margin-bottom:6px">';h+='<div style="width:12px;height:12px;border-radius:50%;background:'+f.color+';flex-shrink:0"></div>';h+='<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+f.name+'</div>';h+='<div style="font-size:10px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+f.url+'</div></div>';h+='<label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer">';h+='<input type="checkbox" '+(f.enabled?'checked':'')+' onchange="togIcalFeed('+i+',this.checked)" style="width:16px;height:16px"> 表示</label>';h+='<button onclick="delIcalFeed('+i+')" style="background:none;border:none;color:#C94040;font-size:20px;cursor:pointer;padding:0 4px;touch-action:manipulation">🗑</button>';h+='</div>';});}else{h+='<div style="text-align:center;padding:12px;color:var(--t2);font-size:13px">まだ登録されていません</div>';}h+='<div style="border-top:1px solid var(--wm);margin:12px 0 10px;padding-top:12px">';h+='<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px">➕ カレンダーを追加</div>';h+='<input type="text" class="fi" id="ical-name" placeholder="カレンダー名" style="margin-bottom:8px">';h+='<input type="url" class="fi" id="ical-url" placeholder="iCal URL (.ics)" style="margin-bottom:10px">';var COLS=['#D4663E','#6480B8','#5A9E7C','#E8B84B','#C94040','#9B59B6'];h+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:12px"><span style="font-size:12px;font-weight:700;color:var(--t2)">色:</span>';COLS.forEach(function(c,i){h+='<input type="radio" name="ical-col" value="'+c+'" id="ic'+i+'" '+(i===0?'checked':'')+' style="display:none">';h+='<label for="ic'+i+'" style="width:26px;height:26px;border-radius:50%;background:'+c+';display:inline-block;cursor:pointer;border:3px solid '+(i===0?'var(--br)':'transparent')+'" onclick="document.querySelectorAll(\'[name=ical-col]+label\').forEach(function(l){l.style.border=\'3px solid transparent\'});this.style.border=\'3px solid var(--br)\'"></label>';});h+='</div>';h+='<button class="btn btn-o btn-full" onclick="addIcalFeed()">追加</button></div>';h+='<button class="btn btn-ghost btn-full" style="margin-top:4px" onclick="closeModal();fetchIcalEvents().then(function(){try{renderCal();}catch(e){}})">保存して閉じる</button>';mc.innerHTML=h;openOv();}
+function showGcalComingSoon(){
+  var mc=document.getElementById('mc');if(!mc)return;
+  var feeds=icalFeeds||[];
+  var h='<div class="m-title">📅 カレンダー連携</div>';
+
+  // メインCTA: Googleアカウントで連携
+  h+='<div style="background:linear-gradient(135deg,#4285F4,#34A853);border-radius:16px;padding:16px;margin-bottom:16px;text-align:center">';
+  h+='<div style="font-size:28px;margin-bottom:6px">🗓️</div>';
+  h+='<div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px">Googleアカウントで連携</div>';
+  h+='<div style="font-size:11px;color:rgba(255,255,255,.8);margin-bottom:12px">ログイン中のGoogleアカウントの<br>カレンダーを自動で取得します</div>';
+  h+='<button onclick="openGcalLink()" style="background:#fff;color:#4285F4;border:none;border-radius:10px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;touch-action:manipulation">';
+  h+='<svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>';
+  h+='Googleカレンダーを選ぶ</button>';
+  h+='</div>';
+
+  // 登録済み一覧
+  h+='<div id="gcal-list-section">';
+  if(feeds.length>0){
+    h+='<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px">📋 登録済み（'+feeds.length+'件）</div>';
+    feeds.forEach(function(f,i){
+      h+='<div style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--wm);border-radius:10px;margin-bottom:6px">';
+      h+='<div style="width:12px;height:12px;border-radius:50%;background:'+f.color+';flex-shrink:0"></div>';
+      h+='<div style="flex:1;min-width:0">';
+      h+='<div style="font-size:13px;font-weight:700">'+f.name+'</div>';
+      h+='<div style="font-size:10px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(f.gcalId?'📅 Google Calendar':'🔗 iCal')+'</div></div>';
+      h+='<label style="font-size:12px;cursor:pointer;display:flex;align-items:center;gap:3px">';
+      h+='<input type="checkbox" '+(f.enabled?'checked':'')+' onchange="togIcalFeed('+i+',this.checked)" style="width:16px;height:16px"> 表示</label>';
+      h+='<button onclick="delIcalFeed('+i+')" style="background:none;border:none;color:#C94040;font-size:20px;cursor:pointer;padding:0 4px;touch-action:manipulation">🗑</button>';
+      h+='</div>';
+    });
+  }
+  h+='</div>';
+
+  // 手動URL入力（折りたたみ）
+  h+='<details style="margin-top:12px">';
+  h+='<summary style="font-size:12px;color:var(--t2);cursor:pointer;padding:8px 0;list-style:none;display:flex;align-items:center;gap:6px">';
+  h+='<span>🔗</span><span>URLで手動追加</span><span style="margin-left:auto;font-size:10px">▼</span></summary>';
+  h+='<div style="padding-top:10px">';
+  h+='<input type="text" class="fi" id="ical-name-inp" placeholder="カレンダー名（例: お父さん）" style="margin-bottom:8px">';
+  h+='<input type="url" class="fi" id="ical-url-inp" placeholder="iCal URL または Google embed URL" style="margin-bottom:10px">';
+  h+='<div style="font-size:11px;color:var(--t2);background:var(--wm);border-radius:8px;padding:8px;margin-bottom:10px">';
+  h+='💡 Google CalendarのembedURLも貼り付け可能<br>（自動でiCal形式に変換します）</div>';
+  var COLS2=['#D4663E','#6480B8','#5A9E7C','#E8B84B','#C94040','#9B59B6'];
+  h+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:12px"><span style="font-size:12px;font-weight:700;color:var(--t2)">色:</span>';
+  COLS2.forEach(function(c,i){
+    h+='<div onclick="_pickCol(this,\''+c+'\')" data-col="'+c+'" style="width:24px;height:24px;border-radius:50%;background:'+c+';cursor:pointer;border:3px solid '+(i===0?'var(--br)':'transparent')+';flex-shrink:0;touch-action:manipulation"></div>';
+  });
+  h+='</div>';
+  h+='<button class="btn btn-o btn-full" onclick="addIcalFeedManual()">追加</button>';
+  h+='</div></details>';
+  h+='<button class="btn btn-ghost btn-full" style="margin-top:12px" onclick="closeModal()">閉じる</button>';
+  mc.innerHTML=h;openOv();
+}
 </script>
 <!-- ══ チュートリアル ══ -->
 <div id="tutOverlay" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(20,10,5,.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center">
