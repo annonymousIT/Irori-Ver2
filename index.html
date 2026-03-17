@@ -412,7 +412,7 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 .gcal-evt-pill{font-size:10px;font-weight:700;padding:1px 4px;border-radius:4px;margin-bottom:1px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;line-height:1.5}
 .gcal-more{font-size:10px;color:var(--t3);text-align:right;padding-right:2px}
 /* Bath checkboxes */
-.bath-chk{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px 8px;border-radius:14px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;transition:all .15s;width:100%;min-height:84px;box-sizing:border-box;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-appearance:none;appearance:none;position:relative;z-index:1;pointer-events:auto}
+.bath-chk{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:14px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;transition:all .15s;width:100%;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none}
 .bath-chk-on.bath-blue{border-color:#6480B8;background:rgba(100,128,184,.1);color:#6480B8}
 .bath-chk-on.bath-green{border-color:#5A9E7C;background:rgba(90,158,124,.1);color:#5A9E7C}
 
@@ -429,7 +429,7 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 .item-in{animation:itemIn .18s ease both}
 
 /* ══ FAB ══ */
-.fab-wrap{position:fixed;bottom:76px;right:16px;z-index:300;display:flex;flex-direction:column;align-items:flex-end;gap:10px;pointer-events:none}.fab-main{pointer-events:auto!important}
+.fab-wrap{position:fixed;bottom:76px;right:16px;z-index:300;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
 .fab-main{width:52px;height:52px;border-radius:50%;background:var(--ac);border:none;color:#fff;font-size:28px;cursor:pointer;box-shadow:0 4px 18px rgba(212,102,62,.4);display:flex;align-items:center;justify-content:center;transition:transform .22s,background .22s;line-height:1}
 .fab-main.open{transform:rotate(45deg);background:var(--br)}
 .fab-items{display:flex;flex-direction:column;align-items:flex-end;gap:8px;pointer-events:none;opacity:0;transform:translateY(12px);transition:opacity .2s,transform .2s}
@@ -542,25 +542,64 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 
 @keyframes ldbar{0%,100%{width:30%;margin-left:0}50%{width:60%;margin-left:20%}}
 .hide{display:none!important}
+/* ── PC レイアウト ── */
+.app-shell{display:flex;flex-direction:column;height:100dvh;height:100vh;overflow:hidden}
+.hdr{flex-shrink:0}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.bnav{flex-shrink:0;position:relative;z-index:200}
+@media(min-width:600px){
+  html,body{background:var(--wm);height:100%}
+  body{display:flex;justify-content:center}
+  .app-shell{width:480px;box-shadow:0 0 60px rgba(0,0,0,.2)}
+  .overlay{left:calc(50% - 240px)!important;width:480px!important}
+  .fab-wrap{right:calc(50% - 240px + 16px)!important}
+}
+/* ── カレンダーフィルタ ── */
+.cal-filter-wrap{padding:6px 12px 2px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.cal-fc{display:inline-flex;gap:6px;white-space:nowrap;padding-bottom:4px}
+.cal-fc button{padding:4px 10px;border-radius:16px;border:1.5px solid var(--wm);background:var(--cd);font-size:11px;font-weight:700;color:var(--t2);cursor:pointer;touch-action:manipulation;transition:all .15s}
+.cal-fc button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+/* ── チュートリアル ── */
+#tuto-overlay{position:fixed;inset:0;z-index:9990;pointer-events:none}
+#tuto-overlay.active{pointer-events:auto}
+.tuto-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9990}
+.tuto-card{position:fixed;z-index:9995;background:#fff;border-radius:20px;padding:20px;max-width:320px;width:calc(100% - 32px);box-shadow:0 8px 40px rgba(0,0,0,.25)}
+.tuto-title{font-size:16px;font-weight:700;color:var(--br);margin-bottom:8px}
+.tuto-body{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:16px}
+.tuto-btns{display:flex;gap:8px}
+.tuto-btn{flex:1;padding:10px;border-radius:12px;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation}
+.tuto-btn-skip{background:var(--wm);color:var(--t2)}
+.tuto-btn-next{background:var(--ac);color:#fff}
+.tuto-progress{display:flex;gap:4px;justify-content:center;margin-bottom:14px}
+.tuto-dot{width:6px;height:6px;border-radius:50%;background:var(--wm)}
+.tuto-dot.on{background:var(--ac)}
+#tuto-hl{position:fixed;z-index:9993;border-radius:14px;box-shadow:0 0 0 3000px rgba(0,0,0,.55),0 0 0 3px var(--ac),0 0 12px rgba(212,102,62,.6);pointer-events:none;transition:all .3s ease}
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-.cal-filter-wrap{padding:6px 12px 2px;overflow-x:auto;-webkit-overflow-scrolling:touch}.cal-fc{display:inline-flex;gap:6px;white-space:nowrap;padding-bottom:4px}.cal-fc button{padding:4px 10px;border-radius:16px;border:1.5px solid var(--wm);background:var(--cd);font-size:11px;font-weight:700;color:var(--t2);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:all .15s}.cal-fc button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
-#tuto-overlay{position:fixed;inset:0;z-index:9990;pointer-events:none}#tuto-overlay.active{pointer-events:auto}.tuto-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9990}.tuto-card{position:fixed;z-index:9995;background:#fff;border-radius:20px;padding:20px;max-width:320px;width:calc(100% - 32px);box-shadow:0 8px 40px rgba(0,0,0,.25)}.tuto-title{font-size:16px;font-weight:700;color:var(--br);margin-bottom:8px}.tuto-body{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:16px}.tuto-btns{display:flex;gap:8px}.tuto-btn{flex:1;padding:10px;border-radius:12px;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation}.tuto-btn-skip{background:var(--wm);color:var(--t2)}.tuto-btn-next{background:var(--ac);color:#fff}.tuto-progress{display:flex;gap:4px;justify-content:center;margin-bottom:14px}.tuto-dot{width:6px;height:6px;border-radius:50%;background:var(--wm)}.tuto-dot.on{background:var(--ac)}#tuto-hl{position:fixed;z-index:9993;border-radius:14px;box-shadow:0 0 0 3000px rgba(0,0,0,.55),0 0 0 3px var(--ac),0 0 12px rgba(212,102,62,.6);pointer-events:none;transition:all .3s ease}
-
+/* ── 在宅グリッド(3列) ── */
+.fam-status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.fam-sc{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 6px;border-radius:12px;background:var(--wm);cursor:pointer;transition:filter .12s;border:1.5px solid transparent;text-align:center;min-height:72px}
+/* ── お風呂ボタン ── */
+.bath-chk{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px 8px;border-radius:14px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;transition:all .15s;width:100%;min-height:84px;box-sizing:border-box;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-appearance:none;appearance:none;position:relative;z-index:1;pointer-events:auto}
+/* ── FAB ── */
+.fab-wrap{pointer-events:none}
+.fab-main{pointer-events:auto!important}
+.fab-items{pointer-events:auto}
+/* ── 位置情報設定 ── */
 /* ── マイページ ウィジェット ── */
-.widget-card{background:var(--cd);border-radius:16px;padding:14px;box-shadow:var(--sh);border:1.5px solid rgba(78,52,37,.08);margin-bottom:12px}
+.widget-card{background:var(--cd);border-radius:16px;padding:14px;box-shadow:var(--sh);border:1.5px solid rgba(78,52,37,.08);margin-bottom:12px;font-size:var(--fs)}
 .widget-hdr{display:flex;align-items:center;gap:6px;margin-bottom:12px}
 .widget-icon{font-size:18px;flex-shrink:0}
-.widget-title{font-size:14px;font-weight:700;color:var(--tx);flex:1}
-.widget-cfg-btn{background:none;border:none;font-size:16px;color:var(--t3);cursor:pointer;padding:2px 4px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-.widget-del-btn{background:none;border:none;font-size:18px;color:var(--t3);cursor:pointer;padding:2px 4px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;line-height:1}
+.widget-title{font-size:var(--ftitle,14px);font-weight:700;color:var(--tx);flex:1}
+.widget-cfg-btn{background:none;border:none;font-size:16px;color:var(--t3);cursor:pointer;padding:2px 4px;touch-action:manipulation}
+.widget-notif-btn{background:none;border:none;font-size:15px;color:var(--t3);cursor:pointer;padding:2px 4px;touch-action:manipulation}
+.widget-del-btn{background:none;border:none;font-size:18px;color:var(--t3);cursor:pointer;padding:2px 4px;touch-action:manipulation;line-height:1}
 .widget-del-btn:active{color:var(--rd)}
 #my-widgets-area{padding:4px 0}
-.mypage-add-fab{position:sticky;bottom:80px;display:flex;justify-content:flex-end;padding:0 0 4px;pointer-events:none}
-.mypage-add-fab button{pointer-events:auto;background:var(--ac);border:none;border-radius:50%;width:48px;height:48px;font-size:24px;color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(212,102,62,.4);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.mypage-add-fab{display:flex;justify-content:center;padding:8px 0 16px}
+.mypage-add-fab button{background:var(--ac);border:none;border-radius:50px;padding:12px 24px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(212,102,62,.4);touch-action:manipulation;font-family:inherit}
 
 </style>
 <script>if('serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(s){s.unregister();});});caches.keys().then(function(k){k.forEach(function(n){caches.delete(n);});});}</script>
-<script src="https://apis.google.com/js/api.js"></script>
 </head>
 <body>
 <div id="loading" style="position:fixed;inset:0;z-index:9999;background:var(--br);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
@@ -697,6 +736,7 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 </div>
 <div id="tuto-overlay"></div>
 <div id="tuto-hl" style="display:none"></div>
+<div class="app-shell">
 <div class="hdr">
   <div class="hdr-top">
     <div class="logo">I<em>rori</em></div>
@@ -708,7 +748,7 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 </div>
       <button class="ibtn" id="myBtn" onclick="openEditProfile()">👤</button>
       <button class="gear-btn" onclick="setPage('settings',null)">⚙️</button>
-      <button id="app-refresh-btn" onclick="appRefresh()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:20px;padding:4px 6px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;line-height:1;display:flex;align-items:center;justify-content:center;" title="更新"><span id="refresh-icon">🔄</span></button>
+      <button id="app-refresh-btn" onclick="appRefresh()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:20px;padding:4px 6px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;line-height:1;display:flex;align-items:center;justify-content:center"><span id="refresh-icon">🔄</span></button>
     </div>
   </div>
 </div>
@@ -725,7 +765,7 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
   <!-- みんなの状況 -->
   <div class="sec">
     <div class="card">
-      <div class="card-hdr"><div class="card-title">🏠 いまだれがいる？</div></div>
+      <div class="card-hdr"><div class="card-title">🏠 いまだれがいる？</div><button onclick="openMyStatusModal()" style="background:none;border:none;font-size:11px;color:var(--ac);font-weight:700;cursor:pointer;padding:4px 8px;touch-action:manipulation">✏️ 更新</button></div>
       <div class="fam-status-grid" id="famStatusGrid"></div>
     </div>
   </div>
@@ -734,7 +774,7 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
     <div class="card">
       <div class="card-hdr">
         <div class="card-title">📍 いまどこにいる？</div>
-        <button class="btn btn-ghost" style="font-size:10px" onclick="shareMyLocation()">共有する</button>
+        <button class="btn btn-ghost" style="font-size:10px" onclick="shareLocation()">共有する</button>
       </div>
       <div id="locList"><div class="empty">まだ誰も共有していません</div></div>
     </div>
@@ -829,19 +869,10 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
   <div style="text-align:center;margin-top:10px" id="calAddBtn"><button class="btn btn-o" style="padding:11px 22px;font-size:14px" onclick="openModal('schedule')">＋ 予定を追加</button></div>
 </div>
 <div class="pg" id="pg-status">
-  <div id="geo-consent-banner" style="display:none;margin:8px 0 0"></div>
-  <!-- マイステータス（コンパクト） -->
-  <div class="sec">
-    <div class="card" style="padding:10px 14px">
-      <div id="myStatusCard" style="margin-bottom:0"></div>
-    </div>
-  </div>
-  <!-- ウィジェットエリア -->
+  <div class="sec"><div class="card" style="padding:10px 14px"><div id="myStatusCard"></div></div></div>
   <div class="sec">
     <div id="my-widgets-area"></div>
-    <div class="mypage-add-fab">
-      <button onclick="openWidgetPicker()" title="ウィジェットを追加">＋</button>
-    </div>
+    <div class="mypage-add-fab"><button onclick="openWidgetPicker()">➕ ウィジェットを追加</button></div>
   </div>
 </div>
 <div class="pg" id="pg-settings">
@@ -955,7 +986,7 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
       </div>
       <div class="iset-row" style="border:none;cursor:default">
         <span class="iset-icon" style="background:#8A8A8A">ℹ️</span>
-        <div class="iset-row-body"><div class="iset-row-title">バージョン</div><div class="iset-row-sub">Irori v1.5.0</div></div>
+        <div class="iset-row-body"><div class="iset-row-title">バージョン</div><div class="iset-row-sub">Irori v2.0.0</div></div>
       </div>
     </div>
   </div>
@@ -1027,165 +1058,149 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
   <div class="ni" id="ni-calendar" onclick="setPage('calendar',this)"><div class="ni-ic">📅</div><div class="ni-lb">予定</div></div>
   <div class="ni" id="ni-status" onclick="setPage('status',this)"><div class="ni-ic">🧩</div><div class="ni-lb">マイページ</div></div>
 </div>
+</div><!-- /app-shell -->
 <div class="overlay" id="modal" onclick="ocl(event)"><div class="sheet"><div class="handle"></div><div id="mc"></div></div></div>
 
 <script>
 
-var roomSettings={homeLocation:null,homeRadius:200,memberGeo:{}};
-var _geoConsents={}; // {uid: {code,expires}}
-
-var _geoWatchId=null;
-var _lastHomeState=null;
-window._openCalApiPage=function(){window.open('https://console.cloud.google.com/apis/library/calendar-json.googleapis.com?project=family-app-3393e');};
-window._pickCol=function(el,col){
-  document.querySelectorAll('[data-col]').forEach(function(e){e.style.border='3px solid transparent';e.classList.remove('selected');});
-  el.style.border='3px solid var(--br)';el.classList.add('selected');
-};
-
-// ━━ Google Calendar 連携 ━━
-var _gcalToken=null;
-var _gcalCalendars=[];
-
-function openGcalLink(){
-  // Google Calendar OAuth - Firebase authのcredentialを再利用
-  // まずFirebaseでCalendar scopeを要求
-  var provider=new firebase.auth.GoogleAuthProvider();
-  provider.addScope('https://www.googleapis.com/auth/calendar.readonly');
-  auth.currentUser.getIdToken(true).catch(function(){});
-
-  // signInWithPopupでcalendar scopeを追加取得
-  auth.signInWithPopup(provider).then(function(result){
-    var credential=result.credential;
-    _gcalToken=credential.accessToken;
-    _fetchGcalList(_gcalToken);
-  }).catch(function(e){
-    if(e.code==='auth/popup-blocked'||e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request'){
-      showToast('⚠️ ポップアップがブロックされました。ブラウザの設定を確認してください');
-    }else if(e.code==='auth/user-cancelled'){
-      showToast('キャンセルしました');
-    }else{
-      showToast('⚠️ '+e.message);
-    }
-  });
+// ━━ 位置情報・在宅判定 ━━
+function _distM(lat1,lng1,lat2,lng2){
+  var R=6371000,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180;
+  var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
-
-function _fetchGcalList(token){
-  showToast('📅 カレンダー一覧を取得中...');
-  fetch('https://www.googleapis.com/calendar/v3/users/me/calendarList?maxResults=50',{
-    headers:{Authorization:'Bearer '+token}
-  }).then(function(r){return r.json();})
-  .then(function(data){
-    if(data.error){
-      if(data.error.code===403){
-        _showCalApiSetupModal();
-      }else if(data.error.code===401){
-        _gcalToken=null;
-        showToast('⚠️ 再認証が必要です。もう一度お試しください');
-      }else{
-        showToast('⚠️ '+data.error.message);
-      }
-      return;
-    }
-    _gcalCalendars=data.items||[];
-    _showGcalSelectModal();
-  }).catch(function(e){
-    showToast('⚠️ カレンダー取得失敗: '+e.message);
-  });
+function _judgeHome(lat,lng){
+  if(!roomSettings.homeLocation)return null;
+  return _distM(lat,lng,roomSettings.homeLocation.lat,roomSettings.homeLocation.lng)<=roomSettings.homeRadius;
 }
-function _showCalApiSetupModal(){
-  var mc=document.getElementById('mc');if(!mc)return;
-  var h='<div class="m-title">⚙️ 初回設定が必要です</div>';
-  h+='<div style="background:rgba(228,180,75,.1);border:1.5px solid rgba(228,180,75,.4);border-radius:12px;padding:14px;margin-bottom:16px">';
-  h+='<div style="font-size:13px;font-weight:700;color:var(--yl);margin-bottom:8px">📋 Google Calendar APIを有効化</div>';
-  h+='<div style="font-size:12px;color:var(--t2);line-height:2">';
-  h+='① 下のボタンからGoogle Cloudを開く<br>';
-  h+='② 「有効にする」ボタンをクリック<br>';
-  h+='③ このアプリに戻って再度試す</div></div>';
-  h+='<div style="font-size:12px;color:var(--t2);line-height:1.8;margin-bottom:16px">※ 初回のみ必要な作業です（無料）</div>';
-  h+='<button class="btn btn-o btn-full" style="margin-bottom:8px" onclick="_openCalApiPage()">Google Cloud Consoleを開く</button>';
-  h+='<button class="btn btn-ghost btn-full" onclick="showGcalComingSoon()">戻る</button>';
-  mc.innerHTML=h;openOv();
+function _onGeoPos(pos){
+  var lat=pos.coords.latitude,lng=pos.coords.longitude;
+  if(ROOM&&db&&currentUser)db.collection('iedash').doc(ROOM).collection('locations').doc(currentUser.uid).set({lat:lat,lng:lng,ts:new Date().toISOString(),uid:currentUser.uid},{merge:true}).catch(function(){});
+  var isHome=_judgeHome(lat,lng);
+  if(isHome!==null&&isHome!==_lastHomeState){
+    _lastHomeState=isHome;
+    if(ROOM&&db&&currentUser)db.collection('iedash').doc(ROOM).collection('status').doc(currentUser.uid).set({home:isHome,autoGeo:true},{merge:true}).catch(function(){});
+    var msg=isHome?'🏠 ただいま！自宅に着きました':'🚪 外出しました';
+    showToast(msg);
+    if(Notification&&Notification.permission==='granted'){try{new Notification('🏠 Irori',{body:msg});}catch(e){}}
+  }
 }
-
-function _showGcalSelectModal(){
-  var mc=document.getElementById('mc');if(!mc)return;
-  var cals=_gcalCalendars;
-  var h='<div class="m-title">📅 カレンダーを選択</div>';
-  h+='<div style="font-size:12px;color:var(--t2);margin-bottom:14px">追加したいカレンダーを選んでください</div>';
-  if(cals.length===0){
-    h+='<div style="text-align:center;padding:20px;color:var(--t2)">カレンダーが見つかりませんでした</div>';
+function _applyGeoTracking(){
+  if(roomSettings.geoTrack){
+    if(!_geoWatchId&&navigator.geolocation)_geoWatchId=navigator.geolocation.watchPosition(_onGeoPos,function(){},{enableHighAccuracy:true,maximumAge:30000,timeout:20000});
+    if(Notification&&Notification.permission==='default')Notification.requestPermission().catch(function(){});
   }else{
-    h+='<div style="max-height:320px;overflow-y:auto;margin-bottom:12px" id="gcal-list">';
-    cals.forEach(function(cal,i){
-      var col=cal.backgroundColor||'#4285F4';
-      var isAdded=icalFeeds.some(function(f){return f.id==='gcal_'+cal.id;});
-      h+='<label style="display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;margin-bottom:6px;background:var(--wm);cursor:'+(isAdded?'default':'pointer')+';opacity:'+(isAdded?'0.5':'1')+'">';
-      h+='<input type="checkbox" name="gcal-pick" value="'+i+'" '+(isAdded?'checked disabled':'')+' style="width:18px;height:18px;accent-color:'+col+';flex-shrink:0">';
-      h+='<div style="width:14px;height:14px;border-radius:50%;background:'+col+';flex-shrink:0"></div>';
-      h+='<div style="flex:1"><div style="font-size:13px;font-weight:700">'+cal.summary+'</div>';
-      if(isAdded)h+='<div style="font-size:11px;color:var(--gn)">✓ 追加済み</div>';
-      h+='</div></label>';
-    });
+    if(_geoWatchId!=null&&navigator.geolocation){navigator.geolocation.clearWatch(_geoWatchId);_geoWatchId=null;}
+  }
+}
+function shareMyLocation(){
+  if(!navigator.geolocation){showToast('⚠️ 位置情報に対応していません');return;}
+  showToast('📍 位置情報を取得中...');
+  navigator.geolocation.getCurrentPosition(function(pos){_onGeoPos(pos);showToast('✅ 位置情報を共有しました');},function(e){showToast('⚠️ 位置取得失敗: '+e.message);},{enableHighAccuracy:true,timeout:10000});
+}
+function saveRoomGeoConfig(cfg){
+  if(!isRoomAdmin){showToast('⚠️ ルーム管理者のみ設定できます');return;}
+  db.collection('iedash').doc(ROOM).collection('settings').doc('room_config').set(cfg,{merge:true}).then(function(){showToast('✅ 設定を保存しました');}).catch(function(e){showToast('⚠️ 保存失敗: '+e.message);});
+}
+function pickHomeLocation(){
+  if(!navigator.geolocation){showToast('⚠️ 位置情報利用不可');return;}
+  showToast('📍 現在地を自宅地点に設定中...');
+  navigator.geolocation.getCurrentPosition(function(pos){
+    var loc={lat:pos.coords.latitude,lng:pos.coords.longitude};
+    saveRoomGeoConfig({homeLocation:loc});
+    showToast('🏠 自宅地点を設定しました');
+    renderGeoSettings();
+  },function(e){showToast('⚠️ 位置取得失敗: '+e.message);},{enableHighAccuracy:true,timeout:10000});
+}
+function renderGeoSettings(){
+  var el=document.getElementById('geo-settings-section');if(!el)return;
+  var hasHome=!!roomSettings.homeLocation,isAdmin=isRoomAdmin;
+  var h='';
+  if(isAdmin){
+    h+='<div class="iset-row" style="cursor:pointer" onclick="saveRoomGeoConfig({geoTrack:'+(!roomSettings.geoTrack)+'})">'
+      +'<span class="iset-icon" style="background:'+(roomSettings.geoTrack?'var(--gn)':'var(--t3)')+'">📡</span>'
+      +'<div class="iset-row-body"><div class="iset-row-title">常時位置追跡</div>'
+      +'<div class="iset-row-sub">'+(roomSettings.geoTrack?'✅ ON — 全員の位置を自動追跡':'❌ OFF — 各自手動共有')+'</div></div>'
+      +'<div style="font-size:20px">'+(roomSettings.geoTrack?'🟢':'⚪')+'</div></div>';
+    h+='<div class="iset-row" onclick="pickHomeLocation()" style="cursor:pointer">'
+      +'<span class="iset-icon" style="background:'+(hasHome?'var(--ac)':'var(--t3)')+'">🏠</span>'
+      +'<div class="iset-row-body"><div class="iset-row-title">自宅地点</div>'
+      +'<div class="iset-row-sub">'+(hasHome?'✅ 設定済み (半径'+roomSettings.homeRadius+'m)':'未設定 — 現在地で設定')+'</div></div>'
+      +'<span class="iset-arrow">›</span></div>';
+    h+='<div style="padding:12px 14px"><div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">判定半径: <span id="geo-rad-val">'+roomSettings.homeRadius+'</span>m</div>'
+      +'<input type="range" min="50" max="500" step="50" value="'+roomSettings.homeRadius+'" oninput="document.getElementById(\'geo-rad-val\').textContent=this.value" onchange="saveRoomGeoConfig({homeRadius:parseInt(this.value)})" style="width:100%"></div>';
+  }
+  if(!roomSettings.geoTrack){
+    h+='<div style="padding:12px 14px'+(isAdmin?';border-top:1px solid var(--wm)':'')+'">';
+    h+='<button onclick="shareMyLocation()" class="btn btn-o btn-full">📍 今の位置を共有</button>';
+    h+='<div style="font-size:11px;color:var(--t2);text-align:center;margin-top:6px">ボタンを押すたびに自宅判定も自動で行います</div>';
     h+='</div>';
   }
-  h+='<button class="btn btn-o btn-full" onclick="_addSelectedGcals()" style="margin-bottom:8px">選択して追加</button>';
-  h+='<button class="btn btn-ghost btn-full" onclick="closeModal()">閉じる</button>';
-  mc.innerHTML=h;openOv();
-}
-window._addSelectedGcals=function(){
-  var checked=document.querySelectorAll('[name=gcal-pick]:checked:not(:disabled)');
-  if(checked.length===0){showToast('⚠️ カレンダーを選んでください');return;}
-  var added=0;
-  checked.forEach(function(cb){
-    var idx=parseInt(cb.value);
-    var cal=_gcalCalendars[idx];
-    if(!cal)return;
-    var col=cal.backgroundColor||'#4285F4';
-    if(!icalFeeds.some(function(f){return f.id==='gcal_'+cal.id;})){
-      // gcalId + token で登録（API経由でプライベートカレンダーも取得可能）
-      icalFeeds.push({id:'gcal_'+cal.id,name:cal.summary,url:'gcal://'+cal.id,color:col,enabled:true,gcalId:cal.id,token:_gcalToken});
-      added++;
-    }
-  });
-  if(added===0){showToast('選択されたカレンダーはすでに追加済みです');return;}
-  saveIcalFeeds();
-  showToast('✅ '+added+'件のカレンダーを連携しました！');
-  fetchIcalEvents().then(function(){try{renderCal();}catch(e){}}).catch(function(){});
-  showGcalComingSoon();
-  renderCalFilter();
-};
-function normalizeCalUrl(url){
-  // embed形式 → ical形式
-  var em=url.match(/calendar\.google\.com\/calendar\/embed\?src=([^&]+)/);
-  if(em){
-    var src=decodeURIComponent(em[1]);
-    var enc=encodeURIComponent(src);
-    return 'https://calendar.google.com/calendar/ical/'+enc+'/public/basic.ics';
-  }
-  // すでにical形式
-  if(url.includes('calendar.google.com/calendar/ical'))return url;
-  // r/basic.ics がない場合補完
-  if(url.includes('calendar.google.com')&&!url.includes('.ics')){
-    var m2=url.match(/\/ical\/([^/]+)/);
-    if(m2)return 'https://calendar.google.com/calendar/ical/'+m2[1]+'/public/basic.ics';
-  }
-  return url;
+  if(!h){h='<div style="padding:12px 14px;font-size:12px;color:var(--t2)">管理者が設定します</div>';}
+  el.innerHTML=h;
 }
 
 // ━━ Tutorial ━━
-var TUTO_STEPS=[{title:'🏠 Iroriへようこそ！',body:'家族みんなの今を一目で確認できるアプリです。\nまず基本的な使い方を紹介します！',target:null,pos:'center'},{title:'👪 家族タブ',body:'在宅状況・ご飯・ゴミ出しなど\n家族全員の情報をここで確認できます。',target:'#ni-home',pos:'top'},{title:'✅ やることタブ',body:'買い物リスト・タスク・お風呂の状況を\n管理できます。',target:'#ni-todo',pos:'top'},{title:'📅 予定タブ',body:'家族の予定を月・週・日で確認。\nGoogleカレンダーの連携もできます。',target:'#ni-calendar',pos:'top'},{title:'🙋 じぶんタブ',body:'自分の在宅・外出・帰宅時間などを\n更新して家族にシェアしましょう。',target:'#ni-status',pos:'top'},{title:'➕ 追加ボタン',body:'右下のボタンから予定・買い物・タスクを\nサッと追加できます。',target:'#fabBtn',pos:'top'},{title:'🔄 更新ボタン',body:'右上の🔄ボタンで最新情報に更新できます。',target:'#app-refresh-btn',pos:'bottom'},{title:'🎉 準備完了！',body:'これでIroriの基本はバッチリ！\n毎日の家族コミュニケーションに\n役立ててください😊',target:null,pos:'center'}];
+var TUTO_STEPS=[
+  {title:'🏠 Iroriへようこそ！',body:'家族みんなの今を一目で確認できるアプリです。\nまず基本的な使い方を紹介します！',target:null,pos:'center'},
+  {title:'👪 家族タブ',body:'在宅状況・ご飯・ゴミ出しなど\n家族全員の情報をここで確認できます。',target:'#ni-home',pos:'top'},
+  {title:'✅ やることタブ',body:'買い物リスト・タスク・お風呂の状況を\n管理できます。',target:'#ni-todo',pos:'top'},
+  {title:'📅 予定タブ',body:'家族の予定を月・週・日で確認。\nGoogleカレンダーの連携もできます。',target:'#ni-calendar',pos:'top'},
+  {title:'🧩 マイページ',body:'自分だけのウィジェットを自由に追加できます。\n体重・習慣・日記など8種類！',target:'#ni-status',pos:'top'},
+  {title:'➕ 追加ボタン',body:'右下のボタンから予定・買い物・タスクを\nサッと追加できます。',target:'#fabBtn',pos:'top'},
+  {title:'🔄 更新ボタン',body:'右上の🔄ボタンで最新情報に更新できます。',target:'#app-refresh-btn',pos:'bottom'},
+  {title:'🎉 準備完了！',body:'これでIroriの基本はバッチリ！\n毎日の家族コミュニケーションに\n役立ててください😊',target:null,pos:'center'}
+];
 var _tStep=0,_tActive=false;
-function startTutorial(){_tStep=0;_tActive=true;localStorage.setItem('iedash_tuto_'+ROOM,'0');// グローバルに公開してinnerHTML内のonclickで呼べるようにする
-window.tutoNext=function(){_tStep++;if(_tStep<TUTO_STEPS.length){_showTStep();}else{endTutorial();}}
-window.tutoSkip=function(){endTutorial();}
-_showTStep();}
-function _showTStep(){var ov=document.getElementById('tuto-overlay');var hl=document.getElementById('tuto-hl');if(!ov)return;if(_tStep>=TUTO_STEPS.length){endTutorial();return;}var s=TUTO_STEPS[_tStep];ov.classList.add('active');if(s.target&&hl){var el2=document.querySelector(s.target);if(el2){var r=el2.getBoundingClientRect();hl.style.cssText='display:block;left:'+(r.left-6)+'px;top:'+(r.top-6)+'px;width:'+(r.width+12)+'px;height:'+(r.height+12)+'px';setTimeout(function(){el2.scrollIntoView({block:'nearest',behavior:'smooth'});},100);}else{hl.style.display='none';}}else if(hl){hl.style.display='none';}var prog=TUTO_STEPS.map(function(_x,i){return '<div class="tuto-dot'+(i===_tStep?' on':'')+'"></div>';}).join('');var isLast=(_tStep===TUTO_STEPS.length-1);var cs='left:16px;right:16px;';if(s.pos==='top'){cs+='bottom:80px;'}else if(s.pos==='bottom'){cs+='top:80px;'}else{cs+='top:50%;transform:translateY(-50%)';}ov.innerHTML='<div class="tuto-backdrop"></div>'+'<div class="tuto-card" style="'+cs+'">'+'<div class="tuto-progress">'+prog+'</div>'+'<div class="tuto-title">'+s.title+'</div>'+'<div class="tuto-body">'+s.body.replace(/\n/g,'<br>')+'</div>'+'<div class="tuto-btns">'+'<button class="tuto-btn tuto-btn-skip" onclick="tutoSkip()">スキップ</button>'+'<button class="tuto-btn tuto-btn-next" onclick="tutoNext()">'+(isLast?'完了 🎉':'次へ →')+'</button>'+'</div></div>';}
-function _nextT(){_tStep++;if(_tStep<TUTO_STEPS.length){_showTStep();}else{endTutorial();}}
-window._nextT=_nextT;
-function endTutorial(){_tActive=false;var ov=document.getElementById('tuto-overlay');if(ov){ov.classList.remove('active');ov.innerHTML='';}var hl=document.getElementById('tuto-hl');if(hl)hl.style.display='none';localStorage.setItem('iedash_tuto_'+ROOM,'1');}
-function _checkTuto(){if(!localStorage.getItem('iedash_tuto_'+ROOM))setTimeout(startTutorial,1000);}
+function startTutorial(){_tStep=0;_tActive=true;localStorage.setItem('iedash_tuto_'+ROOM,'0');_showTStep();}
+function _showTStep(){
+  var ov=document.getElementById('tuto-overlay');var hl=document.getElementById('tuto-hl');if(!ov)return;
+  if(_tStep>=TUTO_STEPS.length){endTutorial();return;}
+  var s=TUTO_STEPS[_tStep];ov.classList.add('active');
+  if(s.target&&hl){var el2=document.querySelector(s.target);
+    if(el2){var r=el2.getBoundingClientRect();
+      hl.style.cssText='display:block;left:'+(r.left-6)+'px;top:'+(r.top-6)+'px;width:'+(r.width+12)+'px;height:'+(r.height+12)+'px';
+    }else{hl.style.display='none';}
+  }else if(hl){hl.style.display='none';}
+  var prog=TUTO_STEPS.map(function(_x,i){return '<div class="tuto-dot'+(i===_tStep?' on':'')+'"></div>';}).join('');
+  var isLast=(_tStep===TUTO_STEPS.length-1);
+  var cs='left:16px;right:16px;';
+  if(s.pos==='top'){cs+='bottom:80px;'}else if(s.pos==='bottom'){cs+='top:80px;'}else{cs+='top:50%;transform:translateY(-50%)';}
+  ov.innerHTML='<div class="tuto-backdrop"></div>'
+    +'<div class="tuto-card" style="'+cs+'">'
+    +'<div class="tuto-progress">'+prog+'</div>'
+    +'<div class="tuto-title">'+s.title+'</div>'
+    +'<div class="tuto-body">'+s.body.replace(/\n/g,'<br>')+'</div>'
+    +'<div class="tuto-btns">'
+    +'<button class="tuto-btn tuto-btn-skip" onclick="window.tutoSkip()">スキップ</button>'
+    +'<button class="tuto-btn tuto-btn-next" onclick="window.tutoNext()">'+(isLast?'完了 🎉':'次へ →')+'</button>'
+    +'</div></div>';
+  window.tutoNext=function(){_tStep++;_tStep<TUTO_STEPS.length?_showTStep():endTutorial();};
+  window.tutoSkip=function(){endTutorial();};
+}
+function endTutorial(){
+  _tActive=false;
+  var ov=document.getElementById('tuto-overlay');if(ov){ov.classList.remove('active');ov.innerHTML='';}
+  var hl=document.getElementById('tuto-hl');if(hl)hl.style.display='none';
+  localStorage.setItem('iedash_tuto_'+ROOM,'1');
+}
+function checkTutorial(){if(ROOM&&!localStorage.getItem('iedash_tuto_'+ROOM))setTimeout(startTutorial,1000);}
 
-function appRefresh(){var ic=document.getElementById('refresh-icon');if(ic){ic.style.transition='none';ic.style.animation='spin .7s linear infinite';}showToast('🔄 更新中...');[renderTabs,renderSG,renderBath,renderMeal,renderMealTime,renderTrash,renderCal].forEach(function(fn){try{fn();}catch(e){}});try{fetchIcalEvents().then(function(){try{renderCal();}catch(e){}}).catch(function(){});}catch(e){}setTimeout(function(){if(ic)ic.style.animation='';showToast('✅ 更新しました');},1200);}
+function normalizeCalUrl(url){
+  var em=url.match(/calendar\.google\.com\/calendar\/embed\?src=([^&]+)/);
+  if(em){var src=decodeURIComponent(em[1]);return 'https://calendar.google.com/calendar/ical/'+encodeURIComponent(src)+'/public/basic.ics';}
+  if(url.includes('calendar.google.com/calendar/ical'))return url;
+  return url;
+}
+
+function appRefresh(){var ic=document.getElementById('refresh-icon');if(ic)ic.style.animation='spin .7s linear infinite';showToast('🔄 更新中...');[renderTabs,renderSG,renderBath,renderMeal,renderMealTime,renderTrash,renderCal].forEach(function(fn){try{fn();}catch(e){}});try{fetchIcalEvents().then(function(){try{renderCal();}catch(e){}}).catch(function(){});}catch(e){}setTimeout(function(){if(ic)ic.style.animation='';showToast('✅ 更新しました');},1200);}
+
+var roomSettings={geoTrack:false,homeLocation:null,homeRadius:200};
+var _geoWatchId=null;
+var _lastHomeState=null;
+var _myWidgets=[];
+var _gcalToken=null;
+var _gcalCalendars=[];
 
 // レンダリングデバウンス
 let _rAF=null;
@@ -1258,7 +1273,7 @@ function signInGoogle(){
   ldtxt('ログイン中...');
   document.getElementById('login-screen').classList.add('hide');
   document.getElementById('loading').classList.remove('hide');
-  const provider=new firebase.auth.GoogleAuthProvider();
+  var provider=new firebase.auth.GoogleAuthProvider();
   auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function(){
     return auth.signInWithPopup(provider);
   }).then(function(){}).catch(function(e){
@@ -1513,7 +1528,9 @@ function boot(){
     try{renderBath();}catch(e){}
     try{renderHomeSummary();}catch(e){}
     try{renderGeoSettings();}catch(e){}
+    try{checkTutorial();}catch(e){}
     try{_loadMyWidgets();}catch(e){}
+    try{_scheduleWidgetNotifs();}catch(e){}
     checkTutorial();schedChecks();
     // 位置情報の「X分前」表示を1分ごと更新
     setInterval(()=>{if(state.locations&&Object.keys(state.locations).length)renderLocations(state.locations);},60000);
@@ -1529,389 +1546,6 @@ function boot(){
     },800);
   }
 }
-// ━━ 位置追跡 同意フロー ━━
-function _adminRequestGeo(uid){
-  if(!isRoomAdmin)return;
-  var code=String(Math.floor(1000+Math.random()*9000));
-  var expires=new Date(Date.now()+5*60*1000).toISOString();
-  // Firestoreにコードを書く（本人のスマホで参照）
-  db.collection('iedash').doc(ROOM).collection('geo_consent').doc(uid).set({
-    code:code,uid:uid,expires:expires,requestedAt:new Date().toISOString()
-  }).then(function(){
-    var mg=Object.assign({},roomSettings.memberGeo||{});
-    mg[uid]='pending';
-    return saveRoomGeoConfig({memberGeo:mg});
-  }).then(function(){
-    showToast('📤 依頼を送りました。相手の画面に表示される4桁コードを入力してください');
-  }).catch(function(e){
-    showToast('⚠️ 失敗: '+e.message);
-  });
-}
-function _adminEnterCode(uid){
-  var m2=(members||[]).find(function(m){return m.uid===uid;});
-  var mname=m2?m2.name:uid;
-  var mc=document.getElementById('mc');if(!mc)return;
-  mc.innerHTML='<div class="m-title">🔑 追跡同意コード</div>'+'<div style="font-size:13px;color:var(--t2);margin-bottom:16px">'+mname+'さんの画面に表示されている4桁のコードを入力してください</div>'+'<input type="number" id="consent-code-inp" class="fi" placeholder="0000" maxlength="4" style="text-align:center;font-size:28px;font-weight:700;letter-spacing:8px;margin-bottom:14px">'+'<button class="btn btn-o btn-full" onclick="_adminVerifyCode(\''+uid+'\')">確認して追跡ON</button>'+'<button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="closeModal()">キャンセル</button>';  openOv();
-}
-function _adminVerifyCode(uid){
-  var inp=document.getElementById('consent-code-inp');
-  if(!inp)return;
-  var entered=inp.value.trim();
-  if(!entered||entered.length!==4){showToast('⚠️ 4桁のコードを入力してください');return;}
-  db.collection('iedash').doc(ROOM).collection('geo_consent').doc(uid).get()
-    .then(function(d){
-      if(!d.exists){showToast('⚠️ コードが見つかりません。再度依頼してください');return;}
-      var data=d.data();
-      if(new Date(data.expires)<new Date()){showToast('⚠️ コードの有効期限が切れました。再度依頼してください');return;}
-      if(data.code!==entered){showToast('⚠️ コードが違います');return;}
-      var mg=Object.assign({},roomSettings.memberGeo||{});
-      mg[uid]='allowed';
-      return saveRoomGeoConfig({memberGeo:mg}).then(function(){
-        return db.collection('iedash').doc(ROOM).collection('geo_consent').doc(uid).delete();
-      }).then(function(){
-        closeModal();
-        showToast('✅ 追跡が有効になりました');
-      });
-    }).catch(function(e){showToast('⚠️ '+e.message);});
-}
-function _adminRevokeGeo(uid){
-  var mg=Object.assign({},roomSettings.memberGeo||{});
-  mg[uid]='denied';
-  saveRoomGeoConfig({memberGeo:mg}).then(function(){
-    showToast('❌ 追跡を停止しました');
-  }).catch(function(e){showToast('⚠️ '+e.message);});
-}
-function _selfRevokeGeo(){
-  if(!currentUser)return;
-  var mg=Object.assign({},roomSettings.memberGeo||{});
-  mg[currentUser.uid]='denied';
-  saveRoomGeoConfig({memberGeo:mg}).then(function(){
-    showToast('🛑 追跡をやめました');
-  }).catch(function(e){showToast('⚠️ '+e.message);});
-}
-function _renderConsentBanner(){
-  if(!currentUser)return;
-  var consent=_geoConsents[currentUser.uid];
-  var bannerEl=document.getElementById('geo-consent-banner');
-  if(!bannerEl)return;
-  if(!consent||(new Date(consent.expires)<new Date())){
-    bannerEl.style.display='none';
-    return;
-  }
-  bannerEl.style.display='block';
-  var mins=Math.max(0,Math.floor((new Date(consent.expires)-new Date())/60000));
-  bannerEl.innerHTML='<div style="background:linear-gradient(135deg,rgba(212,102,62,.15),rgba(100,128,184,.15));border:1.5px solid rgba(212,102,62,.3);border-radius:16px;padding:16px;margin-bottom:12px">'+'<div style="font-size:14px;font-weight:700;color:var(--br);margin-bottom:6px">📡 位置追跡の同意を求められています</div>'+'<div style="font-size:12px;color:var(--t2);margin-bottom:12px">グループ管理者があなたの常時位置追跡を尊重しています。許可する場合は下のコードを管理者に伝えてください。('+(consent.expires?mins+'分後に期限切れ':'')+')</div>'+'<div style="text-align:center;font-size:42px;font-weight:700;color:var(--br);letter-spacing:12px;background:var(--wm);border-radius:12px;padding:12px;margin-bottom:12px">'+consent.code+'</div>'+'<div style="display:flex;gap:8px">'+'<button onclick="_selfDenyConsent()" style="flex:1;padding:10px;background:rgba(201,64,64,.1);color:var(--rd);border:1px solid rgba(201,64,64,.3);border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">🚫 拒否</button>'+'</div></div>';
-}
-function _selfDenyConsent(){
-  if(!currentUser||!ROOM)return;
-  db.collection('iedash').doc(ROOM).collection('geo_consent').doc(currentUser.uid).delete()
-    .then(function(){
-      var mg=Object.assign({},roomSettings.memberGeo||{});
-      mg[currentUser.uid]='denied';
-      return saveRoomGeoConfig({memberGeo:mg});
-    }).then(function(){
-      showToast('🚫 追跡を拒否しました');
-    }).catch(function(){});
-}
-
-// ━━ 位置情報・在宅判定 ━━
-function _distM(lat1,lng1,lat2,lng2){
-  var R=6371000;
-  var dLat=(lat2-lat1)*Math.PI/180;
-  var dLng=(lng2-lng1)*Math.PI/180;
-  var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
-  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
-function _judgeHome(lat,lng){
-  if(!roomSettings.homeLocation)return null;
-  var d=_distM(lat,lng,roomSettings.homeLocation.lat,roomSettings.homeLocation.lng);
-  return d<=roomSettings.homeRadius;
-}
-function _onGeoPos(pos){
-  var lat=pos.coords.latitude,lng=pos.coords.longitude;
-  var ts=new Date().toISOString();
-  // Firestoreに位置保存
-  if(ROOM&&db&&currentUser){
-    db.collection('iedash').doc(ROOM).collection('locations').doc(currentUser.uid).set(
-      {lat:lat,lng:lng,ts:ts,uid:currentUser.uid},
-      {merge:true}
-    ).catch(function(){});
-  }
-  // 在宅自動判定
-  var isHome=_judgeHome(lat,lng);
-  if(isHome!==null&&isHome!==_lastHomeState){
-    _lastHomeState=isHome;
-    // ステータス自動更新
-    if(ROOM&&db&&currentUser){
-      db.collection('iedash').doc(ROOM).collection('status').doc(currentUser.uid).set(
-        {home:isHome,autoGeo:true},
-        {merge:true}
-      ).catch(function(){});
-    }
-    // 通知
-    var msg=isHome?'🏠 ただいま！自宅に着きました':'🚪 外出しました';
-    showToast(msg);
-    // ブラウザ通知
-    if(Notification&&Notification.permission==='granted'){
-      try{new Notification('🏠 Irori',{body:msg,icon:'/Irori-Ver2/icon-192.png'});}catch(e){}
-    }
-  }
-}
-function _applyGeoTracking(){
-  if(!currentUser)return;
-  var myStatus=(roomSettings.memberGeo&&roomSettings.memberGeo[currentUser.uid])||'denied';
-  if(myStatus==='allowed'){
-    if(!_geoWatchId&&navigator.geolocation){
-      _geoWatchId=navigator.geolocation.watchPosition(
-        _onGeoPos,
-        function(e){console.warn('geo error',e);},
-        {enableHighAccuracy:true,maximumAge:30000,timeout:20000}
-      );
-    }
-    if(Notification&&Notification.permission==='default'){
-      Notification.requestPermission().catch(function(){});
-    }
-  }else{
-    if(_geoWatchId!=null&&navigator.geolocation){
-      navigator.geolocation.clearWatch(_geoWatchId);
-      _geoWatchId=null;
-    }
-  }
-  try{renderGeoSettings();}catch(e){}
-  try{_renderConsentBanner();}catch(e){}
-}
-function shareMyLocation(){
-  if(!navigator.geolocation){showToast('⚠️ このデバイスは位置情報に対応していません');return;}
-  showToast('📍 位置情報を取得中...');
-  navigator.geolocation.getCurrentPosition(
-    function(pos){
-      _onGeoPos(pos);
-      showToast('✅ 位置情報を共有しました');
-    },
-    function(e){showToast('⚠️ 位置取得失敗: '+e.message);},
-    {enableHighAccuracy:true,timeout:10000}
-  );
-}
-function saveRoomGeoConfig(cfg){
-  if(!isRoomAdmin){showToast('⚠️ ルーム管理者のみ設定できます');return Promise.reject(new Error('not admin'));}
-  return db.collection('iedash').doc(ROOM).collection('settings').doc('room_config')
-    .set(cfg,{merge:true})
-    .catch(function(e){showToast('⚠️ 保存失敗: '+e.message);throw e;});
-}
-function pickHomeLocation(){
-  if(!navigator.geolocation){showToast('⚠️ 位置情報利用不可');return;}
-  showToast('📍 現在地を自宅地点に設定中...');
-  navigator.geolocation.getCurrentPosition(
-    function(pos){
-      var loc={lat:pos.coords.latitude,lng:pos.coords.longitude};
-      saveRoomGeoConfig({homeLocation:loc});
-      showToast('🏠 自宅地点を設定しました (第'
-        +loc.lat.toFixed(4)+'度, 第'+loc.lng.toFixed(4)+'度)');
-      renderGeoSettings();
-    },
-    function(e){showToast('⚠️ 位置取得失敗: '+e.message);},
-    {enableHighAccuracy:true,timeout:10000}
-  );
-}
-
-// ━━ 位置情報 メンバー別承認フロー ━━
-var _geoApprovalShown=false;
-function _checkMyGeoApproval(){
-  if(!currentUser)return;
-  var myState=(roomSettings.memberGeoTrack||{})[currentUser.uid]||'off';
-  if(myState==='on'){
-    if(!_geoWatchId&&navigator.geolocation){
-      _geoWatchId=navigator.geolocation.watchPosition(
-        _onGeoPos,
-        function(e){console.warn('geo error',e.message);},
-        {enableHighAccuracy:true,maximumAge:30000,timeout:20000}
-      );
-      _myGeoApproved=true;
-    }
-    if(Notification&&Notification.permission==='default'){Notification.requestPermission().catch(function(){});}
-  }else if(myState==='pending_approval'){
-    _showGeoApprovalPrompt();
-  }else{
-    if(_geoWatchId!=null&&navigator.geolocation){navigator.geolocation.clearWatch(_geoWatchId);_geoWatchId=null;_myGeoApproved=false;}
-  }
-}
-function requestGeoTrackOn(uid){
-  if(!isRoomAdmin){showToast('⚠️ 管理者のみ操作できます');return;}
-  var code=Math.floor(100000+Math.random()*900000).toString();
-  var expires=Date.now()+30*60*1000;
-  var updated=Object.assign({},(roomSettings.memberGeoTrack||{}));
-  updated[uid]='pending_approval';
-  db.collection('iedash').doc(ROOM).collection('settings').doc('room_config')
-    .set({memberGeoTrack:updated},{merge:true})
-    .then(function(){
-      return db.collection('iedash').doc(ROOM).collection('geo_approvals').doc(uid).set({code:code,expires:expires,uid:uid,requestedBy:currentUser.uid});
-    })
-    .then(function(){_showAdminCodeModal(uid,code);})
-    .catch(function(e){showToast('⚠️ 失敗: '+e.message);});
-}
-function requestGeoTrackOff(uid){
-  if(!isRoomAdmin){showToast('⚠️ 管理者のみ操作できます');return;}
-  var updated=Object.assign({},(roomSettings.memberGeoTrack||{}));
-  updated[uid]='off';
-  db.collection('iedash').doc(ROOM).collection('settings').doc('room_config')
-    .set({memberGeoTrack:updated},{merge:true})
-    .then(function(){showToast('✅ 追跡をOFFにしました');})
-    .catch(function(e){showToast('⚠️ '+e.message);});
-}
-function _showAdminCodeModal(uid,code){
-  var m=( members||[]).find(function(x){return x.uid===uid;})||{};
-  var mc=document.getElementById('mc');if(!mc)return;
-  mc.innerHTML=
-    '<div class="m-title">📡 承認コード</div>'
-    +'<div style="text-align:center;padding:8px 0 16px">'
-    +'<div style="font-size:13px;color:var(--t2);margin-bottom:8px">'+(m.emoji||'👤')+' '+m.name+'のスマホに通知しました</div>'
-    +'<div style="font-size:11px;color:var(--t2);margin-bottom:16px">コードを伝えてもらい、下の「承認コードを入力」で確認してください</div>'
-    +'<div style="font-size:42px;font-weight:900;letter-spacing:8px;color:var(--ac);font-family:monospace;background:var(--wm);border-radius:16px;padding:16px">'+code+'</div>'
-    +'<div style="font-size:11px;color:var(--t3);margin-top:8px">☢️ 30分間有効</div>'
-    +'</div>'
-    +'<div style="font-size:12px;color:var(--t2);background:var(--wm);border-radius:10px;padding:10px;margin-bottom:14px">📱 本人のIrori画面に承認コードが表示されます。伝えてもらったら下のボタンで入力してください。</div>'
-    +'<div style="display:flex;gap:8px">'
-    +'<button class="btn btn-ghost" style="flex:1" onclick="closeModal()">閉じる</button>'
-    +'<button class="btn btn-o" style="flex:2" onclick="_adminVerifyCode(\''+uid+'\')">承認コードを入力</button>'
-    +'</div>';
-  openOv();
-}
-function _adminVerifyCode(uid){
-  var mc=document.getElementById('mc');if(!mc)return;
-  var m=(members||[]).find(function(x){return x.uid===uid;})||{};
-  mc.innerHTML=
-    '<div class="m-title">🔑 承認コードの確認</div>'
-    +'<div style="font-size:13px;color:var(--t2);margin-bottom:14px;text-align:center">'+(m.emoji||'👤')+' '+m.name+'から届いたコードを入力</div>'
-    +'<input type="text" class="fi" id="geo-code-inp" maxlength="6" inputmode="numeric" placeholder="6桁のコード" style="text-align:center;font-size:28px;letter-spacing:8px;font-weight:900;font-family:monospace">'
-    +'<div style="display:flex;gap:8px;margin-top:14px">'
-    +'<button class="btn btn-ghost" style="flex:1" onclick="closeModal()">キャンセル</button>'
-    +'<button class="btn btn-o" style="flex:2" onclick="_confirmGeoCode(\''+uid+'\')">承認する</button>'
-    +'</div>';
-  openOv();
-}
-function _confirmGeoCode(uid){
-  var inp=document.getElementById('geo-code-inp');
-  if(!inp){showToast('入力フォームが見つかりません');return;}
-  var entered=inp.value.trim();
-  if(entered.length!==6){showToast('⚠️ 6桁のコードを入力してください');return;}
-  db.collection('iedash').doc(ROOM).collection('geo_approvals').doc(uid).get()
-    .then(function(snap){
-      if(!snap.exists){showToast('⚠️ 承認レコードが見つかりません');return;}
-      var data=snap.data();
-      if(Date.now()>data.expires){showToast('⚠️ コードの有効期限が切れています。再度リクエストしてください');return;}
-      if(data.code!==entered){showToast('⚠️ コードが違います');inp.style.border='2px solid var(--rd)';return;}
-      var updated=Object.assign({},(roomSettings.memberGeoTrack||{}));
-      updated[uid]='on';
-      db.collection('iedash').doc(ROOM).collection('settings').doc('room_config')
-        .set({memberGeoTrack:updated},{merge:true})
-        .then(function(){
-          db.collection('iedash').doc(ROOM).collection('geo_approvals').doc(uid).delete().catch(function(){});
-          closeModal();
-          showToast('✅ 位置追跡が有効になりました');
-        }).catch(function(e){showToast('⚠️ '+e.message);});
-    }).catch(function(e){showToast('⚠️ '+e.message);});
-}
-function _showGeoApprovalPrompt(){
-  if(_geoApprovalShown)return;
-  _geoApprovalShown=true;
-  var code=Math.floor(100000+Math.random()*900000).toString();
-  var expires=Date.now()+30*60*1000;
-  if(ROOM&&db&&currentUser){
-    db.collection('iedash').doc(ROOM).collection('geo_approvals').doc(currentUser.uid)
-      .set({code:code,expires:expires,uid:currentUser.uid},{merge:true}).catch(function(){});
-  }
-  showToast('📡 位置追跡の承認リクエストが届いています');
-  setTimeout(function(){
-    var mc=document.getElementById('mc');if(!mc)return;
-    mc.innerHTML=
-      '<div class="m-title">📡 位置追跡の承認リクエスト</div>'
-      +'<div style="background:rgba(212,102,62,.1);border:1.5px solid rgba(212,102,62,.3);border-radius:12px;padding:14px;margin-bottom:16px">'
-      +'<div style="font-size:14px;font-weight:700;color:var(--ac);margin-bottom:6px">グループ管理者からのリクエスト</div>'
-      +'<div style="font-size:13px;color:var(--t2);line-height:1.8">あなたの位置情報の常時共有を求めています。<br>承認する場合は下記のコードを管理者に伝えてください。</div>'
-      +'</div>'
-      +'<div style="text-align:center;margin-bottom:16px">'
-      +'<div style="font-size:11px;color:var(--t2);margin-bottom:8px">管理者に伝えるコード</div>'
-      +'<div style="font-size:42px;font-weight:900;letter-spacing:8px;color:var(--ac);font-family:monospace;background:var(--wm);border-radius:16px;padding:16px">'+code+'</div>'
-      +'<div style="font-size:11px;color:var(--t3);margin-top:8px">☢️ 30分間有効</div>'
-      +'</div>'
-      +'<div style="display:flex;gap:8px">'
-      +'<button class="btn btn-ghost" style="flex:1" onclick="_rejectGeoApproval()">拒否する</button>'
-      +'<button class="btn btn-o" style="flex:2" onclick="closeModal()">済み（管理者に伝えた）</button>'
-      +'</div>';
-    openOv();
-  },600);
-}
-function _rejectGeoApproval(){
-  if(!currentUser)return;
-  var updated=Object.assign({},(roomSettings.memberGeoTrack||{}));
-  updated[currentUser.uid]='off';
-  db.collection('iedash').doc(ROOM).collection('settings').doc('room_config')
-    .set({memberGeoTrack:updated},{merge:true}).catch(function(){});
-  db.collection('iedash').doc(ROOM).collection('geo_approvals').doc(currentUser.uid)
-    .delete().catch(function(){});
-  closeModal();
-  _geoApprovalShown=false;
-  showToast('位置追跡を断りました');
-}
-function renderGeoSettings(){
-  var el=document.getElementById('geo-settings-section');if(!el)return;
-  var hasHome=!!roomSettings.homeLocation;
-  var h='';
-  if(isRoomAdmin){
-    h+='<div class="iset-row" style="cursor:default;border-bottom:none">';
-    h+='<span class="iset-icon" style="background:var(--ac)">🏠</span>';
-    h+='<div class="iset-row-body">';
-    h+='<div class="iset-row-title">自宅地点の設定</div>';
-    h+='<div class="iset-row-sub">'+(hasHome?'✅ 設定済み (半径'+roomSettings.homeRadius+'m)':'未設定')+'</div>';
-    h+='</div><button onclick="pickHomeLocation()" class="btn btn-ghost" style="font-size:12px;padding:6px 12px;flex-shrink:0">'+(hasHome?'変更':'設定する')+'</button>';
-    h+='</div>';
-    h+='<div style="padding:10px 14px;border-top:1px solid var(--wm)">';
-    h+='<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">判定半径: <span id="geo-rad-val">'+roomSettings.homeRadius+'</span>m</div>';
-    h+='<input type="range" min="50" max="500" step="50" value="'+roomSettings.homeRadius+'" oninput="document.getElementById(\'geo-rad-val\').textContent=this.value" onchange="saveRoomGeoConfig({homeRadius:parseInt(this.value)})" style="width:100%">';
-    h+='</div>';
-    h+='<div style="padding:10px 14px 6px;border-top:1px solid var(--wm)">';
-    h+='<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px">👥 メンバーの追跡設定</div>';
-    (members||[]).forEach(function(m){
-      if(!m||!m.uid)return;
-      var status=(roomSettings.memberGeo&&roomSettings.memberGeo[m.uid])||'denied';
-      var isMe2=(currentUser&&m.uid===currentUser.uid);
-      var statusLabel=status==='allowed'?'🟢 追跡中':status==='pending'?'🟡 同意待ち':'⚪ 未設定';
-      var statusColor=status==='allowed'?'var(--gn)':status==='pending'?'var(--yl)':'var(--t3)';
-      h+='<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--wm)">';
-      h+='<span style="font-size:22px">'+m.emoji+'</span>';
-      h+='<div style="flex:1"><div style="font-size:13px;font-weight:700">'+m.name+(isMe2?' <span style="font-size:9px;background:var(--yl);color:var(--br);padding:1px 5px;border-radius:4px">自分</span>':'')+'</div>';
-      h+='<div style="font-size:11px;font-weight:700;color:'+statusColor+'">'+statusLabel+'</div></div>';
-      if(status==='allowed'){
-        h+='<button onclick="_adminRevokeGeo(\''+m.uid+'\')" style="font-size:11px;padding:5px 10px;background:rgba(201,64,64,.1);color:var(--rd);border:1px solid rgba(201,64,64,.3);border-radius:8px;cursor:pointer;font-family:inherit">追跡を停止</button>';
-      }else if(status==='pending'){
-        h+='<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">';
-        h+='<button onclick="_adminEnterCode(\''+m.uid+'\')" style="font-size:11px;padding:5px 10px;background:rgba(232,184,75,.15);color:var(--br);border:1px solid rgba(232,184,75,.4);border-radius:8px;cursor:pointer;font-family:inherit">🔑 コード入力</button>';
-        h+='<div style="font-size:10px;color:var(--t2)">相手の画面のコードを入力</div>';
-        h+='</div>';
-      }else{
-        h+='<button onclick="_adminRequestGeo(\''+m.uid+'\')" style="font-size:11px;padding:5px 10px;background:rgba(212,102,62,.1);color:var(--ac);border:1px solid rgba(212,102,62,.3);border-radius:8px;cursor:pointer;font-family:inherit">追跡を依頼</button>';
-      }
-      h+='</div>';
-    });
-    h+='</div>';
-  }
-  if(!isRoomAdmin){
-    var myStatus2=(currentUser&&roomSettings.memberGeo&&roomSettings.memberGeo[currentUser.uid])||'denied';
-    if(myStatus2!=='allowed'){
-      h+='<div style="padding:12px 14px">';
-      h+='<button onclick="shareMyLocation()" class="btn btn-o btn-full">📍 今の位置を共有</button>';
-      h+='<div style="font-size:11px;color:var(--t2);text-align:center;margin-top:6px">ボタンを押すと現在地を共有し、自宅判定も自動で行います</div>';
-      h+='</div>';
-    }else{
-      h+='<div style="padding:12px 14px;text-align:center">';
-      h+='<div style="font-size:13px;color:var(--gn);font-weight:700;margin-bottom:8px">🟢 常時追跡中</div>';
-      h+='<button onclick="_selfRevokeGeo()" style="font-size:12px;padding:8px 16px;background:rgba(201,64,64,.1);color:var(--rd);border:1px solid rgba(201,64,64,.3);border-radius:10px;cursor:pointer;font-family:inherit">🛑 追跡をやめる</button>';
-      h+='</div>';
-    }
-  }
-  el.innerHTML=h;
-}
-
 function loadFbCount(){
   db.collection('iedash').doc(ROOM).collection('feedbacks').get().then(s=>{
     // Store count for display in settings
@@ -2020,35 +1654,13 @@ function listenAll(){
   },console.error);
   db.collection('iedash').doc(ROOM).collection('emergency').onSnapshot(s=>{const recent=s.docs.map(d=>({id:d.id,...d.data()})).filter(x=>x.createdAt&&(Date.now()-new Date(x.createdAt).getTime())<300000);if(recent.length>0)showEmergencyAlert(recent[recent.length-1]);},console.error);
 
-  // 部屋設定リスナー（位置情報設定等）
+  // 部屋設定リスナー
   db.collection('iedash').doc(ROOM).collection('settings').doc('room_config').onSnapshot(function(d){
-    if(d.exists){
-      var v=d.data();
-      roomSettings={
-        geoTrack:v.geoTrack||false,
-        homeLocation:v.homeLocation||null,
-        homeRadius:v.homeRadius||200,
-        memberGeoTrack:v.memberGeoTrack||{}
-      };
-    }else{
-      roomSettings={geoTrack:false,homeLocation:null,homeRadius:200,memberGeoTrack:{}};
-    }
-    _checkMyGeoApproval();
+    if(d.exists){var v=d.data();roomSettings={geoTrack:v.geoTrack||false,homeLocation:v.homeLocation||null,homeRadius:v.homeRadius||200};}
+    else{roomSettings={geoTrack:false,homeLocation:null,homeRadius:200};}
+    _applyGeoTracking();
     try{renderGeoSettings();}catch(e){}
   },function(){});
-
-  // geo同意コードリスナー（本人用 - 自分宛のコードを監視）
-  if(currentUser){
-    db.collection('iedash').doc(ROOM).collection('geo_consent').doc(currentUser.uid)
-      .onSnapshot(function(d){
-        if(d.exists){
-          _geoConsents[currentUser.uid]=d.data();
-        }else{
-          delete _geoConsents[currentUser.uid];
-        }
-        try{_renderConsentBanner();}catch(e){}
-      },function(){});
-  }
 
   // お風呂状態のFirestore同期リスナー
   try{
@@ -2248,8 +1860,19 @@ function renderCal(){
   else renderDayCal();
 }
 
-function renderCalFilter(){var el=document.getElementById('cal-fc');if(!el)return;var noF=(calFilter.length===0);var h='<button class="'+(noF?'on':'')+'" onclick="calFilter=[];renderCal()">全員</button>';(members||[]).forEach(function(m){var on=calFilter.includes(m.uid);h+='<button class="'+(on?'on':'')+'" onclick="togCF(\''+m.uid+'\')">'+(m.emoji||'👤')+' '+m.name+'</button>';});(icalFeeds||[]).filter(function(f){return f.enabled;}).forEach(function(f){h+='<button class="on" style="border-color:'+f.color+';background:'+f.color+'22;color:'+f.color+'">';h+='<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+f.color+';margin-right:3px;vertical-align:middle"></span>'+f.name+'</button>';});el.innerHTML=h;}
-
+function renderCalFilter(){
+  var el=document.getElementById('cal-fc');if(!el)return;
+  var noF=(calFilter.length===0);
+  var h='<button class="'+(noF?'on':'')+'" onclick="calFilter=[];renderCal()">全員</button>';
+  (members||[]).forEach(function(m){
+    var on=calFilter.includes(m.uid);
+    h+='<button class="'+(on?'on':'')+'" onclick="togCF(\''+m.uid+'\')">'+(m.emoji||'👤')+' '+m.name+'</button>';
+  });
+  (icalFeeds||[]).filter(function(f){return f.enabled;}).forEach(function(f){
+    h+='<button class="on" style="border-color:'+f.color+';background:'+f.color+'22;color:'+f.color+'"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+f.color+';margin-right:3px;vertical-align:middle"></span>'+f.name+'</button>';
+  });
+  el.innerHTML=h;
+}
 function togCF(u){calFilter=calFilter.includes(u)?calFilter.filter(x=>x!==u):[...calFilter,u];renderCal();}
 function filteredSch(){return state.schedules.filter(s=>calFilter.length===0||calFilter.includes(s.member));}
 function renderMonthCal(){
@@ -2364,8 +1987,7 @@ function renderSUPage(){
     myCard.innerHTML=
       '<div style="display:flex;align-items:center;gap:10px">'
       +'<span style="font-size:28px">'+m.emoji+'</span>'
-      +'<div style="flex:1">'
-      +'<div style="display:flex;align-items:center;gap:6px">'
+      +'<div style="flex:1"><div style="display:flex;align-items:center;gap:6px">'
       +'<span style="font-size:14px;font-weight:700">'+m.name+'</span>'
       +'<span style="font-size:10px;background:var(--yl);color:var(--br);padding:1px 6px;border-radius:5px">自分</span>'
       +(mood?'<span style="font-size:18px">'+mood+'</span>':'')+'</div>'
@@ -2378,8 +2000,8 @@ function renderSUPage(){
       +'</div></div>';
   }
   renderMyPage();
-  renderNhistStatus();
 }
+
 let _toastTimer=null;
 function showToast(msg){
   const t=document.getElementById('statusToast');if(!t)return;
@@ -2986,43 +2608,19 @@ function loadIcalFeeds(){
   try{icalFeeds=JSON.parse(localStorage.getItem('iedash_ical')||'[]');}catch{icalFeeds=[];}
 }
 function saveIcalFeeds(){localStorage.setItem('iedash_ical',JSON.stringify(icalFeeds));}
-function addIcalFeed(){addIcalFeedManual();}
-
-function _refreshFeedList(){
-  var sec=document.getElementById('gcal-list-section');if(!sec)return;
-  var feeds=icalFeeds||[];
-  if(feeds.length===0){sec.innerHTML='<div style="text-align:center;padding:8px;color:var(--t2);font-size:13px">まだ登録されていません</div>';return;}
-  sec.innerHTML=feeds.map(function(f,i){
-    return '<div style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--wm);border-radius:10px;margin-bottom:6px">'
-    +'<div style="width:12px;height:12px;border-radius:50%;background:'+f.color+';flex-shrink:0"></div>'
-    +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+f.name+'</div>'
-    +'<div style="font-size:10px;color:var(--t2);">'+(f.gcalId?'📅 Google Calendar':'🔗 iCal')+'</div></div>'
-    +'<label style="font-size:12px;cursor:pointer;display:flex;align-items:center;gap:3px">'
-    +'<input type="checkbox" '+(f.enabled?'checked':'')+' onchange="togIcalFeed('+i+',this.checked)" style="width:16px;height:16px"> 表示</label>'
-    +'<button onclick="delIcalFeed('+i+')" style="background:none;border:none;color:#C94040;font-size:18px;cursor:pointer;padding:0 4px">🗑</button>'
-    +'</div>';
-  }).join('');
-}
-function addIcalFeedManual(){
-  var nameEl=document.getElementById('ical-name-inp')||document.getElementById('ical-name');
-  var urlEl=document.getElementById('ical-url-inp')||document.getElementById('ical-url');
-  if(!nameEl||!urlEl){showToast('⚠️ フォームが見つかりません');return;}
-  var name=nameEl.value.trim();
-  var rawUrl=urlEl.value.trim();
-  if(!name||!rawUrl){showToast('⚠️ カレンダー名とURLを入力してください');return;}
-  var url=normalizeCalUrl(rawUrl);
-  if(url!==rawUrl)showToast('🔗 Google URLを自動変換しました');
-  var selCol=document.querySelector('[data-col].selected');
-  var color=selCol?selCol.dataset.col:'#D4663E';
-  icalFeeds.push({id:Date.now()+'',name:name,url:url,color:color,enabled:true});
+function addIcalFeed(){
+  const name=document.getElementById('ical-name').value.trim();
+  const url=document.getElementById('ical-url').value.trim();
+  if(!name||!url){alert('名前とURLを入力してください');return;}
+  if(!url.includes('.ics')&&!url.includes('ical')){if(!confirm('URLにicsが含まれていません。続けますか？'))return;}
+  const colors=['#D4663E','#5A9E7C','#6480B8','#E8A040','#8E6BB5'];
+  const color=colors[icalFeeds.length%colors.length];
+  icalFeeds.push({id:Date.now()+'',name,url,color,enabled:true});
   saveIcalFeeds();
-  if(nameEl)nameEl.value='';
-  if(urlEl)urlEl.value='';
-  // モーダル内の登録済み一覧を更新（モーダルは閉じない）
-  var sec=document.getElementById('gcal-list-section');
-  if(sec)_refreshFeedList();
-  fetchIcalEvents().then(function(){try{renderCal();}catch(e){}}).catch(function(){});
-  showToast('✅ カレンダーを追加しました');
+  document.getElementById('ical-name').value='';
+  document.getElementById('ical-url').value='';
+  renderIcalFeeds();
+  fetchIcalEvents();
 }
 function delIcalFeed(id){
   icalFeeds=icalFeeds.filter(f=>f.id!==id);saveIcalFeeds();
@@ -3072,9 +2670,8 @@ function parseIcal(text){
 }
 
 let icalEventsCache={};
-async function fetchIcalEvents(){
+function fetchIcalEvents(){
   var promises=(icalFeeds||[]).filter(function(f){return f.enabled;}).map(function(feed){
-    // Google Calendar API直接取得（tokenがある場合）
     var tok=feed.token||_gcalToken;
     if(feed.gcalId&&tok){
       var now=new Date();
@@ -3084,18 +2681,8 @@ async function fetchIcalEvents(){
         headers:{Authorization:'Bearer '+tok}
       }).then(function(r){return r.json();})
       .then(function(data){
-        if(data.error){
-          // tokenが切れた場合はiCal fallback
-          return _fetchIcalProxy(feed);
-        }
         var evts=(data.items||[]).map(function(e){
-          return {
-            title:e.summary||'(無題)',
-            start:e.start&&(e.start.dateTime||e.start.date),
-            end:e.end&&(e.end.dateTime||e.end.date),
-            allDay:!!(e.start&&e.start.date&&!e.start.dateTime),
-            uid:e.id
-          };
+          return {title:e.summary||'(無題)',start:e.start&&(e.start.dateTime||e.start.date),end:e.end&&(e.end.dateTime||e.end.date),allDay:!!(e.start&&e.start.date&&!e.start.dateTime),uid:e.id};
         });
         icalEventsCache[feed.id]={events:evts,color:feed.color,name:feed.name};
       }).catch(function(){return _fetchIcalProxy(feed);});
@@ -3109,11 +2696,9 @@ function _fetchIcalProxy(feed){
   return fetch(proxyUrl).then(function(r){return r.text();})
   .then(function(text){
     icalEventsCache[feed.id]={events:parseIcal(text),color:feed.color,name:feed.name};
-  }).catch(function(e){
-    console.warn('iCal fetch failed',feed.name,e);
-    icalEventsCache[feed.id]={events:[],color:feed.color,name:feed.name};
-  });
+  }).catch(function(e){console.warn('iCal fetch failed',feed.name,e);});
 }
+
 function renderIcalEvts(){
   const el=document.getElementById('icalEvts');if(!el)return;
   if(calMode==='gcal'){el.innerHTML='';return;}// shown in gcalPanel
@@ -3351,7 +2936,7 @@ function showRoomInvite(){
     showNewRoomCode(ROOM,name);
   }).catch(()=>showNewRoomCode(ROOM,ROOM));
 }
-function openTrashAreaPicker(){const A=[{id:'箕面市A-4地区',l:'箕面市 A-4地区（石丸３丁目など）',k:'箕面 みのお a4 a-4 石丸'},{id:'箕面市A-1地区',l:'箕面市 A-1地区',k:'箕面 みのお a1 a-1'},{id:'箕面市B地区',l:'箕面市 B地区（火・金：燃えるごみ）',k:'箕面 みのお b'},{id:'大阪市一般',l:'大阪市（月・木：燃えるごみ）',k:'大阪市 osaka'},{id:'豊中市',l:'豊中市（月・木：燃えるごみ）',k:'豊中 とよなか'},{id:'吹田市',l:'吹田市（月・木：燃えるごみ）',k:'吹田 すいた'},{id:'池田市',l:'池田市（月・木：燃えるごみ）',k:'池田 いけだ'},{id:'東京23区',l:'東京23区（火・金：燃えるごみ）',k:'東京 23区 tokyo'},{id:'横浜市',l:'横浜市（火・金：燃えるごみ）',k:'横浜 yokohama'},{id:'custom',l:'その他・手動設定',k:'custom その他 手動'}];const cur=localStorage.getItem('iedash_trash_area')||'箕面市A-4地区';const mc=document.getElementById('mc');if(!mc)return;mc.innerHTML='<div class="m-title">🗺️ ゴミ出し地域</div>'+'<div style="font-size:12px;color:var(--t2);margin-bottom:10px">市区町村名で検索できます</div>'+'<input type="text" class="fi" id="trash-q" placeholder="例: 箕面、大阪市、東京..." style="margin-bottom:10px">'+'<div id="trash-list" style="max-height:300px;overflow-y:auto"></div>'+'<button class="btn btn-ghost btn-full" onclick="closeModal()" style="margin-top:8px">閉じる</button>';openOv();function draw(q){var f=q?A.filter(function(a){return (a.l+' '+a.k).toLowerCase().includes(q);}):A;var el=document.getElementById('trash-list');if(!el)return;if(f.length===0){el.innerHTML='<div style="padding:12px;font-size:13px;color:var(--t2)">見つかりません</div>';return;}el.innerHTML=f.map(function(a){var sel=(a.id===cur)?'border:2px solid var(--ac);color:var(--ac)':'';return '<button onclick="setTrashArea(\''+a.id+'\',\''+a.l+'\')" class="btn btn-ghost" style="width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;font-size:13px;'+sel+'">'+(a.id===cur?'✅ ':'')+a.l+'</button>';}).join('');}draw('');var inp=document.getElementById('trash-q');if(inp)inp.oninput=function(){draw(this.value.toLowerCase().trim());};}
+function openTrashAreaPicker(){var A=[{id:'箕面市A-4地区',l:'箕面市 A-4地区（石丸3丁目など）',k:'箕面 みのお a4'},{id:'箕面市A-1地区',l:'箕面市 A-1地区',k:'箕面 みのお a1'},{id:'箕面市B地区',l:'箕面市 B地区（火・金：燃えるごみ）',k:'箕面 みのお b'},{id:'大阪市一般',l:'大阪市（月・木：燃えるごみ）',k:'大阪市 osaka'},{id:'豊中市',l:'豊中市（月・木：燃えるごみ）',k:'豊中 とよなか'},{id:'吹田市',l:'吹田市（月・木：燃えるごみ）',k:'吹田 すいた'},{id:'池田市',l:'池田市（月・木：燃えるごみ）',k:'池田 いけだ'},{id:'東京23区',l:'東京23区（火・金：燃えるごみ）',k:'東京 23区 tokyo'},{id:'横浜市',l:'横浜市（火・金：燃えるごみ）',k:'横浜 yokohama'},{id:'custom',l:'その他・手動設定',k:'custom その他'}];var cur=localStorage.getItem('iedash_trash_area')||'箕面市A-4地区';var mc=document.getElementById('mc');if(!mc)return;mc.innerHTML='<div class="m-title">🗺️ ゴミ出し地域</div>'+'<input type="text" class="fi" id="trash-q" placeholder="例: 箕面、大阪市..." style="margin-bottom:10px">'+'<div id="trash-list" style="max-height:300px;overflow-y:auto"></div>'+'<button class="btn btn-ghost btn-full" onclick="closeModal()" style="margin-top:8px">閉じる</button>';openOv();function draw(q){var f=q?A.filter(function(a){return (a.l+' '+a.k).toLowerCase().includes(q);}):A;var el=document.getElementById('trash-list');if(!el)return;if(f.length===0){el.innerHTML='<div style="padding:12px;font-size:13px;color:var(--t2)">見つかりません</div>';return;}el.innerHTML=f.map(function(a){var sel=(a.id===cur)?'border:2px solid var(--ac);color:var(--ac)':'';return '<button onclick="setTrashArea(\''+a.id+'\',\''+a.l+'\')" class="btn btn-ghost" style="width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;font-size:13px;'+sel+'">'+(a.id===cur?'✅ ':'')+a.l+'</button>';}).join('');}draw('');var inp=document.getElementById('trash-q');if(inp)inp.oninput=function(){draw(this.value.toLowerCase().trim());};}
 function setTrashArea(id,label){
   localStorage.setItem('iedash_trash_area',id);
   const lbl=document.getElementById('iset-trash-area-lbl');
@@ -3379,23 +2964,20 @@ function closeFab(){
 }
 
 function renderFamStatus(){renderMemberPanels();
-  const el=document.getElementById('famStatusGrid');if(!el)return;
+  var el=document.getElementById('famStatusGrid');if(!el)return;
   if(!members.length){el.innerHTML='<div class="empty">メンバーがいません</div>';return;}
-  el.innerHTML=members.map(m=>{
-    const s=state.status[m.uid]||{home:true,ret:''},mood=state.mood[m.uid]||'';
-    const mine=isMe(m.uid);
-    const home=s.home!==false;
-    const loc=state.locations&&state.locations[m.uid];
-    const locTxt=!home&&loc&&loc.place?loc.place:'';
-    const retTxt=s.ret?'帰宅予定 '+s.ret:'';
-    return '<div class="fam-sc'+(mine?' mine':'')+'" style="border-left:3px solid '+m.color+'" onclick="'+(mine?'openMyStatusModal()':'')+'">'
-      +memberAvatar(m,32)
-      +'<div style="flex:1;min-width:0">'
-        +'<div class="fam-sc-name">'+m.name+'</div>'
-        +'<div class="fam-sc-st '+(home?'home':'out')+'">'+(home?'🏠 在宅':'🚶 外出中')+(retTxt?' · '+retTxt:'')+'</div>'
-        +(locTxt?'<div class="fam-sc-loc">📍 '+locTxt+'</div>':'')
-      +'</div>'
-      +(mood?'<div class="fam-sc-mood">'+mood+'</div>':'')
+  el.innerHTML=members.map(function(m){
+    var s=state.status[m.uid]||{home:true,ret:''};
+    var mood=state.mood[m.uid]||'';
+    var mine=isMe(m.uid);
+    var home=s.home!==false;
+    var onclick=mine?'onclick="openMyStatusModal()"':'';
+    return '<div class="fam-sc'+(mine?' mine':'')+'" '+onclick+'>'
+      +'<div style="font-size:26px;line-height:1">'+m.emoji+'</div>'
+      +'<div style="font-size:11px;font-weight:700;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">'+m.name+'</div>'
+      +'<div style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;background:'+(home?'rgba(90,158,124,.15)':'rgba(201,64,64,.12)')+';color:'+(home?'var(--gn)':'var(--rd)')+'">'+(home?'在宅':'外出')+'</div>'
+      +(s.ret&&!home?'<div style="font-size:9px;color:var(--t2)">帰'+s.ret+'</div>':'')
+      +(mood?'<div style="font-size:16px;line-height:1">'+mood+'</div>':'')
       +'</div>';
   }).join('');
 }
@@ -3547,7 +3129,8 @@ function selectTmplDay(i){
 }
 
 async 
-function saveMealAll(){const t={breakfast:document.getElementById('mtime-breakfast')?.value||'',lunch:document.getElementById('mtime-lunch')?.value||'',dinner:document.getElementById('mtime-dinner')?.value||'',date:tday()};state.mealTimeToday=t;try{db.collection('iedash').doc(ROOM).collection('settings').doc('meal_times_today').set(t).catch(function(){});}catch(e){}const m={breakfast:document.getElementById('mfood-breakfast')?.value||'',lunch:document.getElementById('mfood-lunch')?.value||'',dinner:document.getElementById('mfood-dinner')?.value||''};const meals=state.meals||{};meals['override_'+tday()]=m;state.meals=meals;try{db.collection('iedash').doc(ROOM).collection('settings').doc('meal_tpl').set(meals,{merge:true}).catch(function(){});}catch(e){}renderMeal();closeModal();showToast('🍽️ 保存しました');}
+function saveMealAll(){var t={breakfast:document.getElementById('mtime-breakfast')?.value||'',lunch:document.getElementById('mtime-lunch')?.value||'',dinner:document.getElementById('mtime-dinner')?.value||'',date:tday()};state.mealTimeToday=t;db.collection('iedash').doc(ROOM).collection('settings').doc('meal_times_today').set(t).catch(function(){});var m={breakfast:document.getElementById('mfood-breakfast')?.value||'',lunch:document.getElementById('mfood-lunch')?.value||'',dinner:document.getElementById('mfood-dinner')?.value||''};var meals=state.meals||{};meals['override_'+tday()]=m;state.meals=meals;db.collection('iedash').doc(ROOM).collection('settings').doc('meal_tpl').set(meals,{merge:true}).catch(function(){});renderMeal();closeModal();showToast('🍽️ 保存しました');}
+
 function saveMealTimeToday(){
   const t={
     breakfast:document.getElementById('mtime-breakfast')?.value||'',
@@ -3592,35 +3175,28 @@ function checkTutorial(){if(!localStorage.getItem('iedash_tut_done'))setTimeout(
 
 // ══ スワイプ切り替え ══
 (function(){
-  const TABS=['home','todo','calendar','status'];
-  let sx=0,sy=0,moving=false,locked=false;
-  function curIdx(){return TABS.findIndex(t=>document.getElementById('pg-'+t)?.classList.contains('active'));}
-  document.addEventListener('touchstart',e=>{
-    sx=e.touches[0].clientX;
-    sy=e.touches[0].clientY;
-    moving=false;locked=false;
-  },{passive:true});
-  document.addEventListener('touchmove',e=>{
+  var TABS=['home','todo','calendar','status'];
+  var sx=0,sy=0,moving=false,locked=false;
+  function curIdx(){return TABS.findIndex(function(t){return document.getElementById('pg-'+t)?.classList.contains('active');});}
+  document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;moving=false;locked=false;},{passive:true});
+  document.addEventListener('touchmove',function(e){
     if(locked)return;
-    const dx=e.touches[0].clientX-sx;
-    const dy=e.touches[0].clientY-sy;
-    // 縦スクロール中はロック
+    var dx=e.touches[0].clientX-sx,dy=e.touches[0].clientY-sy;
     if(Math.abs(dy)>10){locked=true;return;}
-    // 横スワイプ検出：縦より横が大きく、かつ15px以上
     if(!moving&&Math.abs(dx)>Math.abs(dy)*1.5&&Math.abs(dx)>20){moving=true;}
   },{passive:true});
-  document.addEventListener('touchend',e=>{
+  document.addEventListener('touchend',function(e){
     if(!moving)return;
-    const dx=e.changedTouches[0].clientX-sx;
-    const dy_te=e.changedTouches[0].clientY-sy;
-    if(Math.abs(dy_te)>Math.abs(dx)*0.7)return;
-    if(Math.abs(dx)<40)return;  // 40pxで反応
-    const i=curIdx();
-    if(dx<0&&i<TABS.length-1)setPage(TABS[i+1],null);
-    else if(dx>0&&i>0)setPage(TABS[i-1],null);
+    var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dy)>Math.abs(dx)*0.7)return;
+    if(Math.abs(dx)<40)return;
+    var idx=curIdx();
+    if(dx<0&&idx<TABS.length-1)setPage(TABS[idx+1],null);
+    else if(dx>0&&idx>0)setPage(TABS[idx-1],null);
     moving=false;
   });
 })();
+;
 
 function memberAvatar(m,size){
   const sz=size||36;
@@ -3722,211 +3298,246 @@ async function execDeleteAccount(){
     }else{showToast('削除失敗: '+ex.message);}
   }
 }
+function addIcalFeedManual(){
+  var nameEl=document.getElementById('ical-name-inp');
+  var urlEl=document.getElementById('ical-url-inp');
+  if(!nameEl||!urlEl){showToast('⚠️ フォームが見つかりません');return;}
+  var name=nameEl.value.trim(), rawUrl=urlEl.value.trim();
+  if(!name||!rawUrl){showToast('⚠️ カレンダー名とURLを入力してください');return;}
+  var url=normalizeCalUrl(rawUrl);
+  if(url!==rawUrl)showToast('🔗 Google URLを自動変換しました');
+  var colors=['#D4663E','#5A9E7C','#6480B8','#E8A040','#8E6BB5'];
+  icalFeeds.push({id:Date.now()+'',name:name,url:url,color:colors[icalFeeds.length%colors.length],enabled:true});
+  saveIcalFeeds();
+  nameEl.value=''; urlEl.value='';
+  var sec=document.getElementById('gcal-list-section');if(sec)_refreshFeedList();
+  fetchIcalEvents().then(function(){try{renderCal();}catch(e){}}).catch(function(){});
+  showToast('✅ カレンダーを追加しました');
+}
+function _refreshFeedList(){
+  var sec=document.getElementById('gcal-list-section');if(!sec)return;
+  var feeds=icalFeeds||[];
+  if(!feeds.length){sec.innerHTML='<div style="text-align:center;padding:8px;color:var(--t2);font-size:13px">まだ登録されていません</div>';return;}
+  sec.innerHTML=feeds.map(function(f,i){
+    return '<div style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--wm);border-radius:10px;margin-bottom:6px">'
+    +'<div style="width:12px;height:12px;border-radius:50%;background:'+f.color+'"></div>'
+    +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+f.name+'</div>'
+    +'<div style="font-size:10px;color:var(--t2)">'+(f.gcalId?'📅 Google Calendar':'🔗 iCal')+'</div></div>'
+    +'<label style="font-size:12px;cursor:pointer;display:flex;align-items:center;gap:3px">'
+    +'<input type="checkbox" '+(f.enabled?'checked':'')+' onchange="togIcalFeed('+i+',this.checked)" style="width:16px;height:16px"> 表示</label>'
+    +'<button onclick="delIcalFeed('+i+')" style="background:none;border:none;color:#C94040;font-size:18px;cursor:pointer;padding:0 4px">🗑</button>'
+    +'</div>';
+  }).join('');
+}
+
+function openGcalLink(){
+  var provider=new firebase.auth.GoogleAuthProvider();
+  provider.addScope('https://www.googleapis.com/auth/calendar.readonly');
+  auth.signInWithPopup(provider).then(function(result){
+    var credential=result.credential;
+    _gcalToken=credential?credential.accessToken:null;
+    if(_gcalToken){_fetchGcalList(_gcalToken);}
+    else{showToast('⚠️ トークン取得失敗');}
+  }).catch(function(e){
+    showToast('⚠️ '+e.message);
+  });
+}
+function _fetchGcalList(token){
+  showToast('📅 カレンダー一覧を取得中...');
+  fetch('https://www.googleapis.com/calendar/v3/users/me/calendarList',{
+    headers:{Authorization:'Bearer '+token}
+  }).then(function(r){return r.json();})
+  .then(function(data){
+    if(data.error){showToast('⚠️ '+data.error.message);return;}
+    _gcalCalendars=data.items||[];
+    _showGcalSelectModal();
+  }).catch(function(e){showToast('⚠️ 取得失敗: '+e.message);});
+}
+function _showGcalSelectModal(){
+  var mc=document.getElementById('mc');if(!mc)return;
+  var cals=_gcalCalendars;
+  var h='<div class="m-title">📅 カレンダーを選択</div>';
+  h+='<div style="font-size:12px;color:var(--t2);margin-bottom:14px">追加したいカレンダーにチェックを入れてください</div>';
+  h+='<div style="max-height:320px;overflow-y:auto;margin-bottom:12px" id="gcal-list">';
+  cals.forEach(function(cal,i){
+    var col=cal.backgroundColor||'#4285F4';
+    var isAdded=icalFeeds.some(function(f){return f.id==='gcal_'+cal.id;});
+    h+='<label style="display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;margin-bottom:6px;background:var(--wm);cursor:'+(isAdded?'default':'pointer')+';opacity:'+(isAdded?'0.5':'1')+'">';
+    h+='<input type="checkbox" name="gcal-pick" value="'+i+'" '+(isAdded?'checked disabled':'')+' style="width:18px;height:18px;accent-color:'+col+'">';
+    h+='<div style="width:14px;height:14px;border-radius:50%;background:'+col+'"></div>';
+    h+='<div style="flex:1"><div style="font-size:13px;font-weight:700">'+cal.summary+'</div>';
+    if(isAdded)h+='<div style="font-size:11px;color:var(--gn)">✓ 追加済み</div>';
+    h+='</div></label>';
+  });
+  h+='</div>';
+  h+='<button class="btn btn-o btn-full" onclick="window._addSelectedGcals()" style="margin-bottom:8px">選択して追加</button>';
+  h+='<button class="btn btn-ghost btn-full" onclick="showGcalComingSoon()">← 戻る</button>';
+  mc.innerHTML=h;openOv();
+}
+window._addSelectedGcals=function(){
+  var checked=document.querySelectorAll('[name=gcal-pick]:checked:not(:disabled)');
+  if(checked.length===0){showToast('⚠️ カレンダーを選んでください');return;}
+  var added=0;
+  checked.forEach(function(cb){
+    var idx=parseInt(cb.value),cal=_gcalCalendars[idx];if(!cal)return;
+    if(!icalFeeds.some(function(f){return f.id==='gcal_'+cal.id;})){
+      icalFeeds.push({id:'gcal_'+cal.id,name:cal.summary,url:'gcal://'+cal.id,
+        color:cal.backgroundColor||'#4285F4',enabled:true,gcalId:cal.id,token:_gcalToken});
+      added++;
+    }
+  });
+  if(added===0){showToast('選択されたカレンダーはすでに追加済みです');return;}
+  saveIcalFeeds();showToast('✅ '+added+'件のカレンダーを連携しました！');
+  fetchIcalEvents().then(function(){try{renderCal();}catch(e){}}).catch(function(){});
+  showGcalComingSoon();renderCalFilter();
+};
 function showGcalComingSoon(){
   var mc=document.getElementById('mc');if(!mc)return;
   var feeds=icalFeeds||[];
-  var h='<div class="m-title">📅 カレンダー連携</div>';
-
-  // メインCTA: Googleアカウントで連携
-  h+='<div style="background:linear-gradient(135deg,#4285F4,#34A853);border-radius:16px;padding:16px;margin-bottom:16px;text-align:center">';
-  h+='<div style="font-size:28px;margin-bottom:6px">🗓️</div>';
-  h+='<div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px">Googleアカウントで連携</div>';
-  h+='<div style="font-size:11px;color:rgba(255,255,255,.8);margin-bottom:12px">ログイン中のGoogleアカウントの<br>カレンダーを自動で取得します</div>';
-  h+='<button onclick="openGcalLink()" style="background:#fff;color:#4285F4;border:none;border-radius:10px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;touch-action:manipulation">';
-  h+='<svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>';
-  h+='Googleカレンダーを選ぶ</button>';
-  h+='</div>';
-
-  // 登録済み一覧
+  var h='<div class="m-title">📅 外部カレンダー連携</div>';
+  h+='<button onclick="openGcalLink()" style="width:100%;padding:14px;background:#4285F4;color:#fff;border:none;border-radius:14px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px;touch-action:manipulation">'
+    +'<svg width="18" height="18" viewBox="0 0 24 24"><path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#fff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>'
+    +'Googleアカウントのカレンダーを追加</button>';
   h+='<div id="gcal-list-section">';
   if(feeds.length>0){
     h+='<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px">📋 登録済み（'+feeds.length+'件）</div>';
-    feeds.forEach(function(f,i){
-      h+='<div style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--wm);border-radius:10px;margin-bottom:6px">';
-      h+='<div style="width:12px;height:12px;border-radius:50%;background:'+f.color+';flex-shrink:0"></div>';
-      h+='<div style="flex:1;min-width:0">';
-      h+='<div style="font-size:13px;font-weight:700">'+f.name+'</div>';
-      h+='<div style="font-size:10px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(f.gcalId?'📅 Google Calendar':'🔗 iCal')+'</div></div>';
-      h+='<label style="font-size:12px;cursor:pointer;display:flex;align-items:center;gap:3px">';
-      h+='<input type="checkbox" '+(f.enabled?'checked':'')+' onchange="togIcalFeed('+i+',this.checked)" style="width:16px;height:16px"> 表示</label>';
-      h+='<button onclick="delIcalFeed('+i+')" style="background:none;border:none;color:#C94040;font-size:20px;cursor:pointer;padding:0 4px;touch-action:manipulation">🗑</button>';
-      h+='</div>';
-    });
+    h+=feeds.map(function(f,i){
+      return '<div style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--wm);border-radius:10px;margin-bottom:6px">'
+        +'<div style="width:12px;height:12px;border-radius:50%;background:'+f.color+'"></div>'
+        +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+f.name+'</div>'
+        +'<div style="font-size:10px;color:var(--t2)">'+(f.gcalId?'📅 Google Calendar':'🔗 iCal')+'</div></div>'
+        +'<label style="font-size:12px;cursor:pointer;display:flex;align-items:center;gap:3px">'
+        +'<input type="checkbox" '+(f.enabled?'checked':'')+' onchange="togIcalFeed('+i+',this.checked)" style="width:16px;height:16px"> 表示</label>'
+        +'<button onclick="delIcalFeed('+i+')" style="background:none;border:none;color:#C94040;font-size:20px;cursor:pointer;padding:0 4px">🗑</button>'
+        +'</div>';
+    }).join('');
+  }else{
+    h+='<div style="text-align:center;padding:8px;color:var(--t2);font-size:13px">まだ登録されていません</div>';
   }
   h+='</div>';
-
-  // 手動URL入力（折りたたみ）
-  h+='<details style="margin-top:12px">';
-  h+='<summary style="font-size:12px;color:var(--t2);cursor:pointer;padding:8px 0;list-style:none;display:flex;align-items:center;gap:6px">';
-  h+='<span>🔗</span><span>URLで手動追加</span><span style="margin-left:auto;font-size:10px">▼</span></summary>';
+  h+='<details style="margin-top:12px"><summary style="font-size:12px;color:var(--t2);cursor:pointer;padding:8px 0;list-style:none;display:flex;align-items:center;gap:6px"><span>🔗 URLで手動追加</span></summary>';
   h+='<div style="padding-top:10px">';
-  h+='<input type="text" class="fi" id="ical-name-inp" placeholder="カレンダー名（例: お父さん）" style="margin-bottom:8px">';
-  h+='<input type="url" class="fi" id="ical-url-inp" placeholder="iCal URL または Google embed URL" style="margin-bottom:10px">';
-  h+='<div style="font-size:11px;color:var(--t2);background:var(--wm);border-radius:8px;padding:8px;margin-bottom:10px">';
-  h+='💡 Google CalendarのembedURLも貼り付け可能<br>（自動でiCal形式に変換します）</div>';
-  var COLS2=['#D4663E','#6480B8','#5A9E7C','#E8B84B','#C94040','#9B59B6'];
-  h+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:12px"><span style="font-size:12px;font-weight:700;color:var(--t2)">色:</span>';
-  COLS2.forEach(function(c,i){
-    h+='<div onclick="_pickCol(this,\''+c+'\')" data-col="'+c+'" style="width:24px;height:24px;border-radius:50%;background:'+c+';cursor:pointer;border:3px solid '+(i===0?'var(--br)':'transparent')+';flex-shrink:0;touch-action:manipulation"></div>';
-  });
-  h+='</div>';
+  h+='<input type="text" class="fi" id="ical-name-inp" placeholder="カレンダー名" style="margin-bottom:8px">';
+  h+='<input type="text" class="fi" id="ical-url-inp" placeholder="iCal URL または Google Calendar のリンク" style="margin-bottom:10px">';
+  h+='<div style="font-size:11px;color:var(--t2);background:var(--wm);border-radius:8px;padding:8px;margin-bottom:10px">💡 Google CalendarのembedURLも貼り付け可能（自動変換します）</div>';
   h+='<button class="btn btn-o btn-full" onclick="addIcalFeedManual()">追加</button>';
   h+='</div></details>';
   h+='<button class="btn btn-ghost btn-full" style="margin-top:12px" onclick="closeModal()">閉じる</button>';
   mc.innerHTML=h;openOv();
 }
 
+
+
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // IRORI マイページ ウィジェットシステム
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-var _myWidgets = [];  // [{id, type, config, data}]
-var _widgetListeners = {};
-
-function _loadMyWidgets() {
-  if (!ROOM || !currentUser) return;
+function _loadMyWidgets(){
+  if(!ROOM||!currentUser)return;
   db.collection('iedash').doc(ROOM).collection('widgets').doc(currentUser.uid)
-    .onSnapshot(function(d) {
-      _myWidgets = d.exists ? (d.data().list || []) : [];
+    .onSnapshot(function(d){
+      _myWidgets=d.exists?(d.data().list||[]):[];
       renderMyPage();
-    }, function() {});
+    },function(){});
 }
 
-function _saveMyWidgets() {
-  if (!ROOM || !currentUser) return;
+function _saveMyWidgets(){
+  renderMyPage();
+  if(!ROOM||!currentUser)return;
   db.collection('iedash').doc(ROOM).collection('widgets').doc(currentUser.uid)
-    .set({ list: _myWidgets }, { merge: false })
-    .catch(function() {});
+    .set({list:_myWidgets},{merge:false}).catch(function(){});
 }
 
-// ─── ウィジェットデータ保存（個別）───
-function _saveWidgetData(wid, data) {
-  var w = _myWidgets.find(function(x) { return x.id === wid; });
-  if (!w) return;
-  w.data = data;
+function _saveWidgetData(wid,data){
+  var w=_myWidgets.find(function(x){return x.id===wid;});if(!w)return;
+  w.data=data;
   _saveMyWidgets();
 }
 
-// ─── ウィジェット追加 ───
-function openWidgetPicker() {
-  var mc = document.getElementById('mc'); if (!mc) return;
-  var TMPL = _getWidgetTemplates();
-  var h = '<div class="m-title">➕ ウィジェットを追加</div>';
-  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">';
-  TMPL.forEach(function(t) {
-    h += '<div onclick="addWidget(\'' + t.type + '\')" style="background:var(--wm);border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;border:2px solid transparent;touch-action:manipulation" onmousedown="this.style.borderColor=\'var(--ac)\'" onmouseup="this.style.borderColor=\'transparent\'">';
-    h += '<div style="font-size:28px;margin-bottom:6px">' + t.icon + '</div>';
-    h += '<div style="font-size:12px;font-weight:700;color:var(--tx)">' + t.name + '</div>';
-    h += '<div style="font-size:10px;color:var(--t2);margin-top:3px">' + t.desc + '</div>';
-    h += '</div>';
+function openWidgetPicker(){
+  var mc=document.getElementById('mc');if(!mc)return;
+  var TMPL=_getWidgetTemplates();
+  var h='<div class="m-title">➕ ウィジェットを追加</div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">';
+  TMPL.forEach(function(t){
+    h+='<div onclick="addWidget(\''+t.type+'\')" style="background:var(--wm);border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;touch-action:manipulation">';
+    h+='<div style="font-size:28px;margin-bottom:6px">'+t.icon+'</div>';
+    h+='<div style="font-size:12px;font-weight:700;color:var(--tx)">'+t.name+'</div>';
+    h+='<div style="font-size:10px;color:var(--t2);margin-top:3px">'+t.desc+'</div>';
+    h+='</div>';
   });
-  h += '</div>';
-  h += '<button class="btn btn-ghost btn-full" onclick="closeModal()">閉じる</button>';
-  mc.innerHTML = h; openOv();
+  h+='</div><button class="btn btn-ghost btn-full" onclick="closeModal()">閉じる</button>';
+  mc.innerHTML=h;openOv();
 }
 
-function addWidget(type) {
-  var TMPL = _getWidgetTemplates();
-  var t = TMPL.find(function(x) { return x.type === type; });
-  if (!t) return;
-  var w = { id: Date.now() + '_' + type, type: type, config: Object.assign({}, t.defaultConfig), data: {} };
-  _myWidgets.push(w);
-  _saveMyWidgets();
-  closeModal();
-  showToast('✅ ' + t.name + ' を追加しました');
+function addWidget(type){
+  var TMPL=_getWidgetTemplates();
+  var t=TMPL.find(function(x){return x.type===type;});if(!t)return;
+  var cfg={};Object.keys(t.defaultConfig).forEach(function(k){cfg[k]=t.defaultConfig[k];});
+  _myWidgets.push({id:Date.now()+'_'+type,type:type,config:cfg,data:{}});
+  _saveMyWidgets();closeModal();showToast('✅ '+t.name+' を追加しました');
 }
 
-function removeWidget(wid) {
-  _myWidgets = _myWidgets.filter(function(w) { return w.id !== wid; });
+function removeWidget(wid){
+  _myWidgets=_myWidgets.filter(function(w){return w.id!==wid;});
   _saveMyWidgets();
 }
 
-// ─── テンプレート一覧 ───
-function _getWidgetTemplates() {
+function moveWidget(wid,dir){
+  var idx=_myWidgets.findIndex(function(w){return w.id===wid;});
+  if(idx<0)return;
+  var ni=idx+dir;
+  if(ni<0||ni>=_myWidgets.length)return;
+  var tmp=_myWidgets[idx];_myWidgets[idx]=_myWidgets[ni];_myWidgets[ni]=tmp;
+  _saveMyWidgets();
+}
+
+function _getWidgetTemplates(){
   return [
-    {
-      type: 'weight',
-      icon: '⚖️',
-      name: '体重記録',
-      desc: '毎日の体重を記録・グラフで見える化',
-      defaultConfig: { targetWeight: null, targetDate: null, unit: 'kg' }
-    },
-    {
-      type: 'habit',
-      icon: '🔥',
-      name: '習慣トラッカー',
-      desc: 'ストリーク記録・継続日数を管理',
-      defaultConfig: { habitName: '習慣', color: '#D4663E', emoji: '🔥' }
-    },
-    {
-      type: 'memo',
-      icon: '📝',
-      name: 'スティッキーメモ',
-      desc: '自由にメモを書き留める',
-      defaultConfig: { title: 'メモ', color: '#E8B84B' }
-    },
-    {
-      type: 'countdown',
-      icon: '⏰',
-      name: 'カウントダウン',
-      desc: '大切な日までのカウントダウン',
-      defaultConfig: { title: 'カウントダウン', targetDate: '', emoji: '🎉' }
-    },
-    {
-      type: 'expense',
-      icon: '💰',
-      name: '支出記録',
-      desc: '日々の支出をカテゴリ別に記録',
-      defaultConfig: { monthBudget: 30000, currency: '¥' }
-    },
-    {
-      type: 'sleep',
-      icon: '😴',
-      name: '睡眠記録',
-      desc: '就寝・起床時間と睡眠の質を記録',
-      defaultConfig: { targetHours: 7 }
-    },
-    {
-      type: 'diary',
-      icon: '🌸',
-      name: '一言日記',
-      desc: '毎日一言、気持ちを記録',
-      defaultConfig: { title: '今日の一言', mood: true }
-    },
-    {
-      type: 'goal',
-      icon: '🎯',
-      name: '目標管理',
-      desc: '目標と進捗をタスク形式で管理',
-      defaultConfig: { goalTitle: 'マイゴール', color: '#5A9E7C' }
-    }
+    {type:'weight',icon:'⚖️',name:'体重記録',desc:'毎日の体重を記録・グラフで見える化',defaultConfig:{targetWeight:null,targetDate:null}},
+    {type:'habit',icon:'🔥',name:'習慣トラッカー',desc:'ストリーク・継続日数を管理',defaultConfig:{habitName:'習慣',color:'#D4663E',emoji:'🔥'}},
+    {type:'memo',icon:'📝',name:'スティッキーメモ',desc:'自由にメモを書き留める',defaultConfig:{title:'メモ',color:'#E8B84B'}},
+    {type:'countdown',icon:'⏰',name:'カウントダウン',desc:'大切な日までをカウント',defaultConfig:{title:'カウントダウン',targetDate:'',emoji:'🎉'}},
+    {type:'expense',icon:'💰',name:'支出記録',desc:'日々の支出をカテゴリ別に記録',defaultConfig:{monthBudget:30000,currency:'¥'}},
+    {type:'sleep',icon:'😴',name:'睡眠記録',desc:'就寝・起床時間と質を記録',defaultConfig:{targetHours:7}},
+    {type:'diary',icon:'🌸',name:'一言日記',desc:'毎日一言、気持ちを記録',defaultConfig:{title:'今日の一言'}},
+    {type:'goal',icon:'🎯',name:'目標管理',desc:'目標と進捗をタスク形式で管理',defaultConfig:{goalTitle:'マイゴール',color:'#5A9E7C'}}
   ];
 }
 
-// ─── マイページ レンダリング ───
-function renderMyPage() {
-  var el = document.getElementById('my-widgets-area'); if (!el) return;
-  if (_myWidgets.length === 0) {
-    el.innerHTML = '<div style="text-align:center;padding:40px 20px">'
-      + '<div style="font-size:48px;margin-bottom:12px">🧩</div>'
-      + '<div style="font-size:15px;font-weight:700;color:var(--tx);margin-bottom:6px">ウィジェットがありません</div>'
-      + '<div style="font-size:12px;color:var(--t2);margin-bottom:20px">下の＋ボタンから追加してください</div>'
-      + '<button onclick="openWidgetPicker()" class="btn btn-o">➕ ウィジェットを追加</button>'
-      + '</div>';
+function renderMyPage(){
+  var el=document.getElementById('my-widgets-area');if(!el)return;
+  if(!_myWidgets||!_myWidgets.length){
+    el.innerHTML='<div style="text-align:center;padding:40px 20px">'
+      +'<div style="font-size:48px;margin-bottom:12px">🧩</div>'
+      +'<div style="font-size:15px;font-weight:700;color:var(--tx);margin-bottom:6px">ウィジェットがありません</div>'
+      +'<div style="font-size:12px;color:var(--t2);margin-bottom:20px">下の＋ボタンから追加してください</div>'
+      +'</div>';
     return;
   }
-  el.innerHTML = _myWidgets.map(function(w) {
-    return _renderWidget(w);
+  el.innerHTML=_myWidgets.map(function(w,i){
+    var canUp=(i>0),canDown=(i<_myWidgets.length-1);
+    var wid=w.id;
+    var sortHtml='<span style="display:flex;gap:2px;margin-right:4px">'
+      +'<button onclick="moveWidget(\''+wid+'\',-1)" style="background:none;border:1px solid var(--wm);border-radius:6px;font-size:11px;padding:2px 5px;cursor:pointer;color:'+(canUp?'var(--t2)':'var(--t3)')+';touch-action:manipulation" '+(canUp?'':'disabled')+'>▲</button>'
+      +'<button onclick="moveWidget(\''+wid+'\',1)" style="background:none;border:1px solid var(--wm);border-radius:6px;font-size:11px;padding:2px 5px;cursor:pointer;color:'+(canDown?'var(--t2)':'var(--t3)')+';touch-action:manipulation" '+(canDown?'':'disabled')+'>▼</button>'
+      +'</span>';
+    try{
+      var r=_renderWidget(w);
+      return r.replace('class="widget-del-btn"','sort-placeholder>'+sortHtml+'</span><button class="widget-del-btn"');
+    }catch(e){
+      console.error('widget error',w.type,e);
+      return '<div class="widget-card"><div class="widget-hdr"><span class="widget-icon">⚠️</span><span class="widget-title">エラー('+w.type+')</span><button onclick="removeWidget(\''+wid+'\')" class="widget-del-btn">×</button></div></div>';
+    }
   }).join('');
 }
 
-function _renderWidget(w) {
-  var fn = _widgetRenderers[w.type];
-  if (!fn) return '<div class="widget-card"><div class="widget-hdr"><span>' + w.type + '</span></div></div>';
+function _renderWidget(w){
+  var fn=_widgetRenderers[w.type];
+  if(!fn)return '<div class="widget-card"><div class="widget-hdr"><span class="widget-icon">🧩</span><span class="widget-title">'+w.type+'</span><button onclick="removeWidget(\''+w.id+'\')" class="widget-del-btn">×</button></div></div>';
   return fn(w);
 }
 
-// ─── 各ウィジェットレンダラー ───
 var _widgetRenderers = {
 
   // ┌─────────────────────────────────┐
@@ -4508,6 +4119,57 @@ function saveGoalConfig(wid) {
   w.config.goalTitle = document.getElementById('gtit_' + wid)?.value || '目標';
   w.config.color = document.getElementById('gcol_' + wid)?.value || '#5A9E7C';
   _saveMyWidgets(); closeModal();
+}
+
+
+function openWidgetNotifConfig(wid){
+  var w=_myWidgets.find(function(x){return x.id===wid;});if(!w)return;
+  var nc=w.config.notif||{enabled:false,time:'08:00',message:''};
+  var mc=document.getElementById('mc');if(!mc)return;
+  var TMPL=_getWidgetTemplates();
+  var tmpl=TMPL.find(function(t){return t.type===w.type;});
+  var defMsg=tmpl?tmpl.name+'を記録しましょう！':'記録しましょう！';
+  var h='<div class="m-title">🔔 通知設定</div>';
+  h+='<div style="background:rgba(212,102,62,.08);border-radius:12px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--t2)">📱 設定した時間にブラウザ通知が届きます。</div>';
+  h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--wm)">';
+  h+='<div style="font-size:14px;font-weight:700">通知をON</div>';
+  h+='<input type="checkbox" id="wne_'+wid+'" '+(nc.enabled?'checked':'')+' style="width:20px;height:20px">';
+  h+='</div>';
+  h+='<div style="padding:12px 0;border-bottom:1px solid var(--wm)"><div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">通知時刻</div><input type="time" id="wnt_'+wid+'" value="'+nc.time+'" class="fi"></div>';
+  h+='<div style="padding:12px 0"><div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">メッセージ</div><input type="text" id="wnm_'+wid+'" value="'+(nc.message||defMsg)+'" class="fi"></div>';
+  h+='<div style="display:flex;gap:8px;margin-top:4px"><button class="btn btn-ghost" style="flex:1" onclick="closeModal()">キャンセル</button><button class="btn btn-o" style="flex:2" onclick="saveWidgetNotifConfig(\''+wid+'\')">保存</button></div>';
+  mc.innerHTML=h;openOv();
+}
+function saveWidgetNotifConfig(wid){
+  var w=_myWidgets.find(function(x){return x.id===wid;});if(!w)return;
+  var enabled=!!document.getElementById('wne_'+wid)?.checked;
+  var time=document.getElementById('wnt_'+wid)?.value||'08:00';
+  var msg=document.getElementById('wnm_'+wid)?.value||'';
+  w.config.notif={enabled:enabled,time:time,message:msg};
+  _saveMyWidgets();
+  if(enabled&&Notification&&Notification.permission!=='granted')Notification.requestPermission().catch(function(){});
+  showToast(enabled?'✅ 通知を設定しました ('+time+')':'🔕 通知をOFFにしました');
+  closeModal();
+}
+function _scheduleWidgetNotifs(){
+  if(window._widgetNotifInterval)clearInterval(window._widgetNotifInterval);
+  window._widgetNotifInterval=setInterval(function(){
+    var now=new Date();
+    var hm=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    (_myWidgets||[]).forEach(function(w){
+      var nc=w.config&&w.config.notif;
+      if(!nc||!nc.enabled||nc.time!==hm)return;
+      var key='iedash_wnotif_'+w.id+'_'+tday()+'_'+hm;
+      if(localStorage.getItem(key))return;
+      localStorage.setItem(key,'1');
+      var TMPL=_getWidgetTemplates();
+      var tmpl=TMPL.find(function(t){return t.type===w.type;});
+      var icon=tmpl?tmpl.icon:'🧩';
+      if(Notification&&Notification.permission==='granted'){
+        try{new Notification('Irori '+icon+' '+(tmpl?tmpl.name:w.type),{body:nc.message||'記録しましょう！'});}catch(e){}
+      }else{showToast('🔔 '+(nc.message||'記録しましょう！'));}
+    });
+  },60000);
 }
 </script>
 <!-- ══ チュートリアル ══ -->
