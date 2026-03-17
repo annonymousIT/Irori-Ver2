@@ -412,7 +412,7 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 .gcal-evt-pill{font-size:10px;font-weight:700;padding:1px 4px;border-radius:4px;margin-bottom:1px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;line-height:1.5}
 .gcal-more{font-size:10px;color:var(--t3);text-align:right;padding-right:2px}
 /* Bath checkboxes */
-.bath-chk{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px 8px;border-radius:14px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;transition:all .15s;width:100%;min-height:84px;box-sizing:border-box;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-appearance:none;appearance:none}
+.bath-chk{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px 8px;border-radius:14px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;transition:all .15s;width:100%;min-height:84px;box-sizing:border-box;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-appearance:none;appearance:none;position:relative;z-index:1;pointer-events:auto}
 .bath-chk-on.bath-blue{border-color:#6480B8;background:rgba(100,128,184,.1);color:#6480B8}
 .bath-chk-on.bath-green{border-color:#5A9E7C;background:rgba(90,158,124,.1);color:#5A9E7C}
 
@@ -429,7 +429,7 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 .item-in{animation:itemIn .18s ease both}
 
 /* ══ FAB ══ */
-.fab-wrap{position:fixed;bottom:76px;right:16px;z-index:300;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.fab-wrap{position:fixed;bottom:76px;right:16px;z-index:300;display:flex;flex-direction:column;align-items:flex-end;gap:10px;pointer-events:none}.fab-main{pointer-events:auto!important}
 .fab-main{width:52px;height:52px;border-radius:50%;background:var(--ac);border:none;color:#fff;font-size:28px;cursor:pointer;box-shadow:0 4px 18px rgba(212,102,62,.4);display:flex;align-items:center;justify-content:center;transition:transform .22s,background .22s;line-height:1}
 .fab-main.open{transform:rotate(45deg);background:var(--br)}
 .fab-items{display:flex;flex-direction:column;align-items:flex-end;gap:8px;pointer-events:none;opacity:0;transform:translateY(12px);transition:opacity .2s,transform .2s}
@@ -841,6 +841,14 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
     <div class="iset-arrow">›</div>
   </div>
 
+  <!-- Geo section -->
+  <div class="iset-section">
+    <div class="iset-section-label">📡 位置情報・在宅判定</div>
+    <div class="iset-group" id="geo-settings-section">
+      <div style="padding:12px 14px;font-size:12px;color:var(--t2)">読み込み中...</div>
+    </div>
+  </div>
+
   <!-- Room section -->
   <div class="iset-section">
     <div class="iset-section-label">ルーム</div>
@@ -1008,6 +1016,10 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 <div class="overlay" id="modal" onclick="ocl(event)"><div class="sheet"><div class="handle"></div><div id="mc"></div></div></div>
 
 <script>
+
+var roomSettings={geoTrack:false,homeLocation:null,homeRadius:200};
+var _geoWatchId=null;
+var _lastHomeState=null;
 window._openCalApiPage=function(){window.open('https://console.cloud.google.com/apis/library/calendar-json.googleapis.com?project=family-app-3393e');};
 window._pickCol=function(el,col){
   document.querySelectorAll('[data-col]').forEach(function(e){e.style.border='3px solid transparent';e.classList.remove('selected');});
@@ -1484,6 +1496,7 @@ function boot(){
     try{renderNotifToggles();}catch(e){}
     try{renderBath();}catch(e){}
     try{renderHomeSummary();}catch(e){}
+    try{renderGeoSettings();}catch(e){}
     checkTutorial();schedChecks();
     // 位置情報の「X分前」表示を1分ごと更新
     setInterval(()=>{if(state.locations&&Object.keys(state.locations).length)renderLocations(state.locations);},60000);
@@ -1499,6 +1512,137 @@ function boot(){
     },800);
   }
 }
+// ━━ 位置情報・在宅判定 ━━
+function _distM(lat1,lng1,lat2,lng2){
+  var R=6371000;
+  var dLat=(lat2-lat1)*Math.PI/180;
+  var dLng=(lng2-lng1)*Math.PI/180;
+  var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function _judgeHome(lat,lng){
+  if(!roomSettings.homeLocation)return null;
+  var d=_distM(lat,lng,roomSettings.homeLocation.lat,roomSettings.homeLocation.lng);
+  return d<=roomSettings.homeRadius;
+}
+function _onGeoPos(pos){
+  var lat=pos.coords.latitude,lng=pos.coords.longitude;
+  var ts=new Date().toISOString();
+  // Firestoreに位置保存
+  if(ROOM&&db&&currentUser){
+    db.collection('iedash').doc(ROOM).collection('locations').doc(currentUser.uid).set(
+      {lat:lat,lng:lng,ts:ts,uid:currentUser.uid},
+      {merge:true}
+    ).catch(function(){});
+  }
+  // 在宅自動判定
+  var isHome=_judgeHome(lat,lng);
+  if(isHome!==null&&isHome!==_lastHomeState){
+    _lastHomeState=isHome;
+    // ステータス自動更新
+    if(ROOM&&db&&currentUser){
+      db.collection('iedash').doc(ROOM).collection('status').doc(currentUser.uid).set(
+        {home:isHome,autoGeo:true},
+        {merge:true}
+      ).catch(function(){});
+    }
+    // 通知
+    var msg=isHome?'🏠 ただいま！自宅に着きました':'🚪 外出しました';
+    showToast(msg);
+    // ブラウザ通知
+    if(Notification&&Notification.permission==='granted'){
+      try{new Notification('🏠 Irori',{body:msg,icon:'/Irori-Ver2/icon-192.png'});}catch(e){}
+    }
+  }
+}
+function _applyGeoTracking(){
+  if(roomSettings.geoTrack){
+    // 常時追跡
+    if(!_geoWatchId&&navigator.geolocation){
+      _geoWatchId=navigator.geolocation.watchPosition(
+        _onGeoPos,
+        function(e){console.warn('geo error',e);},
+        {enableHighAccuracy:true,maximumAge:30000,timeout:20000}
+      );
+    }
+    // 通知許可を要求
+    if(Notification&&Notification.permission==='default'){
+      Notification.requestPermission().catch(function(){});
+    }
+  }else{
+    // 常時追跡を止める
+    if(_geoWatchId!=null&&navigator.geolocation){
+      navigator.geolocation.clearWatch(_geoWatchId);
+      _geoWatchId=null;
+    }
+  }
+}
+function shareMyLocation(){
+  if(!navigator.geolocation){showToast('⚠️ このデバイスは位置情報に対応していません');return;}
+  showToast('📍 位置情報を取得中...');
+  navigator.geolocation.getCurrentPosition(
+    function(pos){
+      _onGeoPos(pos);
+      showToast('✅ 位置情報を共有しました');
+    },
+    function(e){showToast('⚠️ 位置取得失敗: '+e.message);},
+    {enableHighAccuracy:true,timeout:10000}
+  );
+}
+function saveRoomGeoConfig(cfg){
+  if(!isRoomAdmin){showToast('⚠️ ルーム管理者のみ設定できます');return;}
+  db.collection('iedash').doc(ROOM).collection('settings').doc('room_config')
+    .set(cfg,{merge:true})
+    .then(function(){showToast('✅ 設定を保存しました');})
+    .catch(function(e){showToast('⚠️ 保存失敗: '+e.message);});
+}
+function pickHomeLocation(){
+  if(!navigator.geolocation){showToast('⚠️ 位置情報利用不可');return;}
+  showToast('📍 現在地を自宅地点に設定中...');
+  navigator.geolocation.getCurrentPosition(
+    function(pos){
+      var loc={lat:pos.coords.latitude,lng:pos.coords.longitude};
+      saveRoomGeoConfig({homeLocation:loc});
+      showToast('🏠 自宅地点を設定しました (第'
+        +loc.lat.toFixed(4)+'度, 第'+loc.lng.toFixed(4)+'度)');
+      renderGeoSettings();
+    },
+    function(e){showToast('⚠️ 位置取得失敗: '+e.message);},
+    {enableHighAccuracy:true,timeout:10000}
+  );
+}
+function renderGeoSettings(){
+  var el=document.getElementById('geo-settings-section');if(!el)return;
+  var hasHome=!!roomSettings.homeLocation;
+  var isAdmin=isRoomAdmin;
+  var h='';
+  if(isAdmin){
+    h+='<div class="iset-row" style="cursor:pointer" onclick="saveRoomGeoConfig({geoTrack:'+(!roomSettings.geoTrack)+'})">';
+    h+='<span class="iset-icon" style="background:'+(roomSettings.geoTrack?'var(--gn)':'var(--t3)')+'">📡</span>';
+    h+='<div class="iset-row-body"><div class="iset-row-title">常時位置追跡</div>';
+    h+='<div class="iset-row-sub">'+(roomSettings.geoTrack?'✅ ON — 全員の位置を自動追跡':'❌ OFF — 各自手動共有')+'</div></div>';
+    h+='<div style="font-size:20px">'+(roomSettings.geoTrack?'🟢':'⚪')+'</div>';
+    h+='</div>';
+    h+='<div class="iset-row" onclick="pickHomeLocation()" style="cursor:pointer">';
+    h+='<span class="iset-icon" style="background:'+(hasHome?'var(--ac)':'var(--t3)')+'">🏠</span>';
+    h+='<div class="iset-row-body"><div class="iset-row-title">自宅地点</div>';
+    h+='<div class="iset-row-sub">'+(hasHome?'✅ 設定済み (半径'+roomSettings.homeRadius+'m)':'未設定 — 現在地で設定')+'</div></div>';
+    h+='<span class="iset-arrow">›</span>';
+    h+='</div>';
+    h+='<div style="padding:12px 14px;border-top:1px solid var(--wm)">';
+    h+='<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">自宅判定半径: <span id="geo-rad-val">'+roomSettings.homeRadius+'</span>m</div>';
+    h+='<input type="range" min="50" max="500" step="50" value="'+roomSettings.homeRadius+'" oninput="document.getElementById(\'geo-rad-val\').textContent=this.value" onchange="saveRoomGeoConfig({homeRadius:parseInt(this.value)})" style="width:100%">';
+    h+='</div>';
+  }
+  if(!roomSettings.geoTrack){
+    h+='<div style="padding:12px 14px;'+(isAdmin?'border-top:1px solid var(--wm)':'')+'">';
+    h+='<button onclick="shareMyLocation()" class="btn btn-o btn-full">📍 今の位置を共有</button>';
+    h+='<div style="font-size:11px;color:var(--t2);text-align:center;margin-top:6px">ボタンを押すたびに自宅判定も自動で行います</div>';
+    h+='</div>';
+  }
+  el.innerHTML=h;
+}
+
 function loadFbCount(){
   db.collection('iedash').doc(ROOM).collection('feedbacks').get().then(s=>{
     // Store count for display in settings
@@ -1606,6 +1750,22 @@ function listenAll(){
     renderMealTime();
   },console.error);
   db.collection('iedash').doc(ROOM).collection('emergency').onSnapshot(s=>{const recent=s.docs.map(d=>({id:d.id,...d.data()})).filter(x=>x.createdAt&&(Date.now()-new Date(x.createdAt).getTime())<300000);if(recent.length>0)showEmergencyAlert(recent[recent.length-1]);},console.error);
+
+  // 部屋設定リスナー（位置情報設定等）
+  db.collection('iedash').doc(ROOM).collection('settings').doc('room_config').onSnapshot(function(d){
+    if(d.exists){
+      var v=d.data();
+      roomSettings={
+        geoTrack:v.geoTrack||false,
+        homeLocation:v.homeLocation||null,
+        homeRadius:v.homeRadius||200
+      };
+    }else{
+      roomSettings={geoTrack:false,homeLocation:null,homeRadius:200};
+    }
+    _applyGeoTracking();
+    try{renderGeoSettings();}catch(e){}
+  },function(){});
 
   // お風呂状態のFirestore同期リスナー
   try{
@@ -1930,7 +2090,8 @@ function renderSUPage(){
       +(mood?'<span style="font-size:22px">'+mood+'</span>':'')
       +'</div>'
       +'<div style="font-size:11px;color:var(--t3);margin-bottom:12px">最終更新：'+lastUp+'</div>'
-      +'<button class="btn btn-o" style="font-size:13px;padding:9px 20px" onclick="openStatusEdit()">✏️ 編集する</button>';
+      +'<button class="btn btn-o" style="font-size:13px;padding:9px 20px" onclick="openStatusEdit()">✏️ 編集する</button>'
+      +'<button onclick="shareMyLocation()" style="font-size:13px;padding:9px 16px;margin-left:8px;background:rgba(100,128,184,.15);color:var(--bl);border:1.5px solid rgba(100,128,184,.3);border-radius:12px;font-family:inherit;font-weight:700;cursor:pointer;touch-action:manipulation">📍 位置共有</button>';
   }
   const el=document.getElementById('suCards');if(!el)return;
   el.innerHTML=members.filter(m=>m.uid!==currentUser?.uid).map(m=>{
