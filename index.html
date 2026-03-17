@@ -3128,7 +3128,6 @@ function selectTmplDay(i){
     +'</div>';
 }
 
-async 
 function saveMealAll(){var t={breakfast:document.getElementById('mtime-breakfast')?.value||'',lunch:document.getElementById('mtime-lunch')?.value||'',dinner:document.getElementById('mtime-dinner')?.value||'',date:tday()};state.mealTimeToday=t;db.collection('iedash').doc(ROOM).collection('settings').doc('meal_times_today').set(t).catch(function(){});var m={breakfast:document.getElementById('mfood-breakfast')?.value||'',lunch:document.getElementById('mfood-lunch')?.value||'',dinner:document.getElementById('mfood-dinner')?.value||''};var meals=state.meals||{};meals['override_'+tday()]=m;state.meals=meals;db.collection('iedash').doc(ROOM).collection('settings').doc('meal_tpl').set(meals,{merge:true}).catch(function(){});renderMeal();closeModal();showToast('🍽️ 保存しました');}
 
 function saveMealTimeToday(){
