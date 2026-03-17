@@ -111,8 +111,373 @@ body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cr);color:var(--t
 .hdr-date{font-size:11px;color:rgba(255,255,255,.5);font-family:'DM Sans',sans-serif}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--gn);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.hdr-btn{width:34px;height:34px;background:rgba(255,255,255,.13);border:none;border-radius:10px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent;flex-shrink:0;transition:background .12s}
-.hdr-btn:active{background:rgba(255,255,255,.25)}
+.ibtn{background:rgba(255,255,255,.13);border:none;border-radius:9px;color:#fff;font-size:var(--fi);padding:4px 8px;cursor:pointer;transition:background .13s}
+.ibtn:active{background:rgba(255,255,255,.25)}
+.mtabs{display:flex;gap:5px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none}
+.mtabs::-webkit-scrollbar{display:none}
+.mtab{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;border:2px solid rgba(255,255,255,.18);background:transparent;color:rgba(255,255,255,.5);font-family:'Zen Maru Gothic',sans-serif;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.mtab.active{background:#fff;color:var(--br);border-color:#fff;font-weight:700}
+.mtab.me.active{background:var(--yl);color:var(--br);border-color:var(--yl)}
+/* LAYOUT */
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+.sec{margin-bottom:13px}
+.card{background:var(--cd);border-radius:var(--r);padding:14px;box-shadow:var(--sh);border:1.5px solid #4E3425}
+.card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
+.card-title{font-size:15px;font-weight:700}
+.sec-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.sec-title{font-size:var(--fsub,10px);font-weight:700;color:var(--t3);letter-spacing:.1em}
+/* BUTTONS */
+.btn{border:none;border-radius:10px;padding:6px 12px;font-family:'Zen Maru Gothic',sans-serif;font-size:12px;cursor:pointer;font-weight:700;transition:all .13s;line-height:1.3}
+.btn:active{transform:scale(.93)}
+.btn-o{background:var(--ac);color:#fff}.btn-g{background:var(--gn);color:#fff}.btn-b{background:var(--bl);color:#fff}.btn-r{background:var(--rd);color:#fff}.btn-ghost{background:var(--wm);color:var(--t2)}.btn-dark{background:var(--br);color:#fff}
+.btn-full{width:100%;padding:13px;font-size:14px;border-radius:13px;margin-top:6px}
+/* EMERGENCY */
+.emg-btn{width:100%;padding:18px;background:linear-gradient(135deg,#C94040,#a02020);color:#fff;border:none;border-radius:16px;font-family:'Zen Maru Gothic',sans-serif;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 20px rgba(201,64,64,.4);transition:all .15s;margin-bottom:13px}
+.emg-btn:active{transform:scale(.96);box-shadow:0 2px 10px rgba(201,64,64,.3)}
+/* STATUS GRID */
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.sc{background:var(--cd);border-radius:var(--r);padding:12px;box-shadow:var(--sh);display:flex;align-items:center;gap:9px;position:relative;overflow:hidden;border-left:4px solid transparent}
+.sc.mine{box-shadow:var(--sh),0 0 0 2px var(--yl);cursor:pointer;transition:transform .13s}.sc.mine:active{transform:scale(.96)}
+.sc-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:var(--fi);flex-shrink:0}
+.sc-name{font-size:var(--fs);font-weight:700;margin-bottom:3px}
+.sc-b{display:inline-flex;align-items:center;font-size:10px;padding:3px 7px;border-radius:7px;font-weight:700}
+.hm{background:#E6F4EC;color:#2E7D52}.out{background:#FEF0E7;color:#C4500C}
+.sc-ret{font-size:10px;color:var(--t3);margin-top:2px}.sc-mood{position:absolute;top:7px;right:7px;font-size:14px}
+/* LISTS */
+.li{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--wm);animation:fi .18s ease}
+.li:last-child{border-bottom:none}
+@keyframes fi{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.chk{width:24px;height:24px;border-radius:50%;border:2.5px solid var(--gn);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .16s}
+.chk.done{background:var(--gn);border-color:var(--gn)}.chk.done::after{content:"✓";color:#fff;font-size:12px;font-weight:700}
+.chk-sq{width:24px;height:24px;border-radius:7px;border:2.5px solid var(--bl);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .16s}
+.chk-sq.done{background:var(--bl);border-color:var(--bl)}.chk-sq.done::after{content:"✓";color:#fff;font-size:12px;font-weight:700}
+.li-txt{font-size:var(--fs);flex:1;cursor:pointer;word-break:break-all;line-height:1.4}
+.li-txt.done{text-decoration:line-through;color:var(--t3)}
+.tag{font-size:10px;color:var(--t2);background:var(--wm);padding:2px 7px;border-radius:6px;flex-shrink:0;white-space:nowrap}
+.tag-urg{background:#FEF0E7;color:var(--ac)}.tag-due{background:#EEF2FF;color:var(--bl)}.tag-ov{background:#FEE2E2;color:var(--rd)}.tag-med{background:#F3E8FF;color:#8E6BB5}
+.del{background:none;border:none;color:var(--t3);font-size:16px;cursor:pointer;padding:2px 4px;flex-shrink:0;transition:color .13s}.del:hover{color:var(--rd)}
+/* SCHEDULE */
+.si{display:flex;gap:9px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--wm);cursor:pointer;animation:fi .18s ease}
+.si:last-child{border-bottom:none}
+.si-time{font-size:12px;color:var(--t2);width:40px;flex-shrink:0;font-family:'DM Sans',sans-serif;font-weight:600;padding-top:2px}
+.si-dot{width:9px;height:9px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.si-body{flex:1;min-width:0}
+.si-txt{font-size:var(--fs);margin-bottom:2px;font-weight:600}
+.si-end{font-size:10px;color:var(--t3)}
+.si-tag{font-size:10px;padding:2px 7px;border-radius:6px;font-weight:600}
+/* TRASH */
+.notice{border-radius:13px;padding:10px 13px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.n-td{background:#FEF6EE;border-left:4px solid var(--ac)}.n-tm{background:#FFFDE6;border-left:4px solid var(--yl)}
+.ntxt{font-size:13px;font-weight:700}.nsub{font-size:11px;color:var(--t2);margin-top:2px}
+.wk-row{display:flex;gap:4px;margin:8px 0}
+.wk-c{flex:1;border-radius:9px;padding:6px 2px;text-align:center;background:var(--wm)}
+.wk-c.has{background:#FFF5D6}.wk-c.tod{box-shadow:0 0 0 2.5px var(--ac);background:#FFF0E6}
+.wk-dn{font-size:10px;font-weight:700;color:var(--t2);margin-bottom:3px}
+.wk-ic{font-size:13px;min-height:16px}
+.tr-types{margin-top:10px;display:flex;flex-direction:column;gap:7px}
+.tr-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.tr-fr{font-size:11px;color:var(--t3)}
+/* TOMORROW */
+.tmr{background:linear-gradient(135deg,var(--br),var(--br2));border-radius:var(--r);padding:14px;color:#fff}
+.tmr-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.tmr-title{font-size:12px;color:rgba(255,255,255,.5);font-weight:700}
+.tmr-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.tmr-item:last-child{border-bottom:none}
+.tmr-name{font-size:13px;font-weight:700}.tmr-plan{font-size:11px;color:rgba(255,255,255,.6)}
+/* MEDICINE */
+.med-item{display:flex;align-items:center;gap:9px;padding:10px;background:var(--wm);border-radius:11px;margin-bottom:7px}
+.med-ic{font-size:22px;width:32px;text-align:center;flex-shrink:0}
+.med-name{font-size:var(--fs);font-weight:700}
+.med-time{font-size:11px;color:var(--t2);margin-top:2px}
+.med-chk{margin-left:auto;width:28px;height:28px;border-radius:50%;border:2.5px solid #8E6BB5;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .16s;flex-shrink:0}
+.med-chk.done{background:#8E6BB5;border-color:#8E6BB5}.med-chk.done::after{content:"✓";color:#fff;font-size:13px;font-weight:700}
+/* CALENDAR */
+.cal-view-tog{display:flex;background:var(--wm);border-radius:12px;padding:3px;margin-bottom:10px;gap:2px}
+.cvt{flex:1;padding:7px 4px;border:none;background:transparent;border-radius:9px;font-family:'Zen Maru Gothic',sans-serif;font-size:11px;font-weight:700;cursor:pointer;color:var(--t2);transition:all .15s}
+.cvt.active{background:#fff;color:var(--br);box-shadow:0 1px 5px rgba(0,0,0,.1)}
+.cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.cnav-btn{background:var(--wm);border:none;border-radius:10px;font-size:18px;cursor:pointer;padding:6px 12px;color:var(--br);transition:background .13s}.cnav-btn:active{background:#e0d8cc}
+.cal-mon{font-size:16px;font-weight:700}
+.frow{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px}
+.fc{padding:4px 10px;border-radius:11px;font-size:11px;font-weight:700;cursor:pointer;border:2px solid transparent;opacity:.4;transition:all .13s}.fc.active{opacity:1;border-color:currentColor}
+/* MONTH CALENDAR */
+.cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.chc{text-align:center;font-size:10px;font-weight:700;color:var(--t3);padding:4px 0}
+.chc.s{color:var(--rd)}.chc.sat{color:var(--bl)}
+.cc{min-height:54px;border-radius:9px;padding:4px 3px;cursor:pointer;transition:background .11s;position:relative}
+.cc:hover{background:var(--wm)}.cc.today{background:var(--ac)}.cc.today .cdn{color:#fff;font-weight:700}.cc.om .cdn{color:var(--t3)}
+.cdn{font-size:11px;text-align:center;font-family:'DM Sans',sans-serif;font-weight:600}
+.cc.sc .cdn{color:var(--rd)}.cc.satc .cdn{color:var(--bl)}
+.cdots{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;margin-top:2px}.cdot{width:6px;height:6px;border-radius:50%}
+.ctr{font-size:10px;text-align:center;line-height:1.3}
+/* WEEK CALENDAR */
+.wcal{overflow:hidden}
+.wcal-head{display:grid;grid-template-columns:40px repeat(7,1fr);gap:2px;margin-bottom:2px}
+.wcal-dh{text-align:center;font-size:10px;font-weight:700;color:var(--t3);padding:4px 0}
+.wcal-dh.s{color:var(--rd)}.wcal-dh.sat{color:var(--bl)}
+.wcal-dnum{font-size:12px;font-weight:700;text-align:center;padding:3px;border-radius:8px;cursor:pointer;transition:background .11s;font-family:'DM Sans',sans-serif}
+.wcal-dnum.today{background:var(--ac);color:#fff}
+.wcal-body{position:relative;overflow-y:auto;max-height:calc(100vh - 320px)}
+.wcal-timecol{display:grid;grid-template-columns:40px repeat(7,1fr);gap:2px}
+.wcal-tl{font-size:10px;color:var(--t3);text-align:right;padding-right:5px;height:44px;display:flex;align-items:flex-start;padding-top:2px;font-family:'DM Sans',sans-serif;flex-shrink:0}
+.wcal-cell{height:44px;border-top:1px solid var(--wm);position:relative}
+.wcal-evt{position:absolute;left:2px;right:2px;border-radius:5px;padding:2px 4px;font-size:10px;font-weight:700;color:#fff;overflow:hidden;cursor:pointer;z-index:2;line-height:1.3}
+.wcal-trash{position:absolute;top:1px;right:1px;font-size:10px;opacity:.6}
+/* DAY CALENDAR */
+.dcal-head{background:var(--ac);color:#fff;border-radius:12px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.dcal-date{font-size:16px;font-weight:700}
+.dcal-day{font-size:11px;opacity:.7}
+.dcal-timeline{position:relative}
+.dcal-row{display:flex;gap:8px;min-height:50px;border-bottom:1px solid var(--wm)}
+.dcal-t{width:45px;font-size:11px;color:var(--t3);padding-top:4px;text-align:right;flex-shrink:0;font-family:'DM Sans',sans-serif}
+.dcal-slot{flex:1;padding:3px 0;position:relative}
+.dcal-evt{background:var(--bl);color:#fff;border-radius:8px;padding:5px 8px;margin-bottom:3px;font-size:12px;font-weight:700;cursor:pointer}
+.dcal-trash{background:#FFF5D6;border-radius:8px;padding:4px 8px;margin-bottom:3px;font-size:11px;color:var(--br);display:flex;align-items:center;gap:5px}
+/* EVENT LIST */
+.evtlist{margin-top:10px}.edg{margin-bottom:10px}
+.edl{font-size:12px;font-weight:700;color:var(--t2);margin-bottom:5px;padding-left:3px}
+.ei{display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:10px;background:var(--wm);margin-bottom:4px;cursor:pointer;transition:background .11s}.ei:active{background:#e0d8cc}
+.eic{width:8px;height:8px;border-radius:50%;flex-shrink:0}.eit{font-size:11px;color:var(--t2);width:34px;font-family:'DM Sans',sans-serif;font-weight:600}.eitxt{font-size:13px;flex:1;font-weight:600}.eiwho{font-size:13px}
+.eidel{background:none;border:none;color:var(--t3);font-size:13px;cursor:pointer;padding:1px}.eidel:hover{color:var(--rd)}
+/* STATUS PAGE */
+.su-c{background:var(--cd);border-radius:var(--r);padding:13px;box-shadow:var(--sh);margin-bottom:9px}
+.su-me{font-size:9px;background:var(--yl);color:var(--br);padding:2px 6px;border-radius:5px;font-weight:700;margin-left:5px;vertical-align:middle}
+.su-btns{display:flex;gap:6px;margin:8px 0}
+.su-btn{flex:1;padding:10px;border-radius:10px;border:2px solid var(--wm);background:#fff;font-family:'Zen Maru Gothic',sans-serif;font-size:12px;cursor:pointer;font-weight:700;transition:all .13s}
+.su-btn.hmon{border-color:var(--gn);background:#E6F4EC;color:var(--gn)}.su-btn.outon{border-color:var(--ac);background:#FEF0E7;color:var(--ac)}
+.ret-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ret-lbl{font-size:11px;color:var(--t3);flex-shrink:0}
+.ret-inp{border:2px solid var(--wm);border-radius:9px;padding:6px 8px;font-size:13px;font-family:inherit;outline:none;flex:1;transition:border-color .14s;background:var(--cd);color:var(--tx)}.ret-inp:focus{border-color:var(--ac)}
+.mood-sec{padding-top:8px;border-top:1px solid var(--wm)}.mood-lbl{font-size:11px;color:var(--t3);margin-bottom:5px}
+.mood-row{display:flex;gap:8px;justify-content:center}
+.mood-btn{font-size:24px;border:none;background:none;cursor:pointer;opacity:.25;transition:all .14s;padding:3px}.mood-btn.on{opacity:1;transform:scale(1.2)}
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .18s}
+.overlay.open{opacity:1;pointer-events:all}
+.sheet{background:#fff;width:100%;border-radius:22px 22px 0 0;padding:16px 16px 30px;transform:translateY(100%);transition:transform .25s cubic-bezier(.34,1.4,.64,1);max-height:90vh;overflow-y:auto}
+.overlay.open .sheet{transform:translateY(0)}
+.handle{width:36px;height:4px;background:var(--wm);border-radius:2px;margin:0 auto 14px}
+.m-title{font-size:16px;font-weight:700;margin-bottom:12px}
+.fg{margin-bottom:11px}.fl{font-size:11px;color:var(--t2);margin-bottom:4px;display:block;font-weight:700;letter-spacing:.04em}
+.fi{width:100%;padding:11px 13px;border:2px solid var(--wm);border-radius:12px;font-family:'Zen Maru Gothic',sans-serif;font-size:var(--fs);outline:none;transition:border-color .14s;background:#fff;color:var(--tx)}.fi:focus{border-color:var(--ac)}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.eg{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
+.eo{font-size:24px;text-align:center;padding:7px;border-radius:9px;cursor:pointer;border:2px solid transparent;transition:all .12s}.eo.sel,.eo:hover{background:var(--wm);border-color:var(--ac)}
+.dr{display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--wm);font-size:13px}.dr:last-child{border-bottom:none}
+.dl{color:var(--t2);width:58px;flex-shrink:0;font-size:11px;padding-top:2px}.dv{flex:1}
+.cfr{display:flex;gap:8px;margin-top:12px}.cfr button{flex:1}
+.empty{text-align:center;padding:18px;color:var(--t3);font-size:13px}
+.lock-msg{font-size:12px;color:var(--t3);background:var(--wm);border-radius:10px;padding:9px 12px;margin-top:9px;text-align:center}
+/* SETTINGS */
+.set-sec{margin-bottom:15px}
+.set-sec-title{font-size:10px;font-weight:700;color:var(--t3);letter-spacing:.1em;margin-bottom:9px}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--wm)}.set-row:last-child{border-bottom:none}
+.set-lbl{font-size:14px;font-weight:600;color:var(--tx)}.set-sub{font-size:10px;color:var(--t3);margin-top:2px}
+.fs-btns{display:flex;gap:6px}
+.fs-btn{padding:7px 14px;border-radius:10px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:12px;cursor:pointer;font-weight:700;color:var(--t2);transition:all .13s}.fs-btn.active{background:var(--ac);border-color:var(--ac);color:#fff}
+/* TOGGLE */
+.tgl{width:46px;height:26px;background:var(--wm);border-radius:13px;position:relative;cursor:pointer;transition:background .18s;flex-shrink:0}.tgl.on{background:var(--gn)}
+.tgl::after{content:"";position:absolute;width:22px;height:22px;background:#fff;border-radius:50%;top:2px;left:2px;transition:transform .18s;box-shadow:0 1px 4px rgba(0,0,0,.18)}.tgl.on::after{transform:translateX(20px)}
+/* NOTIF PAGE */
+.nc{background:var(--cd);border-radius:var(--r);padding:14px;box-shadow:var(--sh)}
+.nr{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--wm)}.nr:last-child{border-bottom:none}
+.nl{font-size:14px;font-weight:600}.ns{font-size:11px;color:var(--t3);margin-top:2px}
+.nh{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--wm)}.nh:last-child{border-bottom:none}
+.nh-txt{font-size:13px;flex:1}.nh-t{font-size:10px;color:var(--t3);margin-top:2px}
+/* BNAV */
+.bnav{background:#fff;display:flex;border-top:1px solid var(--wm);padding:5px 0 env(safe-area-inset-bottom,10px);flex-shrink:0}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:3px;opacity:.3;transition:opacity .14s}.ni.active{opacity:1}
+.ni-ic{font-size:var(--fi)}.ni-lb{font-size:10px;font-weight:700;color:var(--br)}
+
+/* TOAST */
+#statusToast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(30px);background:var(--br);color:#fff;padding:11px 22px;border-radius:20px;font-size:13px;font-weight:700;z-index:9000;transition:opacity .25s,transform .25s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0}
+#statusToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* MAINTENANCE SCREEN */
+#maintenance-screen{position:fixed;inset:0;z-index:10000;background:var(--br);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}
+#maintenance-screen.hide{display:none}
+.maint-icon{font-size:64px;margin-bottom:16px}
+.maint-title{font-size:22px;font-weight:700;color:#fff;margin-bottom:10px}
+.maint-msg{font-size:14px;color:rgba(255,255,255,.65);line-height:1.8;max-width:320px}
+.maint-admin-btn{margin-top:24px;padding:10px 22px;background:rgba(255,255,255,.15);color:#fff;border:2px solid rgba(255,255,255,.3);border-radius:12px;font-family:'Zen Maru Gothic',sans-serif;font-size:13px;cursor:pointer}
+/* ROOM SELECT SCREEN */
+#room-screen{position:fixed;inset:0;z-index:9995;background:var(--br);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+#room-screen.hide{display:none}
+.rs-wrap{width:100%;max-width:360px}
+.rs-logo{font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:20px}
+.rs-logo em{color:var(--yl);font-style:normal}
+.rs-card{background:#fff;border-radius:22px;padding:22px;margin-bottom:14px}
+.rs-card-title{font-size:15px;font-weight:700;margin-bottom:4px}
+.rs-card-sub{font-size:11px;color:var(--t2);margin-bottom:14px;line-height:1.7}
+.rs-inp{width:100%;padding:12px 14px;border:2px solid var(--wm);border-radius:11px;font-family:'Zen Maru Gothic',sans-serif;font-size:14px;outline:none;transition:border-color .15s;margin-bottom:10px}
+.rs-inp:focus{border-color:var(--ac)}
+.rs-code{width:100%;padding:14px;border:2px solid var(--wm);border-radius:13px;font-family:'DM Sans',sans-serif;font-size:20px;letter-spacing:.25em;text-align:center;outline:none;font-weight:700;margin-bottom:10px;transition:border-color .15s}
+.rs-code:focus{border-color:var(--ac)}
+.rs-divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:rgba(255,255,255,.5);font-size:11px}
+.rs-divider::before,.rs-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.2)}
+.rs-err{font-size:12px;color:#ffaaaa;text-align:center;min-height:16px;margin-top:6px}
+.rs-myrooms{margin-bottom:14px}
+.rs-room-item{display:flex;align-items:center;gap:10px;padding:12px;background:rgba(255,255,255,.1);border-radius:14px;margin-bottom:8px;cursor:pointer;border:2px solid rgba(255,255,255,.15);transition:all .13s}
+.rs-room-item:active{background:rgba(255,255,255,.2)}
+.rs-room-name{font-size:14px;font-weight:700;color:#fff}
+.rs-room-sub{font-size:10px;color:rgba(255,255,255,.55);margin-top:2px}
+.rs-privacy-link{text-align:center;margin-top:10px}
+.rs-privacy-link a{color:rgba(255,255,255,.45);font-size:11px;text-decoration:underline;cursor:pointer}
+/* MEMBER PICKER */
+.mpick{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0 12px}
+.mpick-btn{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:20px;border:2.5px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:12px;cursor:pointer;font-weight:700;transition:all .13s;color:var(--t2);opacity:.5}
+.mpick-btn.sel{opacity:1}
+/* LOCATION */
+.loc-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--wm)}
+.loc-row:last-child{border-bottom:none}
+.loc-name{font-size:13px;font-weight:700}.loc-place{font-size:11px;color:var(--t3);margin-top:2px}
+/* GCAL BUTTON */
+.gcal-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:11px;background:#fff;border:2px solid #4285F4;border-radius:12px;font-family:'Zen Maru Gothic',sans-serif;font-size:13px;font-weight:700;color:#4285F4;cursor:pointer;margin-top:8px;transition:all .13s}
+.gcal-btn:active{background:#EEF3FF}
+/* iCAL FEED LIST */
+.ical-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--wm)}
+.ical-item:last-child{border-bottom:none}
+.ical-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ical-name{font-size:13px;font-weight:700;flex:1}
+.ical-sub{font-size:10px;color:var(--t3)}
+/* INVITE CODE BOX */
+.inv-code-box{background:rgba(232,184,75,.15);border:2px solid var(--yl);border-radius:12px;padding:12px;text-align:center;margin:10px 0}
+.inv-code-num{font-size:32px;font-weight:700;letter-spacing:.3em;color:var(--yl);font-family:'DM Sans',sans-serif}
+.inv-code-hint{font-size:10px;color:rgba(232,184,75,.7);margin-top:4px}
+/* ADMIN PANEL */
+.admin-sec{background:linear-gradient(135deg,#1A1210,#2A1F1A);border-radius:14px;padding:14px;margin-top:10px;border:2px solid rgba(232,184,75,.3)}
+.admin-title{font-size:11px;font-weight:700;color:var(--yl);letter-spacing:.12em;margin-bottom:10px}
+.admin-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.admin-row:last-child{border-bottom:none}
+.admin-lbl{font-size:13px;color:#fff;font-weight:600}
+.admin-sub{font-size:10px;color:rgba(255,255,255,.45);margin-top:2px}
+/* FEEDBACK */
+.fb-item{padding:11px 0;border-bottom:1px solid var(--wm)}
+.fb-item:last-child{border-bottom:none}
+.fb-hdr{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.fb-name{font-size:12px;font-weight:700}.fb-time{font-size:10px;color:var(--t3)}
+.fb-cat{font-size:10px;padding:2px 8px;border-radius:6px;font-weight:700}
+.fb-body{font-size:13px;line-height:1.6;color:var(--tx)}
+.fb-type-bug{background:#FEE2E2;color:var(--rd)}
+.fb-type-req{background:#EEF2FF;color:var(--bl)}
+.fb-type-other{background:var(--wm);color:var(--t2)}
+
+
+/* ─── iPhone-style Settings Page ─── */
+.iset-profile-card{display:flex;align-items:center;gap:14px;background:var(--cd);margin:12px 12px 0;border-radius:16px;padding:16px;box-shadow:var(--sh);cursor:pointer;transition:opacity .13s}
+.iset-profile-card:active{opacity:.7}
+.iset-avatar{width:56px;height:56px;border-radius:28px;background:var(--ac);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.iset-pname{font-size:17px;font-weight:700;color:var(--tx)}
+.iset-pemail{font-size:12px;color:var(--t2);margin-top:2px}
+.iset-arrow{font-size:20px;color:var(--t3);margin-left:auto;flex-shrink:0}
+.iset-section{margin:20px 12px 0}
+.iset-section-label{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;padding-left:4px}
+.iset-group{background:var(--cd);border-radius:14px;box-shadow:var(--sh);overflow:hidden}
+.iset-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--wm);cursor:pointer;transition:opacity .13s;min-height:48px}
+.iset-row:active{opacity:.6}
+.iset-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;color:#fff}
+.iset-row-body{flex:1;min-width:0}
+.iset-row-title{font-size:var(--fcard,14px);font-weight:600;color:var(--tx)}
+.iset-row-sub{font-size:11px;color:var(--t3);margin-top:2px}
+.iset-pick-row{display:flex;align-items:center;justify-content:space-between;padding:13px 4px;border-bottom:1px solid var(--wm);cursor:pointer;font-size:14px;transition:background .1s}
+.iset-pick-row:last-of-type{border-bottom:none}
+.iset-pick-row:active{background:var(--wm)}
+
+
+/* Status page new buttons */
+.su-btn2{padding:12px;border-radius:12px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;color:var(--t2)}
+.su-btn2.sel-home{background:rgba(90,158,124,.15);border-color:var(--gn);color:var(--gn)}
+.su-btn2.sel-out{background:rgba(201,64,64,.1);border-color:var(--rd);color:var(--rd)}
+.mood-btn2{font-size:24px;padding:6px;background:none;border:2px solid transparent;border-radius:10px;cursor:pointer;transition:all .13s}
+.mood-btn2.on{background:var(--yl);border-color:var(--yl);transform:scale(1.15)}
+/* Meal display */
+#mealDisplay{padding:4px 0}
+/* Ret display in status */
+.ret-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(90,158,124,.12);color:var(--gn);border:1.5px solid rgba(90,158,124,.3);border-radius:10px;padding:4px 10px;font-size:12px;font-weight:700}
+
+
+/* Google Calendar style month grid */
+.gcal-grid{display:grid;grid-template-columns:repeat(7,1fr);background:var(--wm);gap:1px;border:1px solid var(--wm);border-radius:12px;overflow:hidden}
+.gcal-dh{background:var(--cd);text-align:center;font-size:11px;font-weight:700;color:var(--t3);padding:6px 0}
+.gcal-dh.s{color:var(--rd)}.gcal-dh.sat{color:var(--bl)}
+.gcal-cell{background:var(--cd);min-height:72px;padding:4px;cursor:pointer;transition:background .1s}
+.gcal-cell:hover{background:var(--wm)}
+.gcal-cell.gcal-other{background:var(--br);opacity:.5}
+.gcal-cell.gcal-today{background:rgba(212,102,62,.05)}
+.gcal-cell.gcal-sun .gcal-dn{color:var(--rd)}
+.gcal-cell.gcal-sat .gcal-dn{color:var(--bl)}
+.gcal-dn{font-size:12px;font-weight:700;color:var(--t2);text-align:center;margin-bottom:2px;font-family:'DM Sans',sans-serif;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;margin:0 auto 2px}
+.gcal-dn.gcal-dn-today span{background:var(--ac);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px}
+.gcal-trash{font-size:10px;text-align:center;margin-bottom:1px;line-height:1}
+.gcal-evt-pill{font-size:10px;font-weight:700;padding:1px 4px;border-radius:4px;margin-bottom:1px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;line-height:1.5}
+.gcal-more{font-size:10px;color:var(--t3);text-align:right;padding-right:2px}
+/* Bath checkboxes */
+.bath-chk{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px 8px;border-radius:14px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;transition:all .15s;width:100%;min-height:84px;box-sizing:border-box;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-appearance:none;appearance:none;position:relative;z-index:1;pointer-events:auto}
+.bath-chk-on.bath-blue{border-color:#6480B8;background:rgba(100,128,184,.1);color:#6480B8}
+.bath-chk-on.bath-green{border-color:#5A9E7C;background:rgba(90,158,124,.1);color:#5A9E7C}
+
+.fs-btn2{padding:10px 4px;border-radius:10px;border:2px solid var(--wm);background:var(--cd);font-family:'Zen Maru Gothic',sans-serif;font-size:13px;font-weight:700;cursor:pointer;color:var(--t2);transition:all .13s}
+.fs-btn2.active{background:var(--ac);color:#fff;border-color:var(--ac)}
+
+
+/* ══ Page animation ══ */
+.pg{display:none;padding:12px 12px 90px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:none}
+.pg.active{display:block;animation:pgIn .22s ease both;will-change:transform}
+@keyframes pgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes itemIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+@keyframes itemOut{from{opacity:1}to{opacity:0;transform:translateX(8px)}}
+.item-in{animation:itemIn .18s ease both}
+
+/* ══ FAB ══ */
+.fab-wrap{position:fixed;bottom:76px;right:16px;z-index:300;display:flex;flex-direction:column;align-items:flex-end;gap:10px;pointer-events:none}.fab-main{pointer-events:auto!important}
+.fab-main{width:52px;height:52px;border-radius:50%;background:var(--ac);border:none;color:#fff;font-size:28px;cursor:pointer;box-shadow:0 4px 18px rgba(212,102,62,.4);display:flex;align-items:center;justify-content:center;transition:transform .22s,background .22s;line-height:1}
+.fab-main.open{transform:rotate(45deg);background:var(--br)}
+.fab-items{display:flex;flex-direction:column;align-items:flex-end;gap:8px;pointer-events:none;opacity:0;transform:translateY(12px);transition:opacity .2s,transform .2s}
+.fab-items.open{pointer-events:all;opacity:1;transform:translateY(0)}
+.fab-item{display:flex;align-items:center;gap:9px}
+.fab-item-lbl{background:var(--cd);color:var(--tx);font-size:12px;font-weight:700;padding:5px 12px;border-radius:10px;box-shadow:0 2px 10px rgba(78,52,37,.15);white-space:nowrap}
+.fab-item-btn{width:42px;height:42px;border-radius:50%;border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.18);flex-shrink:0;transition:transform .15s}
+.fab-item-btn:active{transform:scale(.9)}
+.fab-bg{display:none;position:fixed;inset:0;z-index:299;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);background:rgba(28,18,9,.3)}
+.fab-bg.open{display:block}
+
+/* ══ bnav 4タブ ══ */
+.bnav{display:flex;justify-content:space-around;background:var(--cd);border-top:1px solid var(--wm);padding:5px 0 env(safe-area-inset-bottom,10px);flex-shrink:0}
+.ni{flex:1;max-width:90px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:6px 2px;opacity:.35;transition:opacity .15s}
+.ni.active{opacity:1}
+.ni-ic{font-size:22px;line-height:1}
+.ni-lb{font-size:9px;font-weight:700;color:var(--br);white-space:nowrap}
+body.dark .ni-lb{color:var(--t2)}
+
+/* ══ tgl (toggle switch) ══ */
+.tgl{width:44px;height:26px;border-radius:13px;background:var(--wm);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;border:none;display:inline-block}
+.tgl::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.tgl.on{background:var(--gn)}
+.tgl.on::after{transform:translateX(18px)}
+
+/* ══ 今日の家族予定グリッド ══ */
+.today-fam-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.today-fam-box{background:var(--cd);border-radius:14px;padding:12px;box-shadow:var(--sh)}
+.tfb-name{font-size:12px;font-weight:700;color:var(--tx);margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.tfb-evt{font-size:11px;color:var(--t2);padding:2px 0;border-bottom:1px solid var(--wm);line-height:1.4}
+.tfb-evt:last-child{border-bottom:none}
+.tfb-empty{font-size:11px;color:var(--t3);font-style:italic}
+
+/* ══ 家族タブ状況カード ══ */
+.fam-status-grid{display:flex;flex-direction:column;gap:6px}
+.fam-sc{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:12px;background:var(--wm);cursor:pointer;transition:filter .12s;border:1.5px solid transparent}
+.fam-sc.mine{border-color:var(--ac)}
+.fam-sc:active{filter:brightness(.95)}
+.fam-sc-av{font-size:26px;flex-shrink:0;width:32px;text-align:center}
+.fam-sc-name{font-size:var(--fs);font-weight:700;color:var(--tx)}
+.fam-sc-st{font-size:11px;margin-top:2px;font-weight:600}
+.fam-sc-st.home{color:var(--gn)}
+.fam-sc-st.out{color:var(--ac)}
+.fam-sc-loc{font-size:10px;color:var(--t3);margin-top:1px}
+.fam-sc-mood{font-size:20px;margin-left:auto;flex-shrink:0}
+
+/* ══ 設定歯車ボタン ══ */
+.gear-btn{background:rgba(255,255,255,.13);border:none;border-radius:9px;color:#fff;font-size:17px;padding:5px 8px;cursor:pointer}
 
 /* ══ elder ══ */
 body.elder .btn{font-size:15px!important}
@@ -151,9 +516,8 @@ body.dark .mbr-panel{border-color:rgba(255,255,255,.08)!important}
 body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 
 /* ══ ヘッダー日付フォント ══ */
-#hdrDate{display:flex;flex-direction:column;align-items:flex-end;line-height:1.25;gap:1px}
-#hdrDateMain{font-family:'DM Sans',sans-serif;font-size:18px;font-weight:800;color:#fff;letter-spacing:-.01em;line-height:1}
-#hdrDateSub{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;color:rgba(255,255,255,.55);letter-spacing:.04em;text-transform:uppercase}
+#hdrDateMain{font-family:'Zen Maru Gothic',sans-serif;font-size:17px!important;font-weight:800!important;color:#fff!important;letter-spacing:.01em}
+#hdrDateSub{font-family:'DM Sans',sans-serif;font-size:11px!important;font-weight:600!important;color:rgba(255,255,255,.6)!important;letter-spacing:.04em}
 
 /* ══ プロフィール写真 ══ */
 .prof-photo{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--ac)}
@@ -183,10 +547,10 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 #tuto-overlay{position:fixed;inset:0;z-index:9990;pointer-events:none}#tuto-overlay.active{pointer-events:auto}.tuto-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9990}.tuto-card{position:fixed;z-index:9995;background:#fff;border-radius:20px;padding:20px;max-width:320px;width:calc(100% - 32px);box-shadow:0 8px 40px rgba(0,0,0,.25)}.tuto-title{font-size:16px;font-weight:700;color:var(--br);margin-bottom:8px}.tuto-body{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:16px}.tuto-btns{display:flex;gap:8px}.tuto-btn{flex:1;padding:10px;border-radius:12px;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation}.tuto-btn-skip{background:var(--wm);color:var(--t2)}.tuto-btn-next{background:var(--ac);color:#fff}.tuto-progress{display:flex;gap:4px;justify-content:center;margin-bottom:14px}.tuto-dot{width:6px;height:6px;border-radius:50%;background:var(--wm)}.tuto-dot.on{background:var(--ac)}#tuto-hl{position:fixed;z-index:9993;border-radius:14px;box-shadow:0 0 0 3000px rgba(0,0,0,.55),0 0 0 3px var(--ac),0 0 12px rgba(212,102,62,.6);pointer-events:none;transition:all .3s ease}
 
 /* ── マイページ ウィジェット ── */
-.widget-card{background:var(--cd);border-radius:16px;padding:14px;box-shadow:var(--sh);border:1.5px solid rgba(78,52,37,.08);margin-bottom:12px;font-size:var(--fs)}
+.widget-card{background:var(--cd);border-radius:16px;padding:14px;box-shadow:var(--sh);border:1.5px solid rgba(78,52,37,.08);margin-bottom:12px}
 .widget-hdr{display:flex;align-items:center;gap:6px;margin-bottom:12px}
 .widget-icon{font-size:18px;flex-shrink:0}
-.widget-title{font-size:var(--ftitle,14px);font-weight:700;color:var(--tx);flex:1}
+.widget-title{font-size:14px;font-weight:700;color:var(--tx);flex:1}
 .widget-cfg-btn{background:none;border:none;font-size:16px;color:var(--t3);cursor:pointer;padding:2px 4px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .widget-del-btn{background:none;border:none;font-size:18px;color:var(--t3);cursor:pointer;padding:2px 4px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;line-height:1}
 .widget-del-btn:active{color:var(--rd)}
@@ -194,8 +558,6 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 .mypage-add-fab{position:sticky;bottom:80px;display:flex;justify-content:flex-end;padding:0 0 4px;pointer-events:none}
 .mypage-add-fab button{pointer-events:auto;background:var(--ac);border:none;border-radius:50%;width:48px;height:48px;font-size:24px;color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(212,102,62,.4);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
-.widget-notif-btn{background:none;border:none;font-size:15px;color:var(--t3);cursor:pointer;padding:2px 4px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-.widget-sort-btns{display:contents}
 </style>
 <script>if('serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(s){s.unregister();});});caches.keys().then(function(k){k.forEach(function(n){caches.delete(n);});});}</script>
 <script src="https://apis.google.com/js/api.js"></script>
@@ -340,13 +702,13 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
     <div class="logo">I<em>rori</em></div>
     <div class="hdr-r">
       <span class="sync-dot" id="syncDot"></span>
-      <div id="hdrDate">
-  <span id="hdrDateMain"></span>
-  <span id="hdrDateSub"></span>
+      <div id="hdrDate" style="display:flex;flex-direction:column;align-items:flex-end;line-height:1.3">
+  <span id="hdrDateMain" style="font-size:17px;font-weight:800;color:#fff;letter-spacing:.01em;font-family:'Zen Maru Gothic',sans-serif"></span>
+  <span id="hdrDateSub" style="font-size:11px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:.04em;font-family:'DM Sans',sans-serif"></span>
 </div>
-      <button class="hdr-btn" id="myBtn" onclick="openEditProfile()">👤</button>
-      <button class="hdr-btn" onclick="setPage('settings',null)">⚙️</button>
-      <button class="hdr-btn" id="app-refresh-btn" onclick="appRefresh()"><span id="refresh-icon">🔄</span></button>
+      <button class="ibtn" id="myBtn" onclick="openEditProfile()">👤</button>
+      <button class="gear-btn" onclick="setPage('settings',null)">⚙️</button>
+      <button id="app-refresh-btn" onclick="appRefresh()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:20px;padding:4px 6px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;line-height:1;display:flex;align-items:center;justify-content:center;" title="更新"><span id="refresh-icon">🔄</span></button>
     </div>
   </div>
 </div>
@@ -433,6 +795,8 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 </div>
 <div class="pg" id="pg-calendar">
   <div class="cal-filter-wrap"><div class="cal-fc" id="cal-fc"></div></div>
+  <!-- 今日の家族予定 -->
+  <div class="today-fam-grid" id="todayFamGrid"></div>
   <div class="cal-view-tog">
     <button class="cvt active" id="cvt-month" onclick="setCalMode('month')">月</button>
     <button class="cvt" id="cvt-week" onclick="setCalMode('week')">週</button>
@@ -1150,7 +1514,6 @@ function boot(){
     try{renderHomeSummary();}catch(e){}
     try{renderGeoSettings();}catch(e){}
     try{_loadMyWidgets();}catch(e){}
-    try{_scheduleWidgetNotifs();}catch(e){}
     checkTutorial();schedChecks();
     // 位置情報の「X分前」表示を1分ごと更新
     setInterval(()=>{if(state.locations&&Object.keys(state.locations).length)renderLocations(state.locations);},60000);
@@ -1756,43 +2119,34 @@ function renderSch(){
 }
 function delSch(id){const s=state.schedules.find(x=>x.id===id);if(!s||!canEdit(s.ownerUid))return;if(!confirm('削除しますか？'))return;db.collection('iedash').doc(ROOM).collection('schedules').doc(id).delete().catch(console.error);}
 function getTrash(d){
-  var area=localStorage.getItem('iedash_trash_area')||'箕面市A-4';
-  var customWdaysRaw=localStorage.getItem('iedash_trash_wdays');
-  var customWdays=null;
-  try{customWdays=customWdaysRaw?JSON.parse(customWdaysRaw):null;}catch(e){}
-  var t=[];var w=d.getDay();
-  // 1日が何週目か
-  var n=Math.ceil(d.getDate()/7);
-  // カスタム曜日設定がある場合はそれを使用
-  if(customWdays&&customWdays.length){
-    if(customWdays.indexOf(w)>=0)t.push({name:'燃えるごみ',emoji:'🔥'});
-  }else if(area==='箕面市A-4'||area==='箕面市A-4地区'){
+  const area=localStorage.getItem('iedash_trash_area')||'箕面市A-4地区';
+  const w=d.getDay(),t=[],n=Math.ceil(d.getDate()/7);
+  if(area==='箕面市A-4地区'||area==='箕面市A-1地区'){
+    if(w===1||w===4)t.push({name:'燃えるごみ',emoji:'🔥'});
+    if(w===3){
+      if(area==='箕面市A-4地区'){if(n===1||n===3)t.push({name:'かん・びん',emoji:'🥫'});if(n===2||n===4)t.push({name:'ペット・不燃',emoji:'♻️'});}
+      else{if(n===2||n===4)t.push({name:'かん・びん',emoji:'🥫'});if(n===1||n===3)t.push({name:'ペット・不燃',emoji:'♻️'});}
+    }
+  }else if(area==='箕面市B地区'){
+    if(w===2||w===5)t.push({name:'燃えるごみ',emoji:'🔥'});
+    if(w===4){if(n===1||n===3)t.push({name:'かん・びん',emoji:'🥫'});if(n===2||n===4)t.push({name:'ペット・不燃',emoji:'♻️'});}
+  }else if(area==='大阪市一般'){
     if(w===1||w===4)t.push({name:'燃えるごみ',emoji:'🔥'});
     if(w===3&&(n===1||n===3))t.push({name:'資源ごみ',emoji:'♻️'});
-  }else if(area==='箕面市A-1'||area==='箕面市A-1地区'){
-    if(w===1||w===4)t.push({name:'燃えるごみ',emoji:'🔥'});
-    if(w===5&&(n===1||n===3))t.push({name:'資源ごみ',emoji:'♻️'});
-  }else if(area.includes('大阪市')||area==='大阪市一般'){
-    if(w===1||w===4)t.push({name:'燃えるごみ',emoji:'🔥'});
-    if(w===3&&(n===1||n===3))t.push({name:'資源ごみ',emoji:'♻️'});
-  }else if(area.includes('豊中市')||area.includes('吹田市')||area.includes('池田市')){
+  }else if(area==='豊中市'||area==='吹田市'||area==='池田市'){
     if(w===1||w===4)t.push({name:'燃えるごみ',emoji:'🔥'});
     if(w===2&&(n===1||n===3))t.push({name:'資源ごみ',emoji:'♻️'});
-  }else if(area.includes('東京')||area.includes('横浜市')){
+  }else if(area==='東京23区'||area==='横浜市'){
     if(w===2||w===5)t.push({name:'燃えるごみ',emoji:'🔥'});
     if(w===4&&(n===1||n===3))t.push({name:'資源ごみ',emoji:'♻️'});
-  }else{
-    // デフォルト: 月・木
-    if(w===1||w===4)t.push({name:'燃えるごみ',emoji:'🔥'});
   }
   return t;
 }
 function renderTrash(){
   // Update header label
-  var area=localStorage.getItem('iedash_trash_area')||'箕面市A-4';
-  var areaName=localStorage.getItem('iedash_trash_name')||area;
-  var hdr=document.getElementById('trash-area-lbl');
-  if(hdr)hdr.textContent='🗑️ ゴミ出し（'+areaName+'）';
+  const area=localStorage.getItem('iedash_trash_area')||'箕面市A-4地区';
+  const hdr=document.getElementById('trash-area-lbl');
+  if(hdr)hdr.textContent='🗑️ ゴミ出し（'+area+'）';
   const today=new Date(),tmr=new Date(today);tmr.setDate(today.getDate()+1);
   const td=getTrash(today),tm=getTrash(tmr),ne=null;
   if(ne)ne.innerHTML=td.length?'<div class="notice n-td"><span style="font-size:24px">'+td[0].emoji+'</span><div><div class="ntxt">今日はゴミの日！'+td.map(x=>x.name).join('・')+'</div><div class="nsub">朝9時までに出してください</div></div></div>':
@@ -2997,189 +3351,7 @@ function showRoomInvite(){
     showNewRoomCode(ROOM,name);
   }).catch(()=>showNewRoomCode(ROOM,ROOM));
 }
-function openTrashAreaPicker(){
-  var mc=document.getElementById('mc');if(!mc)return;
-  mc.innerHTML='<div class="m-title">🗺️ ゴミ出し地域の設定</div>'
-    +'<div style="font-size:12px;color:var(--t2);margin-bottom:10px">住所を入力すると自動でゴミ収集日を判定します</div>'
-    +'<div style="display:flex;gap:6px;margin-bottom:10px">'
-    +'<input type="text" class="fi" id="trash-addr-inp" placeholder="例: 大阪府箕面市石丸3丁目" style="flex:1">'
-    +'<button onclick="searchTrashArea()" class="btn btn-o" style="white-space:nowrap">🔍 検索</button>'
-    +'</div>'
-    +'<div id="trash-search-result"></div>'
-    +'<button class="btn btn-ghost btn-full" onclick="closeModal()" style="margin-top:8px">閉じる</button>';
-  openOv();
-  setTimeout(function(){var el=document.getElementById('trash-addr-inp');if(el)el.focus();},300);
-}
-function searchTrashArea(){
-  var inp=document.getElementById('trash-addr-inp');
-  var addr=inp?inp.value.trim():'';
-  if(!addr){showToast('⚠️ 住所を入力してください');return;}
-  var res=document.getElementById('trash-search-result');
-  if(res)res.innerHTML='<div style="text-align:center;padding:16px;color:var(--t2);font-size:13px">🔄 検索中...</div>';
-  // 国土交通省 住所ジオコーディングAPI
-  var apiUrl='https://mreversegeocoder.gsi.go.jp/reverse-geocoder/LonLatToAddress?lat=0&lon=0';
-  // まず住所→緯度経度 (geolocation API使用、なければテキスト判定)
-  _trashGeocode(addr);
-}
-function _trashGeocode(addr){
-  var res=document.getElementById('trash-search-result');
-  // nominatim (OpenStreetMap) で日本の住所をジオコーディング
-  var url='https://nominatim.openstreetmap.org/search?format=json&q='+encodeURIComponent(addr+' Japan')+'&limit=5&accept-language=ja';
-  fetch(url,{headers:{'User-Agent':'IroriApp/1.0'}})
-    .then(function(r){return r.json();})
-    .then(function(data){
-      if(!data||!data.length){
-        if(res)res.innerHTML='<div style="padding:12px;font-size:13px;color:var(--rd);text-align:center">⚠️ 住所が見つかりませんでした<br>別の表記で再検索してみてください</div>';
-        return;
-      }
-      var best=data[0];
-      var lat=parseFloat(best.lat),lng=parseFloat(best.lon);
-      var displayName=best.display_name||'';
-      _trashReverseGeocode(lat,lng,displayName);
-    })
-    .catch(function(e){
-      // ネット不可の場合はテキストベースで判定
-      if(res)_trashTextJudge(document.getElementById('trash-addr-inp')?.value||'');
-    });
-}
-function _trashReverseGeocode(lat,lng,displayName){
-  // 国土交通省逆ジオコーダで市区町村特定
-  var url='https://mreversegeocoder.gsi.go.jp/reverse-geocoder/LonLatToAddress?lat='+lat+'&lon='+lng;
-  fetch(url)
-    .then(function(r){return r.json();})
-    .then(function(data){
-      var addr=data&&data.results?data.results:{};
-      var pref=addr.lv01Nm||'';
-      var city=addr.lv02Nm||'';
-      var town=addr.lv03Nm||'';
-      _showTrashCandidate(pref,city,town,displayName,lat,lng);
-    })
-    .catch(function(){
-      _trashTextJudge(displayName);
-    });
-}
-var _TRASH_DB=[
-  {id:'箕面市A-4',name:'箕面市 A-4地区',match:function(p,c,t){return c==='箕面市'&&(t.includes('石丸')||t.includes('第二美衅')||t.includes('小野原'));},days:'月・木:燃えるごみ, 水:燃えないごみ(隔週), 土:資源ごみ(隔週)',wdays:[1,4],resource_w:2,resource_day:5},
-  {id:'箕面市A-1',name:'箕面市 A-1地区',match:function(p,c,t){return c==='箕面市'&&(t.includes('箕面')||t.includes('白鳴')||t.includes('桃山'));},days:'月・木:燃えるごみ, 水:燃えないごみ(隔週), 金:資源ごみ(隔週)',wdays:[1,4],resource_w:3,resource_day:5},
-  {id:'大阪市一般',name:'大阪市',match:function(p,c,t){return c.includes('大阪市');},days:'月・木:燃えるごみ, 水(隔週):燃えないごみ, 水または土:資源ごみ',wdays:[1,4],resource_w:3,resource_day:6},
-  {id:'豊中市',name:'豊中市',match:function(p,c,t){return c.includes('豊中市');},days:'月・木:燃えるごみ, 水:燃えないごみ(隔週), 土:資源ごみ(隔週)',wdays:[1,4],resource_w:3,resource_day:6},
-  {id:'吹田市',name:'吹田市',match:function(p,c,t){return c.includes('吹田市');},days:'月・木:燃えるごみ, 水(隔週):燃えないごみ, 水または土:資源ごみ',wdays:[1,4],resource_w:3,resource_day:6},
-  {id:'池田市',name:'池田市',match:function(p,c,t){return c.includes('池田市');},days:'月・木:燃えるごみ, 水・土(隔週):燃えないごみ',wdays:[1,4],resource_w:3,resource_day:6},
-  {id:'京都市',name:'京都市',match:function(p,c,t){return c.includes('京都市');},days:'火・金:燃えるごみ, 月・木(隔週):資源ごみ',wdays:[2,5],resource_w:1,resource_day:4},
-  {id:'神戸市',name:'神戸市',match:function(p,c,t){return c.includes('神戸市');},days:'火・金:燃えるごみ, 月・木:紙・paper, 水(隔週):資源ごみ',wdays:[2,5],resource_w:1,resource_day:3},
-  {id:'東京23区',name:'東京23区',match:function(p,c,t){return p.includes('東京')&&(c.includes('区')||c.includes('市'));},days:'火・金:燃えるごみ, 月・木(隔週):資源ごみ',wdays:[2,5],resource_w:1,resource_day:4},
-  {id:'横浜市',name:'横浜市',match:function(p,c,t){return c.includes('横浜市');},days:'火・金:燃えるごみ, 月(隔週):資源ごみ',wdays:[2,5],resource_w:1,resource_day:4},
-  {id:'名古屋市',name:'名古屋市',match:function(p,c,t){return c.includes('名古屋市');},days:'月・木:燃えるごみ, 水(隔週):資源ごみ',wdays:[1,4],resource_w:3,resource_day:6},
-  {id:'札幌市',name:'札幌市',match:function(p,c,t){return c.includes('札幌市');},days:'火・金:燃えるごみ, 月(隔週):資源ごみ',wdays:[2,5],resource_w:1,resource_day:4},
-  {id:'仕9市一般',name:'仕9市(一般)',match:function(p,c,t){return c.includes('仕9市');},days:'火・金:燃えるごみ, 月(隔週):資源ごみ',wdays:[2,5],resource_w:1,resource_day:4},
-];
-function _trashTextJudge(addr){
-  var res=document.getElementById('trash-search-result');
-  // テキストベースの簡易判定
-  var found=null;
-  for(var i=0;i<_TRASH_DB.length;i++){
-    if(addr.includes(_TRASH_DB[i].id.replace(/[AB]-[\d]+/,'').trim())){
-      found=_TRASH_DB[i];break;
-    }
-  }
-  if(found){_showTrashCandidate('','',addr,'',0,0,found);}
-  else{if(res)res.innerHTML='<div style="padding:12px;font-size:13px;color:var(--t2);text-align:center">住所が特定できませんでした。下の手動設定をご利用ください</div>';_showManualTrashForm();}
-}
-function _showTrashCandidate(pref,city,town,displayName,lat,lng,forceMatch){
-  var res=document.getElementById('trash-search-result');if(!res)return;
-  var match=forceMatch;
-  if(!match){
-    for(var i=0;i<_TRASH_DB.length;i++){
-      if(_TRASH_DB[i].match(pref,city,town)){match=_TRASH_DB[i];break;}
-    }
-  }
-  if(!match){
-    res.innerHTML='<div style="background:var(--wm);border-radius:12px;padding:12px;margin-bottom:10px">'
-      +'<div style="font-size:12px;color:var(--t2);margin-bottom:6px">📍 検索結果</div>'
-      +'<div style="font-size:13px;font-weight:700">'+(city||town||displayName.split(',')[0])+'</div>'
-      +'<div style="font-size:12px;color:var(--rd);margin-top:8px">この地域のゴミ収集日データがまだ登録されていません。手動で設定してください。</div></div>';
-    _showManualTrashForm();
-    return;
-  }
-  // 候補表示 + 曜日確認
-  var WD=['日','月','火','水','木','金','土'];
-  var wdayNames=match.wdays.map(function(d){return WD[d];}).join('・');
-  res.innerHTML='<div style="background:var(--wm);border-radius:12px;padding:14px;margin-bottom:10px">'
-    +'<div style="font-size:11px;color:var(--t2);margin-bottom:4px">📍 検出結果</div>'
-    +'<div style="font-size:15px;font-weight:700;margin-bottom:8px">'+match.name+'</div>'
-    +'<div style="font-size:12px;color:var(--t2);background:rgba(90,158,124,.1);border-radius:8px;padding:8px;margin-bottom:12px;line-height:1.8">' +match.days+'</div>'
-    +'<div style="font-size:13px;font-weight:700;margin-bottom:10px">燃えるごみの日: <span style="color:var(--ac)">' +wdayNames+'</span> でよろしいですか？</div>'
-    +'<div id="trash-day-edit" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">';
-  // 曜日チェックボックス
-  for(var d2=1;d2<=6;d2++){
-    var checked=match.wdays.indexOf(d2)>=0;
-    res.innerHTML+='<label style="display:flex;align-items:center;gap:4px;padding:6px 10px;background:'+(checked?'var(--ac)':'var(--cd)')+';color:'+(checked?'#fff':'var(--t2)')+';border-radius:8px;border:1.5px solid '+(checked?'var(--ac)':'var(--wm)')+';cursor:pointer;font-size:12px;font-weight:700;touch-action:manipulation">'
-      +'<input type="checkbox" name="wday" value="'+d2+'" '+(checked?'checked':'')+' style="display:none">'+WD[d2]+'</label>';
-  }
-  res.innerHTML+='</div>'
-    +'<input type="hidden" id="trash-match-id" value="'+match.id+'">'
-    +'<input type="hidden" id="trash-match-name" value="'+match.name+'">'
-    +'<div style="display:flex;gap:8px">'
-    +'<button class="btn btn-ghost" style="flex:1" onclick="_showManualTrashForm()">手動入力</button>'
-    +'<button class="btn btn-o" style="flex:2" onclick="applyTrashArea()">✅ これで適用</button>'
-    +'</div></div>';
-}
-function applyTrashArea(){
-  var id=document.getElementById('trash-match-id')?.value||'';
-  var name=document.getElementById('trash-match-name')?.value||'';
-  // 選択された曜日を取得
-  var selected=[];
-  document.querySelectorAll('[name=wday]:checked').forEach(function(cb){selected.push(parseInt(cb.value));});
-  if(selected.length===0){showToast('⚠️ 燃えるごみの曜日を選んでください');return;}
-  // カスタム曜日をローカルに保存
-  localStorage.setItem('iedash_trash_area',id);
-  localStorage.setItem('iedash_trash_name',name);
-  localStorage.setItem('iedash_trash_wdays',JSON.stringify(selected));
-  if(ROOM&&db){
-    db.collection('iedash').doc(ROOM).collection('settings').doc('trash_area')
-      .set({area:id,name:name,wdays:selected},{merge:true})
-      .catch(function(){});
-  }
-  closeModal();
-  renderTrash();
-  showToast('✅ ゴミ出し地域を「'+name+'」に設定しました');
-}
-function _showManualTrashForm(){
-  var res=document.getElementById('trash-search-result');if(!res)return;
-  var WD=['日','月','火','水','木','金','土'];
-  var h='<div style="border-top:1px solid var(--wm);padding-top:12px">'
-    +'<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px">手動で設定</div>'
-    +'<input type="text" class="fi" id="trash-manual-name" placeholder="地域名（例: 自宅地区）" style="margin-bottom:8px">'
-    +'<div style="font-size:11px;color:var(--t2);margin-bottom:6px">燃えるごみの曜日</div>'
-    +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">';
-  for(var d=1;d<=6;d++){
-    h+='<label style="display:flex;align-items:center;gap:4px;padding:6px 10px;background:var(--cd);border:1.5px solid var(--wm);border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;touch-action:manipulation">'
-      +'<input type="checkbox" name="wday" value="'+d+'" style="display:none">'+WD[d]+'</label>';
-  }
-  h+='</div>'
-    +'<input type="hidden" id="trash-match-id" value="custom">'
-    +'<input type="hidden" id="trash-match-name" value="">'
-    +'<button class="btn btn-o btn-full" onclick="_applyManualTrash()">適用する</button>'
-    +'</div>';
-  var existing=res.innerHTML;
-  res.innerHTML=existing+h;
-}
-function _applyManualTrash(){
-  var name=document.getElementById('trash-manual-name')?.value.trim()||'自宅地区';
-  var selected=[];
-  document.querySelectorAll('[name=wday]:checked').forEach(function(cb){selected.push(parseInt(cb.value));});
-  if(selected.length===0){showToast('⚠️ 曜日を選んでください');return;}
-  localStorage.setItem('iedash_trash_area','custom');
-  localStorage.setItem('iedash_trash_name',name);
-  localStorage.setItem('iedash_trash_wdays',JSON.stringify(selected));
-  if(ROOM&&db){
-    db.collection('iedash').doc(ROOM).collection('settings').doc('trash_area')
-      .set({area:'custom',name:name,wdays:selected},{merge:true})
-      .catch(function(){});
-  }
-  closeModal();renderTrash();
-  showToast('✅ ゴミ出し地域を設定しました');
-}
+function openTrashAreaPicker(){const A=[{id:'箕面市A-4地区',l:'箕面市 A-4地区（石丸３丁目など）',k:'箕面 みのお a4 a-4 石丸'},{id:'箕面市A-1地区',l:'箕面市 A-1地区',k:'箕面 みのお a1 a-1'},{id:'箕面市B地区',l:'箕面市 B地区（火・金：燃えるごみ）',k:'箕面 みのお b'},{id:'大阪市一般',l:'大阪市（月・木：燃えるごみ）',k:'大阪市 osaka'},{id:'豊中市',l:'豊中市（月・木：燃えるごみ）',k:'豊中 とよなか'},{id:'吹田市',l:'吹田市（月・木：燃えるごみ）',k:'吹田 すいた'},{id:'池田市',l:'池田市（月・木：燃えるごみ）',k:'池田 いけだ'},{id:'東京23区',l:'東京23区（火・金：燃えるごみ）',k:'東京 23区 tokyo'},{id:'横浜市',l:'横浜市（火・金：燃えるごみ）',k:'横浜 yokohama'},{id:'custom',l:'その他・手動設定',k:'custom その他 手動'}];const cur=localStorage.getItem('iedash_trash_area')||'箕面市A-4地区';const mc=document.getElementById('mc');if(!mc)return;mc.innerHTML='<div class="m-title">🗺️ ゴミ出し地域</div>'+'<div style="font-size:12px;color:var(--t2);margin-bottom:10px">市区町村名で検索できます</div>'+'<input type="text" class="fi" id="trash-q" placeholder="例: 箕面、大阪市、東京..." style="margin-bottom:10px">'+'<div id="trash-list" style="max-height:300px;overflow-y:auto"></div>'+'<button class="btn btn-ghost btn-full" onclick="closeModal()" style="margin-top:8px">閉じる</button>';openOv();function draw(q){var f=q?A.filter(function(a){return (a.l+' '+a.k).toLowerCase().includes(q);}):A;var el=document.getElementById('trash-list');if(!el)return;if(f.length===0){el.innerHTML='<div style="padding:12px;font-size:13px;color:var(--t2)">見つかりません</div>';return;}el.innerHTML=f.map(function(a){var sel=(a.id===cur)?'border:2px solid var(--ac);color:var(--ac)':'';return '<button onclick="setTrashArea(\''+a.id+'\',\''+a.l+'\')" class="btn btn-ghost" style="width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;font-size:13px;'+sel+'">'+(a.id===cur?'✅ ':'')+a.l+'</button>';}).join('');}draw('');var inp=document.getElementById('trash-q');if(inp)inp.oninput=function(){draw(this.value.toLowerCase().trim());};}
 function setTrashArea(id,label){
   localStorage.setItem('iedash_trash_area',id);
   const lbl=document.getElementById('iset-trash-area-lbl');
@@ -3621,7 +3793,6 @@ function _loadMyWidgets() {
 }
 
 function _saveMyWidgets() {
-  renderMyPage();
   if (!ROOM || !currentUser) return;
   db.collection('iedash').doc(ROOM).collection('widgets').doc(currentUser.uid)
     .set({ list: _myWidgets }, { merge: false })
@@ -3654,98 +3825,6 @@ function openWidgetPicker() {
   mc.innerHTML = h; openOv();
 }
 
-
-function moveWidget(wid, dir) {
-  var idx = _myWidgets.findIndex(function(w) { return w.id === wid; });
-  if (idx < 0) return;
-  var newIdx = idx + dir;
-  if (newIdx < 0 || newIdx >= _myWidgets.length) return;
-  var tmp = _myWidgets[idx];
-  _myWidgets[idx] = _myWidgets[newIdx];
-  _myWidgets[newIdx] = tmp;
-  _saveMyWidgets();
-}
-
-// ─── ウィジェット通知設定 ───
-function openWidgetNotifConfig(wid) {
-  var w = _myWidgets.find(function(x) { return x.id === wid; }); if (!w) return;
-  var nc = w.config.notif || {enabled: false, time: '08:00', message: ''};
-  var mc = document.getElementById('mc'); if (!mc) return;
-  var TMPL = _getWidgetTemplates();
-  var tmpl = TMPL.find(function(t) { return t.type === w.type; });
-  var defaultMsg = tmpl ? tmpl.name + 'を記録しましょう！' : '記録しましょう！';
-  var h = '<div class="m-title">🔔 通知設定</div>';
-  h += '<div style="background:rgba(212,102,62,.08);border-radius:12px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--t2)">'
-    + '📱 設定した時間にブラウザ通知が届きます。<br>通知を受け取るには、ブラウザの通知を許可してください。</div>';
-  h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--wm)">';
-  h += '<div style="font-size:14px;font-weight:700">通知をON</div>';
-  h += '<div onclick="this.classList.toggle(\'on\');document.getElementById(\'wnotif_en_'+wid+'\').value=this.classList.contains(\'on\')?1:0" class="tgl-btn'+(nc.enabled?' on':'')+'"></div>';
-  h += '<input type="hidden" id="wnotif_en_'+wid+'" value="'+(nc.enabled?1:0)+'">';
-  h += '</div>';
-  h += '<div style="padding:12px 0;border-bottom:1px solid var(--wm)">';
-  h += '<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">通知時刻</div>';
-  h += '<input type="time" id="wnotif_time_'+wid+'" value="'+nc.time+'" class="fi">';
-  h += '</div>';
-  h += '<div style="padding:12px 0">';
-  h += '<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">通知メッセージ</div>';
-  h += '<input type="text" id="wnotif_msg_'+wid+'" value="'+(nc.message||defaultMsg)+'" class="fi" placeholder="'+defaultMsg+'">';
-  h += '</div>';
-  h += '<div style="display:flex;gap:8px;margin-top:4px">';
-  h += '<button class="btn btn-ghost" style="flex:1" onclick="closeModal()">キャンセル</button>';
-  h += '<button class="btn btn-o" style="flex:2" onclick="saveWidgetNotifConfig(\''+wid+'\')" >保存</button>';
-  h += '</div>';
-  mc.innerHTML = h; openOv();
-}
-function saveWidgetNotifConfig(wid) {
-  var w = _myWidgets.find(function(x) { return x.id === wid; }); if (!w) return;
-  var enabled = document.getElementById('wnotif_en_'+wid)?.value === '1';
-  var time = document.getElementById('wnotif_time_'+wid)?.value || '08:00';
-  var msg = document.getElementById('wnotif_msg_'+wid)?.value || '';
-  w.config.notif = { enabled: enabled, time: time, message: msg };
-  _saveMyWidgets();
-  if (enabled) {
-    if (Notification && Notification.permission !== 'granted') {
-      Notification.requestPermission().then(function(p) {
-        if (p === 'granted') showToast('✅ 通知を設定しました (' + time + ')');
-        else showToast('⚠️ ブラウザの通知を許可してください');
-      });
-    } else {
-      showToast('✅ 通知を設定しました (' + time + ')');
-    }
-    _scheduleWidgetNotifs();
-  } else {
-    showToast('🔕 通知をOFFにしました');
-  }
-  closeModal();
-}
-function _scheduleWidgetNotifs() {
-  // 毎分チェックして通知時刻に一致したら通知
-  if (window._widgetNotifInterval) clearInterval(window._widgetNotifInterval);
-  window._widgetNotifInterval = setInterval(function() {
-    var now = new Date();
-    var hm = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-    _myWidgets.forEach(function(w) {
-      var nc = w.config && w.config.notif;
-      if (!nc || !nc.enabled || nc.time !== hm) return;
-      var lastKey = 'iedash_wnotif_'+w.id+'_'+tday()+'_'+hm;
-      if (localStorage.getItem(lastKey)) return;  // 今日この時刻は送信済み
-      localStorage.setItem(lastKey, '1');
-      if (Notification && Notification.permission === 'granted') {
-        var TMPL = _getWidgetTemplates();
-        var tmpl = TMPL.find(function(t) { return t.type === w.type; });
-        var icon = tmpl ? tmpl.icon : '🧩';
-        try {
-          new Notification('Irori ' + icon + ' ' + (tmpl ? tmpl.name : w.type), {
-            body: nc.message || '記録しましょう！',
-            icon: '/Irori-Ver2/icon-192.png'
-          });
-        } catch(e) {}
-      } else {
-        showToast('🔔 ' + (nc.message || '記録しましょう！'));
-      }
-    });
-  }, 60000);
-}
 function addWidget(type) {
   var TMPL = _getWidgetTemplates();
   var t = TMPL.find(function(x) { return x.type === type; });
@@ -3836,28 +3915,15 @@ function renderMyPage() {
       + '</div>';
     return;
   }
-  el.innerHTML = _myWidgets.map(function(w, i) {
-    var canUp = (i > 0);
-    var canDown = (i < _myWidgets.length - 1);
-    var sortBtns = '<div style="display:flex;gap:2px;flex-shrink:0">'
-      + '<button onclick="moveWidget(\''+w.id+'\',-1)" style="background:none;border:1px solid var(--wm);border-radius:6px;font-size:11px;padding:2px 5px;cursor:pointer;color:'+(canUp?'var(--t2)':'var(--t3)')+';touch-action:manipulation" '+(canUp?'':'disabled')+'>▲</button>'
-      + '<button onclick="moveWidget(\''+w.id+'\',1)" style="background:none;border:1px solid var(--wm);border-radius:6px;font-size:11px;padding:2px 5px;cursor:pointer;color:'+(canDown?'var(--t2)':'var(--t3)')+';touch-action:manipulation" '+(canDown?'':'disabled')+'>▼</button>'
-      + '</div>';
-    var rendered = _renderWidget(w);
-    // widget-hdrの末尾(×ボタンの前)に▲▼を挿入
-    return rendered.replace('class="widget-del-btn"', 'class="widget-sort-btns" data-sort="'+w.id+'">' + sortBtns + '</div><button class="widget-del-btn"');
+  el.innerHTML = _myWidgets.map(function(w) {
+    return _renderWidget(w);
   }).join('');
 }
 
 function _renderWidget(w) {
-  try {
-    var fn = _widgetRenderers[w.type];
-    if (!fn) return '<div class="widget-card"><div class="widget-hdr"><span style="font-size:13px;color:var(--t2)">' + w.type + ' (未対応)</span><button onclick="removeWidget(\''+w.id+'\')" class="widget-del-btn" style="margin-left:auto">×</button></div></div>';
-    return fn(w);
-  } catch(e) {
-    console.error('widget render error', w.type, e);
-    return '<div class="widget-card"><div class="widget-hdr"><span style="font-size:13px;color:var(--rd)">⚠️ 表示エラー (' + w.type + ')</span><button onclick="removeWidget(\''+w.id+'\')" class="widget-del-btn" style="margin-left:auto">×</button></div></div>';
-  }
+  var fn = _widgetRenderers[w.type];
+  if (!fn) return '<div class="widget-card"><div class="widget-hdr"><span>' + w.type + '</span></div></div>';
+  return fn(w);
 }
 
 // ─── 各ウィジェットレンダラー ───
