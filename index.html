@@ -721,7 +721,7 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
     <div class="card">
       <div class="card-hdr">
         <div class="card-title">📍 いまどこにいる？</div>
-        <button class="btn btn-ghost" style="font-size:10px" onclick="shareLocation()">共有する</button>
+        <button class="btn btn-ghost" style="font-size:10px" onclick="shareMyLocation()">共有する</button>
       </div>
       <div id="locList"><div class="empty">まだ誰も共有していません</div></div>
     </div>
@@ -816,7 +816,8 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
   <div style="text-align:center;margin-top:10px" id="calAddBtn"><button class="btn btn-o" style="padding:11px 22px;font-size:14px" onclick="openModal('schedule')">＋ 予定を追加</button></div>
 </div>
 <div class="pg" id="pg-status">
-  <div class="sec"><div class="card"><div id="myStatusCard"></div></div></div>
+  <div id="geo-consent-banner" style="display:none;margin:8px 0 0"></div>
+<div class="sec"><div class="card"><div id="myStatusCard"></div></div></div>
   <div class="sec">
     <div class="card">
       <div class="card-title" style="margin-bottom:10px">🏠 家族の状況</div>
@@ -1017,7 +1018,9 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 
 <script>
 
-var roomSettings={geoTrack:false,homeLocation:null,homeRadius:200};
+var roomSettings={homeLocation:null,homeRadius:200,memberGeo:{}};
+var _geoConsents={}; // {uid: {code,expires}}
+
 var _geoWatchId=null;
 var _lastHomeState=null;
 window._openCalApiPage=function(){window.open('https://console.cloud.google.com/apis/library/calendar-json.googleapis.com?project=family-app-3393e');};
@@ -1512,6 +1515,91 @@ function boot(){
     },800);
   }
 }
+// ━━ 位置追跡 同意フロー ━━
+function _adminRequestGeo(uid){
+  if(!isRoomAdmin)return;
+  var code=String(Math.floor(1000+Math.random()*9000));
+  var expires=new Date(Date.now()+5*60*1000).toISOString();
+  // Firestoreにコードを書く（本人のスマホで参照）
+  db.collection('iedash').doc(ROOM).collection('geo_consent').doc(uid).set({
+    code:code,uid:uid,expires:expires,requestedAt:new Date().toISOString()
+  }).then(function(){
+    var mg=Object.assign({},roomSettings.memberGeo||{});
+    mg[uid]='pending';
+    return saveRoomGeoConfig({memberGeo:mg});
+  }).then(function(){
+    showToast('📤 依頼を送りました。相手の画面に表示される4桁コードを入力してください');
+  }).catch(function(e){
+    showToast('⚠️ 失敗: '+e.message);
+  });
+}
+function _adminEnterCode(uid){
+  var m2=(members||[]).find(function(m){return m.uid===uid;});
+  var mname=m2?m2.name:uid;
+  var mc=document.getElementById('mc');if(!mc)return;
+  mc.innerHTML='<div class="m-title">🔑 追跡同意コード</div>'+'<div style="font-size:13px;color:var(--t2);margin-bottom:16px">'+mname+'さんの画面に表示されている4桁のコードを入力してください</div>'+'<input type="number" id="consent-code-inp" class="fi" placeholder="0000" maxlength="4" style="text-align:center;font-size:28px;font-weight:700;letter-spacing:8px;margin-bottom:14px">'+'<button class="btn btn-o btn-full" onclick="_adminVerifyCode(\''+uid+'\')">確認して追跡ON</button>'+'<button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="closeModal()">キャンセル</button>';  openOv();
+}
+function _adminVerifyCode(uid){
+  var inp=document.getElementById('consent-code-inp');
+  if(!inp)return;
+  var entered=inp.value.trim();
+  if(!entered||entered.length!==4){showToast('⚠️ 4桁のコードを入力してください');return;}
+  db.collection('iedash').doc(ROOM).collection('geo_consent').doc(uid).get()
+    .then(function(d){
+      if(!d.exists){showToast('⚠️ コードが見つかりません。再度依頼してください');return;}
+      var data=d.data();
+      if(new Date(data.expires)<new Date()){showToast('⚠️ コードの有効期限が切れました。再度依頼してください');return;}
+      if(data.code!==entered){showToast('⚠️ コードが違います');return;}
+      var mg=Object.assign({},roomSettings.memberGeo||{});
+      mg[uid]='allowed';
+      return saveRoomGeoConfig({memberGeo:mg}).then(function(){
+        return db.collection('iedash').doc(ROOM).collection('geo_consent').doc(uid).delete();
+      }).then(function(){
+        closeModal();
+        showToast('✅ 追跡が有効になりました');
+      });
+    }).catch(function(e){showToast('⚠️ '+e.message);});
+}
+function _adminRevokeGeo(uid){
+  var mg=Object.assign({},roomSettings.memberGeo||{});
+  mg[uid]='denied';
+  saveRoomGeoConfig({memberGeo:mg}).then(function(){
+    showToast('❌ 追跡を停止しました');
+  }).catch(function(e){showToast('⚠️ '+e.message);});
+}
+function _selfRevokeGeo(){
+  if(!currentUser)return;
+  var mg=Object.assign({},roomSettings.memberGeo||{});
+  mg[currentUser.uid]='denied';
+  saveRoomGeoConfig({memberGeo:mg}).then(function(){
+    showToast('🛑 追跡をやめました');
+  }).catch(function(e){showToast('⚠️ '+e.message);});
+}
+function _renderConsentBanner(){
+  if(!currentUser)return;
+  var consent=_geoConsents[currentUser.uid];
+  var bannerEl=document.getElementById('geo-consent-banner');
+  if(!bannerEl)return;
+  if(!consent||(new Date(consent.expires)<new Date())){
+    bannerEl.style.display='none';
+    return;
+  }
+  bannerEl.style.display='block';
+  var mins=Math.max(0,Math.floor((new Date(consent.expires)-new Date())/60000));
+  bannerEl.innerHTML='<div style="background:linear-gradient(135deg,rgba(212,102,62,.15),rgba(100,128,184,.15));border:1.5px solid rgba(212,102,62,.3);border-radius:16px;padding:16px;margin-bottom:12px">'+'<div style="font-size:14px;font-weight:700;color:var(--br);margin-bottom:6px">📡 位置追跡の同意を求められています</div>'+'<div style="font-size:12px;color:var(--t2);margin-bottom:12px">グループ管理者があなたの常時位置追跡を尊重しています。許可する場合は下のコードを管理者に伝えてください。('+(consent.expires?mins+'分後に期限切れ':'')+')</div>'+'<div style="text-align:center;font-size:42px;font-weight:700;color:var(--br);letter-spacing:12px;background:var(--wm);border-radius:12px;padding:12px;margin-bottom:12px">'+consent.code+'</div>'+'<div style="display:flex;gap:8px">'+'<button onclick="_selfDenyConsent()" style="flex:1;padding:10px;background:rgba(201,64,64,.1);color:var(--rd);border:1px solid rgba(201,64,64,.3);border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">🚫 拒否</button>'+'</div></div>';
+}
+function _selfDenyConsent(){
+  if(!currentUser||!ROOM)return;
+  db.collection('iedash').doc(ROOM).collection('geo_consent').doc(currentUser.uid).delete()
+    .then(function(){
+      var mg=Object.assign({},roomSettings.memberGeo||{});
+      mg[currentUser.uid]='denied';
+      return saveRoomGeoConfig({memberGeo:mg});
+    }).then(function(){
+      showToast('🚫 追跡を拒否しました');
+    }).catch(function(){});
+}
+
 // ━━ 位置情報・在宅判定 ━━
 function _distM(lat1,lng1,lat2,lng2){
   var R=6371000;
@@ -1556,8 +1644,9 @@ function _onGeoPos(pos){
   }
 }
 function _applyGeoTracking(){
-  if(roomSettings.geoTrack){
-    // 常時追跡
+  if(!currentUser)return;
+  var myStatus=(roomSettings.memberGeo&&roomSettings.memberGeo[currentUser.uid])||'denied';
+  if(myStatus==='allowed'){
     if(!_geoWatchId&&navigator.geolocation){
       _geoWatchId=navigator.geolocation.watchPosition(
         _onGeoPos,
@@ -1565,17 +1654,17 @@ function _applyGeoTracking(){
         {enableHighAccuracy:true,maximumAge:30000,timeout:20000}
       );
     }
-    // 通知許可を要求
     if(Notification&&Notification.permission==='default'){
       Notification.requestPermission().catch(function(){});
     }
   }else{
-    // 常時追跡を止める
     if(_geoWatchId!=null&&navigator.geolocation){
       navigator.geolocation.clearWatch(_geoWatchId);
       _geoWatchId=null;
     }
   }
+  try{renderGeoSettings();}catch(e){}
+  try{_renderConsentBanner();}catch(e){}
 }
 function shareMyLocation(){
   if(!navigator.geolocation){showToast('⚠️ このデバイスは位置情報に対応していません');return;}
@@ -1590,11 +1679,10 @@ function shareMyLocation(){
   );
 }
 function saveRoomGeoConfig(cfg){
-  if(!isRoomAdmin){showToast('⚠️ ルーム管理者のみ設定できます');return;}
-  db.collection('iedash').doc(ROOM).collection('settings').doc('room_config')
+  if(!isRoomAdmin){showToast('⚠️ ルーム管理者のみ設定できます');return Promise.reject(new Error('not admin'));}
+  return db.collection('iedash').doc(ROOM).collection('settings').doc('room_config')
     .set(cfg,{merge:true})
-    .then(function(){showToast('✅ 設定を保存しました');})
-    .catch(function(e){showToast('⚠️ 保存失敗: '+e.message);});
+    .catch(function(e){showToast('⚠️ 保存失敗: '+e.message);throw e;});
 }
 function pickHomeLocation(){
   if(!navigator.geolocation){showToast('⚠️ 位置情報利用不可');return;}
@@ -1614,31 +1702,58 @@ function pickHomeLocation(){
 function renderGeoSettings(){
   var el=document.getElementById('geo-settings-section');if(!el)return;
   var hasHome=!!roomSettings.homeLocation;
-  var isAdmin=isRoomAdmin;
   var h='';
-  if(isAdmin){
-    h+='<div class="iset-row" style="cursor:pointer" onclick="saveRoomGeoConfig({geoTrack:'+(!roomSettings.geoTrack)+'})">';
-    h+='<span class="iset-icon" style="background:'+(roomSettings.geoTrack?'var(--gn)':'var(--t3)')+'">📡</span>';
-    h+='<div class="iset-row-body"><div class="iset-row-title">常時位置追跡</div>';
-    h+='<div class="iset-row-sub">'+(roomSettings.geoTrack?'✅ ON — 全員の位置を自動追跡':'❌ OFF — 各自手動共有')+'</div></div>';
-    h+='<div style="font-size:20px">'+(roomSettings.geoTrack?'🟢':'⚪')+'</div>';
+  if(isRoomAdmin){
+    h+='<div class="iset-row" style="cursor:default;border-bottom:none">';
+    h+='<span class="iset-icon" style="background:var(--ac)">🏠</span>';
+    h+='<div class="iset-row-body">';
+    h+='<div class="iset-row-title">自宅地点の設定</div>';
+    h+='<div class="iset-row-sub">'+(hasHome?'✅ 設定済み (半径'+roomSettings.homeRadius+'m)':'未設定')+'</div>';
+    h+='</div><button onclick="pickHomeLocation()" class="btn btn-ghost" style="font-size:12px;padding:6px 12px;flex-shrink:0">'+(hasHome?'変更':'設定する')+'</button>';
     h+='</div>';
-    h+='<div class="iset-row" onclick="pickHomeLocation()" style="cursor:pointer">';
-    h+='<span class="iset-icon" style="background:'+(hasHome?'var(--ac)':'var(--t3)')+'">🏠</span>';
-    h+='<div class="iset-row-body"><div class="iset-row-title">自宅地点</div>';
-    h+='<div class="iset-row-sub">'+(hasHome?'✅ 設定済み (半径'+roomSettings.homeRadius+'m)':'未設定 — 現在地で設定')+'</div></div>';
-    h+='<span class="iset-arrow">›</span>';
-    h+='</div>';
-    h+='<div style="padding:12px 14px;border-top:1px solid var(--wm)">';
-    h+='<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">自宅判定半径: <span id="geo-rad-val">'+roomSettings.homeRadius+'</span>m</div>';
+    h+='<div style="padding:10px 14px;border-top:1px solid var(--wm)">';
+    h+='<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">判定半径: <span id="geo-rad-val">'+roomSettings.homeRadius+'</span>m</div>';
     h+='<input type="range" min="50" max="500" step="50" value="'+roomSettings.homeRadius+'" oninput="document.getElementById(\'geo-rad-val\').textContent=this.value" onchange="saveRoomGeoConfig({homeRadius:parseInt(this.value)})" style="width:100%">';
     h+='</div>';
-  }
-  if(!roomSettings.geoTrack){
-    h+='<div style="padding:12px 14px;'+(isAdmin?'border-top:1px solid var(--wm)':'')+'">';
-    h+='<button onclick="shareMyLocation()" class="btn btn-o btn-full">📍 今の位置を共有</button>';
-    h+='<div style="font-size:11px;color:var(--t2);text-align:center;margin-top:6px">ボタンを押すたびに自宅判定も自動で行います</div>';
+    h+='<div style="padding:10px 14px 6px;border-top:1px solid var(--wm)">';
+    h+='<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px">👥 メンバーの追跡設定</div>';
+    (members||[]).forEach(function(m){
+      if(!m||!m.uid)return;
+      var status=(roomSettings.memberGeo&&roomSettings.memberGeo[m.uid])||'denied';
+      var isMe2=(currentUser&&m.uid===currentUser.uid);
+      var statusLabel=status==='allowed'?'🟢 追跡中':status==='pending'?'🟡 同意待ち':'⚪ 未設定';
+      var statusColor=status==='allowed'?'var(--gn)':status==='pending'?'var(--yl)':'var(--t3)';
+      h+='<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--wm)">';
+      h+='<span style="font-size:22px">'+m.emoji+'</span>';
+      h+='<div style="flex:1"><div style="font-size:13px;font-weight:700">'+m.name+(isMe2?' <span style="font-size:9px;background:var(--yl);color:var(--br);padding:1px 5px;border-radius:4px">自分</span>':'')+'</div>';
+      h+='<div style="font-size:11px;font-weight:700;color:'+statusColor+'">'+statusLabel+'</div></div>';
+      if(status==='allowed'){
+        h+='<button onclick="_adminRevokeGeo(\''+m.uid+'\')" style="font-size:11px;padding:5px 10px;background:rgba(201,64,64,.1);color:var(--rd);border:1px solid rgba(201,64,64,.3);border-radius:8px;cursor:pointer;font-family:inherit">追跡を停止</button>';
+      }else if(status==='pending'){
+        h+='<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">';
+        h+='<button onclick="_adminEnterCode(\''+m.uid+'\')" style="font-size:11px;padding:5px 10px;background:rgba(232,184,75,.15);color:var(--br);border:1px solid rgba(232,184,75,.4);border-radius:8px;cursor:pointer;font-family:inherit">🔑 コード入力</button>';
+        h+='<div style="font-size:10px;color:var(--t2)">相手の画面のコードを入力</div>';
+        h+='</div>';
+      }else{
+        h+='<button onclick="_adminRequestGeo(\''+m.uid+'\')" style="font-size:11px;padding:5px 10px;background:rgba(212,102,62,.1);color:var(--ac);border:1px solid rgba(212,102,62,.3);border-radius:8px;cursor:pointer;font-family:inherit">追跡を依頼</button>';
+      }
+      h+='</div>';
+    });
     h+='</div>';
+  }
+  if(!isRoomAdmin){
+    var myStatus2=(currentUser&&roomSettings.memberGeo&&roomSettings.memberGeo[currentUser.uid])||'denied';
+    if(myStatus2!=='allowed'){
+      h+='<div style="padding:12px 14px">';
+      h+='<button onclick="shareMyLocation()" class="btn btn-o btn-full">📍 今の位置を共有</button>';
+      h+='<div style="font-size:11px;color:var(--t2);text-align:center;margin-top:6px">ボタンを押すと現在地を共有し、自宅判定も自動で行います</div>';
+      h+='</div>';
+    }else{
+      h+='<div style="padding:12px 14px;text-align:center">';
+      h+='<div style="font-size:13px;color:var(--gn);font-weight:700;margin-bottom:8px">🟢 常時追跡中</div>';
+      h+='<button onclick="_selfRevokeGeo()" style="font-size:12px;padding:8px 16px;background:rgba(201,64,64,.1);color:var(--rd);border:1px solid rgba(201,64,64,.3);border-radius:10px;cursor:pointer;font-family:inherit">🛑 追跡をやめる</button>';
+      h+='</div>';
+    }
   }
   el.innerHTML=h;
 }
@@ -1766,6 +1881,19 @@ function listenAll(){
     _applyGeoTracking();
     try{renderGeoSettings();}catch(e){}
   },function(){});
+
+  // geo同意コードリスナー（本人用 - 自分宛のコードを監視）
+  if(currentUser){
+    db.collection('iedash').doc(ROOM).collection('geo_consent').doc(currentUser.uid)
+      .onSnapshot(function(d){
+        if(d.exists){
+          _geoConsents[currentUser.uid]=d.data();
+        }else{
+          delete _geoConsents[currentUser.uid];
+        }
+        try{_renderConsentBanner();}catch(e){}
+      },function(){});
+  }
 
   // お風呂状態のFirestore同期リスナー
   try{
