@@ -598,6 +598,21 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 .mypage-add-fab{display:flex;justify-content:center;padding:8px 0 16px}
 .mypage-add-fab button{background:var(--ac);border:none;border-radius:50px;padding:12px 24px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(212,102,62,.4);touch-action:manipulation;font-family:inherit}
 
+
+#fabBg{position:fixed;inset:0;z-index:295;display:none;background:rgba(0,0,0,.3);touch-action:manipulation}
+#fabBg.open{display:block}
+
+/* ── スマホ・iPad最適化 ── */
+@media(max-width:599px){
+  .app-shell{max-width:100%}
+  .widget-card{border-radius:12px;padding:12px}
+  .sheet{max-height:85vh;padding:14px 14px 24px}
+  .btn{min-height:44px;touch-action:manipulation}
+  input[type=text],input[type=number],input[type=date],input[type=time],select{min-height:44px;font-size:16px!important}
+}
+@media(min-width:600px) and (max-width:1024px){
+  .app-shell{max-width:480px}
+}
 </style>
 <script>if('serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(s){s.unregister();});});caches.keys().then(function(k){k.forEach(function(n){caches.delete(n);});});}</script>
 </head>
@@ -835,8 +850,6 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
 </div>
 <div class="pg" id="pg-calendar">
   <div class="cal-filter-wrap"><div class="cal-fc" id="cal-fc"></div></div>
-  <!-- 今日の家族予定 -->
-  <div class="today-fam-grid" id="todayFamGrid"></div>
   <div class="cal-view-tog">
     <button class="cvt active" id="cvt-month" onclick="setCalMode('month')">月</button>
     <button class="cvt" id="cvt-week" onclick="setCalMode('week')">週</button>
@@ -848,7 +861,6 @@ body.dark .today-fam-box{border-color:rgba(255,255,255,.07)}
     <div class="cal-mon" id="calTitle"></div>
     <button class="cnav-btn" id="cal-next" onclick="calDelta(1)">▶</button>
   </div>
-  <div class="frow" id="frow"></div>
   <div id="gcalPanel" style="display:none">
     <div class="card" style="margin-bottom:10px">
       <div class="card-hdr" style="margin-bottom:8px">
@@ -1853,8 +1865,6 @@ function calDelta(d){
 }
 function renderCal(){
   renderCalFilter();
-  const frow=document.getElementById('frow');
-  frow.innerHTML=members.map(m=>'<div class="fc '+(calFilter.length===0||calFilter.includes(m.uid)?'active':'')+'" style="background:'+m.color+'22;color:'+m.color+'" onclick="togCF(\''+m.uid+'\')">'+m.emoji+' '+m.name+'</div>').join('');
   if(calMode==='month')renderMonthCal();
   else if(calMode==='week')renderWeekCal();
   else renderDayCal();
@@ -1901,7 +1911,7 @@ function renderMonthCal(){
   const evts=renderEvtList(calY+'-'+p2(calM+1));
   document.getElementById('calBody').innerHTML=html+'<div class="evtlist" style="margin-top:8px">'+evts+'</div>';
 }
-function jumpToDay(y,m,d){calMode='day';calDay=new Date(y,m,d);['month','week','day'].forEach(v=>document.getElementById('cvt-'+v).classList.toggle('active',v==='day'));renderCal();}
+function jumpToDay(y,m,d){calMode='day';calDay=new Date(y,m,d);window._selectedCalDate=y+'-'+p2(m+1)+'-'+p2(d);['month','week','day'].forEach(v=>document.getElementById('cvt-'+v).classList.toggle('active',v==='day'));renderCal();}
 function renderWeekCal(){
   const start=new Date(calWeek),end=new Date(start);end.setDate(start.getDate()+6);
   const today=new Date();
@@ -2193,22 +2203,23 @@ function openModal(type,data={}){
   }
   const mc=document.getElementById('mc');
   if(type==='schedule'){
-    mc.innerHTML='<div class="m-title">📅 予定を追加</div>'+
-      '<div class="fg">'+
-        '<label class="fl">👥 誰の予定？（複数選択で合同予定）</label>'+
-        '<div class="mpick" id="mpick" style="margin-bottom:6px"></div>'+
-        '<div style="display:flex;gap:6px">'+
-          '<button class="btn btn-ghost" style="font-size:11px;flex:1" id="modeJoint" onclick="setSchMode(\'joint\')">👥 各自の予定として登録</button>'+
-          '<button class="btn btn-ghost" style="font-size:11px;flex:1" id="modeCopy" onclick="setSchMode(\'copy\')">📋 全員に同じ予定をコピー</button>'+
-        '</div>'+
-        '<div id="modeHint" style="font-size:10px;color:var(--t3);margin-top:5px;padding:5px 8px;background:var(--wm);border-radius:8px"></div>'+
-      '</div>'+
-      '<div class="fg"><label class="fl">日付</label><input class="fi" type="date" id="s-date" value="'+tday()+'"></div>'+
-      '<div class="fr"><div class="fg"><label class="fl">開始</label><input class="fi" type="time" id="s-time" value="09:00"></div><div class="fg"><label class="fl">終了（任意）</label><input class="fi" type="time" id="s-end"></div></div>'+
-      '<div class="fg"><label class="fl">カテゴリ</label><select class="fi" id="s-tag">'+Object.keys(TAGC).map(t=>'<option>'+t+'</option>').join('')+'</select></div>'+
-      '<div class="fg"><label class="fl">内容</label><input class="fi" type="text" id="s-txt" placeholder="家族旅行、病院、学校..."></div>'+
-      '<div class="fg"><label class="fl">メモ（任意）</label><input class="fi" type="text" id="s-memo" placeholder="場所・持ち物など"></div>'+
-      '<button class="btn btn-o btn-full" onclick="addSch()">追加する</button>'; buildMPick();
+    var _sDate=(window._selectedCalDate||tday());
+    mc.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
+      +'<div class="m-title" style="margin:0">📅 予定を追加</div>'
+      +'<button class="btn btn-o" style="font-size:13px;padding:8px 16px" onclick="addSch()">追加する</button>'
+      +'</div>'
+      +'<div class="fg"><label class="fl">👥 誰の予定？</label>'
+      +'<div class="mpick" id="mpick" style="margin-bottom:6px"></div></div>'
+      +'<div class="fr">'
+        +'<div class="fg"><label class="fl">日付</label><input class="fi" type="date" id="s-date" value="'+_sDate+'"></div>'
+        +'<div class="fg"><label class="fl">開始</label><input class="fi" type="time" id="s-time" value="09:00"></div>'
+      +'</div>'
+      +'<div class="fg"><label class="fl">内容</label><input class="fi" type="text" id="s-txt" placeholder="家族旅行、病院、学校..." autofocus></div>'
+      +'<div class="fg"><label class="fl">カテゴリ</label><select class="fi" id="s-tag">'+Object.keys(TAGC).map(t=>'<option>'+t+'</option>').join('')+'</select></div>'
+      +'<details><summary style="font-size:11px;color:var(--t2);padding:6px 0;cursor:pointer">詳細オプション</summary>'
+      +'<div class="fg"><label class="fl">終了時間（任意）</label><input class="fi" type="time" id="s-end"></div>'
+      +'<div class="fg"><label class="fl">メモ（任意）</label><input class="fi" type="text" id="s-memo" placeholder="場所・持ち物など"></div>'
+      +'</details>'; buildMPick();
   }else if(type==='schedDet'){
     const s=state.schedules.find(x=>x.id===data.id);if(!s)return;
     const m=gm(s.member),mine=canEdit(s.ownerUid);
@@ -3539,395 +3550,408 @@ function _renderWidget(w){
 
 var _widgetRenderers = {
 
-  // ┌─────────────────────────────────┐
-  // │  ⚖️ 体重記録                     │
-  // └─────────────────────────────────┘
-  weight: function(w) {
-    var data = w.data || {};
-    var records = data.records || {};  // { "2024-01-01": 65.2 }
-    var cfg = w.config || {};
-    var today = tday();
-    var todayVal = records[today] || '';
-    var targetW = cfg.targetWeight;
-    var targetD = cfg.targetDate;
-
-    // 最新30日のデータ
-    var keys = Object.keys(records).sort();
-    var recent = keys.slice(-60);
-    var vals = recent.map(function(k) { return records[k]; });
-    var minV = vals.length ? Math.min.apply(null, vals) : 50;
-    var maxV = vals.length ? Math.max.apply(null, vals) : 80;
-    var range = Math.max(maxV - minV, 5);
-
-    // SVGグラフ生成
-    var W = 280, H = 80;
-    var graph = '';
-    if (vals.length > 1) {
-      var pts = vals.map(function(v, i) {
-        var x = (i / (vals.length - 1)) * (W - 20) + 10;
-        var y = H - ((v - minV) / range * (H - 16)) - 8;
-        return x + ',' + y;
+  // ⚖️ 体重記録
+  weight: function(w){
+    var data=w.data||{};
+    var records=data.records||{};
+    var cfg=w.config||{};
+    var today=tday();
+    var todayVal=records[today]!=null?records[today]:'';
+    var keys=Object.keys(records).sort().slice(-30);
+    var vals=keys.map(function(k){return records[k];});
+    var minV=vals.length?Math.min.apply(null,vals)-1:50;
+    var maxV=vals.length?Math.max.apply(null,vals)+1:80;
+    var rng=Math.max(maxV-minV,3);
+    // グラフ
+    var W=300,H=90;
+    var graph='';
+    if(vals.length>1){
+      var pts=vals.map(function(v,i){
+        var x=(i/(vals.length-1))*(W-24)+12;
+        var y=H-4-((v-minV)/rng*(H-16));
+        return x+','+y;
       });
-      graph += '<polyline points="' + pts.join(' ') + '" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+      // 背景グラデーション
+      graph+='<defs><linearGradient id="wg'+w.id.replace(/[^a-z0-9]/gi,'')+'" x1="0" y1="0" x2="0" y2="1">'
+        +'<stop offset="0%" stop-color="var(--ac)" stop-opacity="0.3"/>'
+        +'<stop offset="100%" stop-color="var(--ac)" stop-opacity="0.02"/>'
+        +'</linearGradient></defs>';
+      var apts=pts.join(' ')+' '+(W-12)+','+(H-4)+' 12,'+(H-4);
+      graph+='<polygon points="'+apts+'" fill="url(#wg'+w.id.replace(/[^a-z0-9]/gi,'')+')" />';
+      graph+='<polyline points="'+pts.join(' ')+'" fill="none" stroke="var(--ac)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>';
       // 目標ライン
-      if (targetW && targetW >= minV && targetW <= maxV + range * 0.2) {
-        var ty = H - ((targetW - minV) / range * (H - 16)) - 8;
-        graph += '<line x1="10" y1="' + ty + '" x2="' + (W-10) + '" y2="' + ty + '" stroke="var(--gn)" stroke-width="1.5" stroke-dasharray="4,3"/>';
-        graph += '<text x="' + (W-12) + '" y="' + (ty - 3) + '" font-size="8" fill="var(--gn)" text-anchor="end">目標</text>';
+      if(cfg.targetWeight){
+        var ty=H-4-((cfg.targetWeight-minV)/rng*(H-16));
+        if(ty>0&&ty<H){
+          graph+='<line x1="12" y1="'+ty+'" x2="'+(W-12)+'" y2="'+ty+'" stroke="var(--gn)" stroke-width="1.5" stroke-dasharray="5,3"/>';
+          graph+='<text x="'+(W-14)+'" y="'+(ty-4)+'" font-size="9" fill="var(--gn)" text-anchor="end" font-weight="700">目標 '+cfg.targetWeight+'kg</text>';
+        }
       }
       // 最新点
-      var lx = pts[pts.length-1].split(',')[0];
-      var ly = pts[pts.length-1].split(',')[1];
-      graph += '<circle cx="' + lx + '" cy="' + ly + '" r="4" fill="var(--ac)"/>';
-      graph += '<text x="' + lx + '" y="' + (parseFloat(ly)-8) + '" font-size="9" fill="var(--ac)" text-anchor="middle" font-weight="bold">' + vals[vals.length-1] + '</text>';
-    } else if (vals.length === 1) {
-      graph += '<circle cx="' + (W/2) + '" cy="' + (H/2) + '" r="5" fill="var(--ac)"/>';
-    } else {
-      graph += '<text x="' + (W/2) + '" y="' + (H/2+4) + '" font-size="11" fill="var(--t3)" text-anchor="middle">データを入力してください</text>';
+      var lp=pts[pts.length-1].split(',');
+      graph+='<circle cx="'+lp[0]+'" cy="'+lp[1]+'" r="5" fill="var(--ac)" stroke="#fff" stroke-width="2"/>';
+      graph+='<text x="'+lp[0]+'" y="'+(parseFloat(lp[1])-9)+'" font-size="10" fill="var(--ac)" text-anchor="middle" font-weight="800">'+vals[vals.length-1]+'</text>';
+      // 軸ラベル
+      graph+='<text x="12" y="'+(H+2)+'" font-size="9" fill="var(--t3)">'+keys[0].slice(5)+'</text>';
+      graph+='<text x="'+(W-12)+'" y="'+(H+2)+'" font-size="9" fill="var(--t3)" text-anchor="end">'+keys[keys.length-1].slice(5)+'</text>';
+    }else if(vals.length===1){
+      var cp=[W/2, H/2-10];
+      graph+='<circle cx="'+cp[0]+'" cy="'+cp[1]+'" r="6" fill="var(--ac)"/>';
+      graph+='<text x="'+cp[0]+'" y="'+(cp[1]-12)+'" font-size="11" fill="var(--ac)" text-anchor="middle" font-weight="800">'+vals[0]+'kg</text>';
+    }else{
+      graph+='<text x="'+W/2+'" y="'+H/2+'" font-size="12" fill="var(--t3)" text-anchor="middle">体重を入力してください</text>';
     }
-
+    // 前日比
+    var diffH='';
+    if(vals.length>=2){
+      var diff=(parseFloat(vals[vals.length-1])-parseFloat(vals[vals.length-2])).toFixed(1);
+      var arr=parseFloat(diff)>0?'▲':parseFloat(diff)<0?'▼':'→';
+      var col=parseFloat(diff)>0?'var(--rd)':parseFloat(diff)<0?'var(--gn)':'var(--t2)';
+      diffH='<span style="font-size:11px;color:'+col+';font-weight:700;margin-left:6px">'+arr+' '+Math.abs(diff)+'kg</span>';
+    }
     // 目標進捗
-    var progressHtml = '';
-    if (targetW && vals.length > 0) {
-      var startW = parseFloat(vals[0]);
-      var currentW = parseFloat(vals[vals.length-1]);
-      var totalDiff = startW - targetW;
-      var doneDiff = startW - currentW;
-      var pct = totalDiff !== 0 ? Math.min(100, Math.max(0, Math.round(doneDiff / totalDiff * 100))) : 0;
-      var remaining = (currentW - targetW).toFixed(1);
-      progressHtml = '<div style="margin-top:10px;padding:8px 10px;background:rgba(90,158,124,.1);border-radius:10px;border:1px solid rgba(90,158,124,.25)">'
-        + '<div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;margin-bottom:5px">'
-        + '<span>🎯 目標まで <strong>' + (remaining > 0 ? remaining + 'kg' : '達成！🎉') + '</strong></span>'
-        + '<span style="color:var(--gn)">' + pct + '%</span></div>'
-        + '<div style="background:var(--wm);border-radius:4px;height:6px"><div style="width:' + pct + '%;background:var(--gn);border-radius:4px;height:6px;transition:width .5s"></div></div>'
-        + (targetD ? '<div style="font-size:10px;color:var(--t2);margin-top:4px">目標日: ' + targetD + '</div>' : '')
-        + '</div>';
+    var progH='';
+    if(cfg.targetWeight&&vals.length>0){
+      var cur=parseFloat(vals[vals.length-1]);
+      var start=parseFloat(vals[0]);
+      var pct=start!==cfg.targetWeight?Math.min(100,Math.max(0,Math.round((start-cur)/(start-cfg.targetWeight)*100))):100;
+      var rem=(cur-cfg.targetWeight).toFixed(1);
+      progH='<div style="margin-top:10px;padding:8px 10px;background:rgba(90,158,124,.1);border-radius:10px">'
+        +'<div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;margin-bottom:5px">'
+        +'<span>🎯 目標まで <strong style="color:var(--gn)">'+(parseFloat(rem)>0?rem+'kg':'達成🎉')+'</strong></span><span style="color:var(--gn)">'+pct+'%</span></div>'
+        +'<div style="background:var(--wm);border-radius:4px;height:6px"><div style="width:'+pct+'%;background:var(--gn);border-radius:4px;height:6px"></div></div>'
+        +(cfg.targetDate?'<div style="font-size:10px;color:var(--t2);margin-top:4px">目標日: '+cfg.targetDate+'</div>':'')
+        +'</div>';
     }
-
-    // 直近の変化
-    var diffHtml = '';
-    if (vals.length >= 2) {
-      var diff = (parseFloat(vals[vals.length-1]) - parseFloat(vals[vals.length-2])).toFixed(1);
-      var arrow = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
-      var col = diff > 0 ? 'var(--ac)' : diff < 0 ? 'var(--gn)' : 'var(--t2)';
-      diffHtml = '<span style="font-size:11px;color:' + col + ';font-weight:700;margin-left:6px">' + arrow + ' ' + Math.abs(diff) + 'kg</span>';
-    }
-
-    return '<div class="widget-card" id="wgt_' + w.id + '">'
-      + '<div class="widget-hdr">'
-      + '<span class="widget-icon">⚖️</span>'
-      + '<span class="widget-title">体重記録</span>'
-      + '<button onclick="openWeightConfig(\'' + w.id + '\')" class="widget-cfg-btn">⚙️</button>'
-      + '<button onclick="removeWidget(\'' + w.id + '\')" class="widget-del-btn">×</button>'
-      + '</div>'
-      // 今日の入力
-      + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">'
-      + '<div style="flex:1">'
-      + '<div style="font-size:11px;color:var(--t2);margin-bottom:3px">今日の体重' + diffHtml + '</div>'
-      + '<div style="display:flex;align-items:center;gap:6px">'
-      + '<input type="number" step="0.1" value="' + todayVal + '" placeholder="-- . -" id="winp_' + w.id + '" '
-      + 'style="width:90px;font-size:22px;font-weight:700;color:var(--tx);background:var(--wm);border:1.5px solid var(--wm);border-radius:10px;padding:6px 10px;font-family:inherit;-webkit-appearance:none" '
-      + 'onchange="recordWeight(\'' + w.id + '\',this.value)">'
-      + '<span style="font-size:13px;color:var(--t2)">kg</span>'
-      + '</div></div>'
-      + (vals.length ? '<div style="text-align:right"><div style="font-size:10px;color:var(--t2)">最軽</div><div style="font-size:13px;font-weight:700;color:var(--gn)">' + Math.min.apply(null, vals) + 'kg</div></div>' : '')
-      + '</div>'
-      // グラフ
-      + '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" style="overflow:visible;margin-bottom:4px">' + graph + '</svg>'
-      + '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-bottom:6px">'
-      + (recent.length > 0 ? '<span>' + recent[0].slice(5) + '</span><span>' + recent[recent.length-1].slice(5) + '</span>' : '')
-      + '</div>'
-      + progressHtml
-      + '</div>';
+    return '<div class="widget-card" id="wgt_'+w.id+'">'
+      +'<div class="widget-hdr">'
+      +'<span class="widget-icon">⚖️</span>'
+      +'<span class="widget-title">体重記録</span>'
+      +'<button onclick="openWeightConfig(\''+w.id+'\')" class="widget-cfg-btn">⚙️</button>'
+      +'<button onclick="removeWidget(\''+w.id+'\')" class="widget-del-btn">×</button>'
+      +'</div>'
+      +'<div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:10px">'
+      +'<div style="flex:1">'
+      +'<div style="font-size:11px;color:var(--t2);margin-bottom:4px">今日の体重'+diffH+'</div>'
+      +'<div style="display:flex;align-items:center;gap:6px">'
+      +'<input type="number" step="0.1" min="20" max="300" value="'+todayVal+'" id="wi_'+w.id+'" placeholder="--.--"'
+      +' style="width:90px;font-size:24px;font-weight:800;color:var(--tx);background:var(--wm);border:2px solid '+(todayVal?'var(--ac)':'var(--wm)')+';border-radius:10px;padding:6px 10px;font-family:inherit;-webkit-appearance:none">'
+      +'<span style="font-size:13px;color:var(--t2)">kg</span>'
+      +'<button onclick="recordWeight(\''+w.id+'\')" style="background:var(--ac);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;padding:8px 14px;cursor:pointer;touch-action:manipulation;white-space:nowrap">記録</button>'
+      +'</div></div>'
+      +(vals.length?'<div style="text-align:right"><div style="font-size:9px;color:var(--t3)">最軽</div><div style="font-size:13px;font-weight:700;color:var(--gn)">'+Math.min.apply(null,vals)+'kg</div></div>':'')
+      +'</div>'
+      +'<svg width="100%" viewBox="0 0 '+W+' '+(H+12)+'" style="overflow:visible;display:block;margin-bottom:4px">'+graph+'</svg>'
+      +progH
+      +'</div>';
   },
 
-  // ┌─────────────────────────────────┐
-  // │  🔥 習慣トラッカー               │
-  // └─────────────────────────────────┘
-  habit: function(w) {
-    var data = w.data || {};
-    var records = data.records || {};  // { date: true }
-    var cfg = w.config || {};
-    var today = tday();
-    var doneTd = !!records[today];
-
-    // ストリーク計算
-    var streak = 0;
-    var d = new Date();
-    while (true) {
-      var key = d.toISOString().slice(0, 10);
-      if (!records[key]) break;
-      streak++;
-      d.setDate(d.getDate() - 1);
+  // 🔥 習慣トラッカー（複数習慣対応）
+  habit: function(w){
+    var data=w.data||{};
+    var cfg=w.config||{};
+    var habits=cfg.habits||(cfg.habitName?[{name:cfg.habitName,emoji:cfg.emoji||'🔥',color:cfg.color||'#D4663E'}]:[]);
+    var allRecords=data.allRecords||{};
+    var today=tday();
+    if(!habits.length){
+      return '<div class="widget-card" id="wgt_'+w.id+'">'
+        +'<div class="widget-hdr"><span class="widget-icon">🔥</span><span class="widget-title">習慣トラッカー</span>'
+        +'<button onclick="openHabitConfig(\''+w.id+'\')" class="widget-cfg-btn">⚙️</button>'
+        +'<button onclick="removeWidget(\''+w.id+'\')" class="widget-del-btn">×</button>'
+        +'</div>'
+        +'<div style="text-align:center;padding:20px;color:var(--t2);font-size:13px">⚙️をタップして習慣を追加してください</div>'
+        +'</div>';
     }
-
-    // 過去21日のマス
-    var cells = '';
-    for (var di = 20; di >= 0; di--) {
-      var dd = new Date(); dd.setDate(dd.getDate() - di);
-      var dk = dd.toISOString().slice(0, 10);
-      var done = !!records[dk];
-      var isToday = dk === today;
-      cells += '<div style="width:12px;height:12px;border-radius:3px;background:' + (done ? (cfg.color || 'var(--ac)') : 'var(--wm)') + ';border:' + (isToday ? '2px solid var(--ac)' : 'none') + '"></div>';
-    }
-
-    return '<div class="widget-card" id="wgt_' + w.id + '">'
-      + '<div class="widget-hdr">'
-      + '<span class="widget-icon">' + (cfg.emoji || '🔥') + '</span>'
-      + '<span class="widget-title">' + (cfg.habitName || '習慣') + '</span>'
-      + '<button onclick="openHabitConfig(\'' + w.id + '\')" class="widget-cfg-btn">⚙️</button>'
-      + '<button onclick="removeWidget(\'' + w.id + '\')" class="widget-del-btn">×</button>'
-      + '</div>'
-      + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">'
-      + '<button onclick="toggleHabit(\'' + w.id + '\')" style="width:64px;height:64px;border-radius:50%;border:3px solid ' + (cfg.color || 'var(--ac)') + ';background:' + (doneTd ? (cfg.color || 'var(--ac)') : 'transparent') + ';font-size:28px;cursor:pointer;touch-action:manipulation;transition:all .2s;-webkit-tap-highlight-color:transparent">' + (doneTd ? '✅' : (cfg.emoji || '🔥')) + '</button>'
-      + '<div>'
-      + '<div style="font-size:11px;color:var(--t2)">' + (doneTd ? '✅ 今日は完了！' : '今日はまだです') + '</div>'
-      + '<div style="font-size:24px;font-weight:800;color:' + (cfg.color || 'var(--ac)') + '">' + streak + '<span style="font-size:12px;font-weight:700"> 日連続</span></div>'
-      + '<div style="font-size:10px;color:var(--t2)">合計 ' + Object.keys(records).length + ' 日達成</div>'
-      + '</div></div>'
-      + '<div style="display:flex;flex-wrap:wrap;gap:3px">' + cells + '</div>'
-      + '<div style="font-size:9px;color:var(--t3);margin-top:4px;text-align:right">過去21日</div>'
-      + '</div>';
-  },
-
-  // ┌─────────────────────────────────┐
-  // │  📝 スティッキーメモ             │
-  // └─────────────────────────────────┘
-  memo: function(w) {
-    var data = w.data || {};
-    var cfg = w.config || {};
-    var colMap = { '#E8B84B': '#FFF8E1', '#D4663E': '#FFF0EC', '#5A9E7C': '#EEF7F2', '#6480B8': '#EEF0FA' };
-    var bg = colMap[cfg.color] || '#FFF8E1';
-    return '<div class="widget-card" id="wgt_' + w.id + '" style="background:' + bg + ';border-color:' + (cfg.color || '#E8B84B') + '40">'
-      + '<div class="widget-hdr">'
-      + '<span class="widget-icon">📝</span>'
-      + '<span class="widget-title">' + (cfg.title || 'メモ') + '</span>'
-      + '<button onclick="removeWidget(\'' + w.id + '\')" class="widget-del-btn">×</button>'
-      + '</div>'
-      + '<textarea id="memo_' + w.id + '" style="width:100%;min-height:100px;background:transparent;border:none;font-family:inherit;font-size:13px;color:var(--tx);resize:vertical;line-height:1.6;outline:none;box-sizing:border-box" placeholder="ここにメモを書いてください..." onblur="saveMemo(\'' + w.id + '\')">' + (data.text || '') + '</textarea>'
-      + '</div>';
-  },
-
-  // ┌─────────────────────────────────┐
-  // │  ⏰ カウントダウン               │
-  // └─────────────────────────────────┘
-  countdown: function(w) {
-    var cfg = w.config || {};
-    var target = cfg.targetDate ? new Date(cfg.targetDate) : null;
-    var now = new Date();
-    var diff = target ? Math.ceil((target - now) / 86400000) : null;
-    var passed = diff !== null && diff < 0;
-    var absDiff = diff !== null ? Math.abs(diff) : 0;
-
-    return '<div class="widget-card" id="wgt_' + w.id + '">'
-      + '<div class="widget-hdr">'
-      + '<span class="widget-icon">' + (cfg.emoji || '⏰') + '</span>'
-      + '<span class="widget-title">' + (cfg.title || 'カウントダウン') + '</span>'
-      + '<button onclick="openCountdownConfig(\'' + w.id + '\')" class="widget-cfg-btn">⚙️</button>'
-      + '<button onclick="removeWidget(\'' + w.id + '\')" class="widget-del-btn">×</button>'
-      + '</div>'
-      + (target
-        ? '<div style="text-align:center;padding:10px 0">'
-          + '<div style="font-size:52px;font-weight:800;color:var(--ac);line-height:1">' + (diff === 0 ? '🎉' : absDiff) + '</div>'
-          + '<div style="font-size:13px;color:var(--t2);margin-top:4px">' + (diff === 0 ? '今日です！' : passed ? '日が経ちました' : '日後') + '</div>'
-          + '<div style="font-size:11px;color:var(--t3);margin-top:2px">' + cfg.targetDate + '</div>'
-          + '</div>'
-        : '<div style="text-align:center;padding:16px;color:var(--t2);font-size:12px">⚙️をタップして日付を設定</div>')
-      + '</div>';
-  },
-
-  // ┌─────────────────────────────────┐
-  // │  💰 支出記録                     │
-  // └─────────────────────────────────┘
-  expense: function(w) {
-    var data = w.data || {};
-    var cfg = w.config || {};
-    var records = data.records || [];  // [{date, amount, category, note}]
-    var today = tday();
-    var thisMonth = today.slice(0, 7);
-    var monthRecs = records.filter(function(r) { return r.date && r.date.startsWith(thisMonth); });
-    var total = monthRecs.reduce(function(s, r) { return s + (r.amount || 0); }, 0);
-    var budget = cfg.monthBudget || 30000;
-    var pct = Math.min(100, Math.round(total / budget * 100));
-    var barCol = pct >= 90 ? 'var(--rd)' : pct >= 70 ? 'var(--yl)' : 'var(--gn)';
-    var cats = ['🍜 食費', '🚃 交通', '🛍 買物', '🎮 娯楽', '💊 医療', '📦 その他'];
-
-    var recentRows = records.slice(-5).reverse().map(function(r) {
-      return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--wm);font-size:12px">'
-        + '<span>' + (r.category || '📦') + ' ' + (r.note || '') + '</span>'
-        + '<span style="font-weight:700;color:var(--tx)">' + (cfg.currency || '¥') + r.amount.toLocaleString() + '</span>'
-        + '</div>';
-    }).join('');
-
-    return '<div class="widget-card" id="wgt_' + w.id + '">'
-      + '<div class="widget-hdr">'
-      + '<span class="widget-icon">💰</span>'
-      + '<span class="widget-title">今月の支出</span>'
-      + '<button onclick="removeWidget(\'' + w.id + '\')" class="widget-del-btn">×</button>'
-      + '</div>'
-      + '<div style="display:flex;align-items:flex-end;gap:6px;margin-bottom:6px">'
-      + '<div style="font-size:26px;font-weight:800;color:var(--tx)">' + (cfg.currency || '¥') + total.toLocaleString() + '</div>'
-      + '<div style="font-size:11px;color:var(--t2);margin-bottom:4px">/ ' + budget.toLocaleString() + '円</div>'
-      + '</div>'
-      + '<div style="background:var(--wm);border-radius:6px;height:8px;margin-bottom:8px"><div style="width:' + pct + '%;background:' + barCol + ';border-radius:6px;height:8px;transition:width .5s"></div></div>'
-      + '<div style="display:flex;gap:6px;margin-bottom:10px">'
-      + '<select id="ecat_' + w.id + '" class="fi" style="flex:1;font-size:12px;padding:6px">' + cats.map(function(c) { return '<option>' + c + '</option>'; }).join('') + '</select>'
-      + '<input type="number" id="eamt_' + w.id + '" placeholder="金額" class="fi" style="width:80px;font-size:12px;padding:6px">'
-      + '<button onclick="addExpense(\'' + w.id + '\')" class="btn btn-o" style="font-size:12px;padding:6px 10px">追加</button>'
-      + '</div>'
-      + (recentRows ? '<div>' + recentRows + '</div>' : '<div style="font-size:12px;color:var(--t3);text-align:center;padding:8px">まだ記録がありません</div>')
-      + '</div>';
-  },
-
-  // ┌─────────────────────────────────┐
-  // │  😴 睡眠記録                     │
-  // └─────────────────────────────────┘
-  sleep: function(w) {
-    var data = w.data || {};
-    var records = data.records || {};  // { date: {bedtime, waketime, quality} }
-    var today = tday();
-    var todayRec = records[today] || {};
-    var cfg = w.config || {};
-    var targetH = cfg.targetHours || 7;
-
-    var keys = Object.keys(records).sort().slice(-7);
-    var avgH = 0;
-    if (keys.length) {
-      var totalM = keys.reduce(function(s, k) {
-        var r = records[k];
-        if (!r.bedtime || !r.waketime) return s;
-        var b = r.bedtime.split(':').map(Number); var wk = r.waketime.split(':').map(Number);
-        var bm = b[0]*60+b[1]; var wm = wk[0]*60+wk[1];
-        if (wm < bm) wm += 1440;
-        return s + (wm - bm);
-      }, 0);
-      avgH = (totalM / keys.length / 60).toFixed(1);
-    }
-
-    var bars = keys.map(function(k) {
-      var r = records[k];
-      var h = 0;
-      if (r.bedtime && r.waketime) {
-        var b = r.bedtime.split(':').map(Number); var wk = r.waketime.split(':').map(Number);
-        var bm = b[0]*60+b[1]; var wm = wk[0]*60+wk[1];
-        if (wm < bm) wm += 1440;
-        h = (wm - bm) / 60;
+    var habitsHtml=habits.map(function(h,hi){
+      var recs=allRecords[hi]||{};
+      var doneTd=!!recs[today];
+      // ストリーク
+      var streak=0;var d=new Date();
+      while(true){var k=d.toISOString().slice(0,10);if(!recs[k])break;streak++;d.setDate(d.getDate()-1);}
+      // 過去14日ヒートマップ
+      var cells='';
+      for(var di=13;di>=0;di--){
+        var dd=new Date();dd.setDate(dd.getDate()-di);
+        var dk=dd.toISOString().slice(0,10);
+        cells+='<div style="width:16px;height:16px;border-radius:4px;background:'+(recs[dk]?h.color:'var(--wm)')
+          +';border:'+(dk===today?'2px solid '+h.color:'none')+'" title="'+dk+'"></div>';
       }
-      var pct = Math.min(100, h / 12 * 100);
-      var col = h >= targetH ? 'var(--gn)' : h >= targetH * 0.8 ? 'var(--yl)' : 'var(--rd)';
-      return '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;flex:1">'
-        + '<div style="font-size:9px;color:var(--t3)">' + (h ? h.toFixed(1) : '-') + '</div>'
-        + '<div style="width:100%;background:var(--wm);border-radius:4px;height:40px;position:relative">'
-        + '<div style="position:absolute;bottom:0;width:100%;height:' + pct + '%;background:' + col + ';border-radius:4px;transition:height .5s"></div>'
-        + '</div>'
-        + '<div style="font-size:8px;color:var(--t3)">' + k.slice(8) + '</div>'
-        + '</div>';
+      return '<div style="display:flex;align-items:center;gap:10px;padding:'+(hi>0?'10px 0 0':'0')+';'+(hi>0?'border-top:1px solid var(--wm)':'')+'">'
+        +'<button onclick="toggleHabitItem(\''+w.id+'\','+hi+')" style="width:44px;height:44px;border-radius:50%;border:3px solid '+h.color+';background:'+(doneTd?h.color:'transparent')+';font-size:20px;cursor:pointer;touch-action:manipulation;flex-shrink:0;transition:all .15s">'+( doneTd?'✅':h.emoji)+'</button>'
+        +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:13px;font-weight:700">'+h.name+'</div>'
+        +'<div style="display:flex;align-items:center;gap:6px;margin:3px 0">'
+        +'<span style="font-size:20px;font-weight:800;color:'+h.color+'">'+streak+'</span>'
+        +'<span style="font-size:11px;color:var(--t2)">日連続</span>'
+        +(doneTd?'<span style="font-size:11px;color:var(--gn)">✅ 今日完了</span>':'<span style="font-size:11px;color:var(--t3)">今日はまだ</span>')
+        +'</div>'
+        +'<div style="display:flex;gap:3px;flex-wrap:wrap">'+cells+'</div>'
+        +'</div></div>';
     }).join('');
-
-    return '<div class="widget-card" id="wgt_' + w.id + '">'
-      + '<div class="widget-hdr">'
-      + '<span class="widget-icon">😴</span>'
-      + '<span class="widget-title">睡眠記録</span>'
-      + '<button onclick="removeWidget(\'' + w.id + '\')" class="widget-del-btn">×</button>'
-      + '</div>'
-      + '<div style="display:flex;gap:10px;margin-bottom:10px">'
-      + '<div style="flex:1"><div style="font-size:10px;color:var(--t2)">就寝</div><input type="time" value="' + (todayRec.bedtime || '') + '" class="fi" style="font-size:13px;padding:6px" onchange="recordSleep(\'' + w.id + '\',\'bedtime\',this.value)"></div>'
-      + '<div style="flex:1"><div style="font-size:10px;color:var(--t2)">起床</div><input type="time" value="' + (todayRec.waketime || '') + '" class="fi" style="font-size:13px;padding:6px" onchange="recordSleep(\'' + w.id + '\',\'waketime\',this.value)"></div>'
-      + '</div>'
-      + '<div style="text-align:center;margin-bottom:10px">'
-      + '<span style="font-size:11px;color:var(--t2)">7日間平均 </span>'
-      + '<span style="font-size:18px;font-weight:700;color:' + (avgH >= targetH ? 'var(--gn)' : 'var(--ac)') + '">' + (avgH || '--') + 'h</span>'
-      + '<span style="font-size:11px;color:var(--t2)"> / 目標 ' + targetH + 'h</span>'
-      + '</div>'
-      + '<div style="display:flex;gap:4px;align-items:flex-end;height:68px">' + bars + '</div>'
-      + '</div>';
+    return '<div class="widget-card" id="wgt_'+w.id+'">'
+      +'<div class="widget-hdr"><span class="widget-icon">🔥</span><span class="widget-title">習慣トラッカー</span>'
+      +'<button onclick="openHabitConfig(\''+w.id+'\')" class="widget-cfg-btn">⚙️</button>'
+      +'<button onclick="removeWidget(\''+w.id+'\')" class="widget-del-btn">×</button>'
+      +'</div>'
+      +habitsHtml
+      +'</div>';
   },
 
-  // ┌─────────────────────────────────┐
-  // │  🌸 一言日記                     │
-  // └─────────────────────────────────┘
-  diary: function(w) {
-    var data = w.data || {};
-    var records = data.records || {};
-    var today = tday();
-    var todayRec = records[today] || {};
-    var MOODS2 = ['😊','😄','😐','😢','😤','😴','🤒','🎉'];
-    var recent5 = Object.keys(records).sort().slice(-5).reverse();
-
-    return '<div class="widget-card" id="wgt_' + w.id + '">'
-      + '<div class="widget-hdr">'
-      + '<span class="widget-icon">🌸</span>'
-      + '<span class="widget-title">一言日記</span>'
-      + '<button onclick="removeWidget(\'' + w.id + '\')" class="widget-del-btn">×</button>'
-      + '</div>'
-      + '<div style="font-size:11px;color:var(--t2);margin-bottom:6px">今日の気分</div>'
-      + '<div style="display:flex;gap:6px;margin-bottom:10px">'
-      + MOODS2.map(function(m) {
-          return '<button onclick="recordDiary(\'' + w.id + '\',\'mood\',\'' + m + '\')" style="font-size:22px;background:' + (todayRec.mood === m ? 'var(--ac)20' : 'transparent') + ';border:2px solid ' + (todayRec.mood === m ? 'var(--ac)' : 'transparent') + ';border-radius:8px;padding:2px;cursor:pointer;touch-action:manipulation">' + m + '</button>';
-        }).join('')
-      + '</div>'
-      + '<textarea id="diary_' + w.id + '" style="width:100%;background:var(--wm);border:none;border-radius:10px;padding:10px;font-family:inherit;font-size:13px;color:var(--tx);resize:none;height:60px;box-sizing:border-box;line-height:1.5" placeholder="今日はどんな一日でしたか？" onblur="recordDiary(\'' + w.id + '\',\'text\',this.value)">' + (todayRec.text || '') + '</textarea>'
-      + '<div style="margin-top:10px">'
-      + recent5.filter(function(k) { return k !== today; }).slice(0,3).map(function(k) {
-          var r = records[k];
-          return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--wm)">'
-            + '<span style="font-size:11px;color:var(--t3)">' + k.slice(5) + '</span>'
-            + '<span style="font-size:16px">' + (r.mood || '📝') + '</span>'
-            + '<span style="font-size:11px;color:var(--t2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (r.text || '（記録なし）') + '</span>'
-            + '</div>';
-        }).join('')
-      + '</div>'
-      + '</div>';
+  // 📝 メモ
+  memo: function(w){
+    var data=w.data||{};
+    var cfg=w.config||{};
+    var colorMap={'#E8B84B':'#FFF8E1','#D4663E':'#FFF0EC','#5A9E7C':'#EEF7F2','#6480B8':'#EEF0FA'};
+    var bg=colorMap[cfg.color]||'#FFF8E1';
+    var border=cfg.color||'#E8B84B';
+    return '<div class="widget-card" id="wgt_'+w.id+'" style="background:'+bg+';border-color:'+border+'40">'
+      +'<div class="widget-hdr">'
+      +'<span class="widget-icon">📝</span>'
+      +'<span class="widget-title">'+(cfg.title||'メモ')+'</span>'
+      +'<button onclick="removeWidget(\''+w.id+'\')" class="widget-del-btn">×</button>'
+      +'</div>'
+      +'<textarea id="memo_'+w.id+'" onblur="saveMemo(\''+w.id+'\')" onchange="saveMemo(\''+w.id+'\')"'
+      +' style="width:100%;min-height:100px;background:transparent;border:none;font-family:inherit;font-size:var(--fs);color:var(--tx);resize:vertical;line-height:1.6;outline:none;box-sizing:border-box;padding:0" placeholder="ここにメモを書いてください...">'+(data.text||'')+'</textarea>'
+      +'<div style="font-size:10px;color:var(--t3);text-align:right;margin-top:4px">フォーカスを外すと自動保存</div>'
+      +'</div>';
   },
 
-  // ┌─────────────────────────────────┐
-  // │  🎯 目標管理                     │
-  // └─────────────────────────────────┘
-  goal: function(w) {
-    var data = w.data || {};
-    var tasks = data.tasks || [];
-    var cfg = w.config || {};
-    var done = tasks.filter(function(t) { return t.done; }).length;
-    var pct = tasks.length ? Math.round(done / tasks.length * 100) : 0;
+  // ⏰ カウントダウン
+  countdown: function(w){
+    var cfg=w.config||{};
+    var target=cfg.targetDate?new Date(cfg.targetDate+'T00:00:00'):null;
+    var diff=target?Math.ceil((target-new Date())/86400000):null;
+    return '<div class="widget-card" id="wgt_'+w.id+'">'
+      +'<div class="widget-hdr">'
+      +'<span class="widget-icon">'+(cfg.emoji||'⏰')+'</span>'
+      +'<span class="widget-title">'+(cfg.title||'カウントダウン')+'</span>'
+      +'<button onclick="openCountdownConfig(\''+w.id+'\')" class="widget-cfg-btn">⚙️</button>'
+      +'<button onclick="removeWidget(\''+w.id+'\')" class="widget-del-btn">×</button>'
+      +'</div>'
+      +(target
+        ?'<div style="text-align:center;padding:12px 0">'
+          +(diff===0?'<div style="font-size:40px">🎉</div><div style="font-size:16px;font-weight:700;color:var(--ac)">今日です！</div>'
+            :'<div style="font-size:56px;font-weight:900;color:var(--ac);line-height:1">'+Math.abs(diff)+'</div>'
+              +'<div style="font-size:14px;color:var(--t2);margin-top:4px">'+(diff<0?'日が経ちました':'日後')+'</div>')
+          +'<div style="font-size:12px;color:var(--t3);margin-top:6px">'+cfg.targetDate+'</div>'
+          +'</div>'
+        :'<div style="text-align:center;padding:20px;color:var(--t2);font-size:13px">⚙️をタップして日付を設定してください</div>')
+      +'</div>';
+  },
 
-    return '<div class="widget-card" id="wgt_' + w.id + '">'
-      + '<div class="widget-hdr">'
-      + '<span class="widget-icon">🎯</span>'
-      + '<span class="widget-title">' + (cfg.goalTitle || '目標') + '</span>'
-      + '<button onclick="openGoalConfig(\'' + w.id + '\')" class="widget-cfg-btn">⚙️</button>'
-      + '<button onclick="removeWidget(\'' + w.id + '\')" class="widget-del-btn">×</button>'
-      + '</div>'
-      + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'
-      + '<div style="flex:1;background:var(--wm);border-radius:6px;height:10px"><div style="width:' + pct + '%;height:10px;border-radius:6px;background:' + (cfg.color || 'var(--gn)') + ';transition:width .5s"></div></div>'
-      + '<span style="font-size:13px;font-weight:700;color:' + (cfg.color || 'var(--gn)') + '">' + pct + '%</span>'
-      + '</div>'
-      + '<div id="goal_tasks_' + w.id + '">'
-      + tasks.map(function(t, i) {
-          return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--wm)">'
-            + '<input type="checkbox" ' + (t.done ? 'checked' : '') + ' onchange="toggleGoalTask(\'' + w.id + '\',' + i + ',this.checked)" style="width:18px;height:18px;accent-color:' + (cfg.color || 'var(--gn)') + '">'
-            + '<span style="font-size:13px;color:var(--tx);flex:1;' + (t.done ? 'text-decoration:line-through;color:var(--t3)' : '') + '">' + t.text + '</span>'
-            + '<button onclick="deleteGoalTask(\'' + w.id + '\',' + i + ')" style="background:none;border:none;color:var(--t3);font-size:16px;cursor:pointer;touch-action:manipulation">×</button>'
-            + '</div>';
-        }).join('')
-      + '</div>'
-      + '<div style="display:flex;gap:6px;margin-top:10px">'
-      + '<input type="text" id="gtask_' + w.id + '" class="fi" placeholder="タスクを追加..." style="flex:1;font-size:12px;padding:7px" onkeydown="if(event.key===\'Enter\')addGoalTask(\'' + w.id + '\')">'
-      + '<button onclick="addGoalTask(\'' + w.id + '\')" class="btn btn-o" style="font-size:12px;padding:7px 12px">追加</button>'
-      + '</div>'
-      + '</div>';
+  // 💰 家計簿（収入・支出）
+  expense: function(w){
+    var data=w.data||{};
+    var cfg=w.config||{};
+    var records=data.records||[];
+    var cur=cfg.currency||'¥';
+    var today=tday();
+    var thisMonth=today.slice(0,7);
+    var monthRecs=records.filter(function(r){return r.date&&r.date.startsWith(thisMonth);});
+    var income=monthRecs.filter(function(r){return r.type==='income';}).reduce(function(s,r){return s+r.amount;},0);
+    var expense=monthRecs.filter(function(r){return r.type==='expense';}).reduce(function(s,r){return s+r.amount;},0);
+    var balance=income-expense;
+    var budget=cfg.budget||0;
+    // カテゴリ別集計
+    var cats={};
+    monthRecs.filter(function(r){return r.type==='expense';}).forEach(function(r){
+      if(!cats[r.category])cats[r.category]=0;
+      cats[r.category]+=r.amount;
+    });
+    var catHtml=Object.keys(cats).map(function(c){
+      return '<div onclick="openExpenseCat(\''+w.id+'\',\''+c+'\')" style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--wm);border-radius:8px;cursor:pointer;touch-action:manipulation">'
+        +'<span style="font-size:12px">'+c+'</span>'
+        +'<span style="font-size:12px;font-weight:700;color:var(--rd)">'+cur+cats[c].toLocaleString()+'</span>'
+        +'</div>';
+    }).join('');
+    var balCol=balance>=0?'var(--gn)':'var(--rd)';
+    return '<div class="widget-card" id="wgt_'+w.id+'">'
+      +'<div class="widget-hdr"><span class="widget-icon">📒</span><span class="widget-title">家計簿</span>'
+      +'<button onclick="openExpenseConfig(\''+w.id+'\')" class="widget-cfg-btn">⚙️</button>'
+      +'<button onclick="removeWidget(\''+w.id+'\')" class="widget-del-btn">×</button>'
+      +'</div>'
+      // 今月サマリー
+      +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;text-align:center">'
+      +'<div style="padding:8px;background:rgba(90,158,124,.1);border-radius:10px"><div style="font-size:10px;color:var(--gn)">収入</div><div style="font-size:14px;font-weight:800;color:var(--gn)">'+cur+income.toLocaleString()+'</div></div>'
+      +'<div style="padding:8px;background:rgba(201,64,64,.1);border-radius:10px"><div style="font-size:10px;color:var(--rd)">支出</div><div style="font-size:14px;font-weight:800;color:var(--rd)">'+cur+expense.toLocaleString()+'</div></div>'
+      +'<div style="padding:8px;background:rgba(100,128,184,.1);border-radius:10px"><div style="font-size:10px;color:'+balCol+'">収支</div><div style="font-size:14px;font-weight:800;color:'+balCol+'">'+(balance>=0?'+':'')+cur+balance.toLocaleString()+'</div></div>'
+      +'</div>'
+      +(budget>0?'<div style="font-size:11px;color:var(--t2);margin-bottom:6px">支出予算: '+cur+budget.toLocaleString()+' '
+        +'<span style="color:'+(expense>budget?'var(--rd)':'var(--gn)')+';font-weight:700">'+(expense>budget?'超過 ¥'+(expense-budget).toLocaleString():'残り ¥'+(budget-expense).toLocaleString())+'</span></div>':'')
+      // カテゴリ別
+      +(catHtml?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px">'+catHtml+'</div>':'')
+      // 入力フォーム
+      +'<div style="border-top:1px solid var(--wm);padding-top:10px">'
+      +'<div style="display:flex;gap:6px;margin-bottom:6px">'
+      +'<button onclick="document.getElementById(\'et_'+w.id+'\').dataset.t=\'income\';this.style.background=\'var(--gn)\';this.style.color=\'#fff\';this.nextElementSibling.style.background=\'var(--wm)\';this.nextElementSibling.style.color=\'var(--t2)\'" id="etinc_'+w.id+'" style="flex:1;padding:8px;border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;background:var(--wm);color:var(--t2);touch-action:manipulation">+ 収入</button>'
+      +'<button onclick="document.getElementById(\'et_'+w.id+'\').dataset.t=\'expense\';this.style.background=\'var(--rd)\';this.style.color=\'#fff\';this.previousElementSibling.style.background=\'var(--wm)\';this.previousElementSibling.style.color=\'var(--t2)\'" id="etexp_'+w.id+'" style="flex:1;padding:8px;border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;background:var(--rd);color:#fff;touch-action:manipulation">- 支出</button>'
+      +'<span id="et_'+w.id+'" data-t="expense" style="display:none"></span>'
+      +'</div>'
+      +'<div style="display:flex;gap:5px;margin-bottom:5px">'
+      +'<input type="text" id="ename_'+w.id+'" class="fi" placeholder="名称（例：スーパー）" style="flex:1;font-size:13px;padding:8px">'
+      +'<input type="number" id="eamt_'+w.id+'" class="fi" placeholder="金額" style="width:80px;font-size:13px;padding:8px">'
+      +'</div>'
+      +'<div style="display:flex;gap:5px">'
+      +'<select id="ecat_'+w.id+'" class="fi" style="flex:1;font-size:12px;padding:8px">'
+      +'<option>🍜 食費</option><option>🚃 交通</option><option>🛍 日用品</option><option>👔 衣類</option><option>🎮 娯楽</option><option>💊 医療</option><option>📚 教育</option><option>🏠 住居</option><option>💡 光熱費</option><option>📦 その他</option>'
+      +'</select>'
+      +'<button onclick="addExpenseRecord(\''+w.id+'\')" class="btn btn-o" style="font-size:13px;padding:8px 14px;white-space:nowrap">追加</button>'
+      +'</div></div>'
+      // 直近5件
+      +(records.slice(-5).reverse().length?'<div style="margin-top:10px;border-top:1px solid var(--wm);padding-top:8px">'
+        +records.slice(-5).reverse().map(function(r){
+          return '<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--wm);font-size:12px">'
+            +'<div><span style="color:var(--t3);font-size:10px">'+r.date.slice(5)+'</span> '+(r.name||r.category)+'</div>'
+            +'<div style="font-weight:700;color:'+(r.type==='income'?'var(--gn)':'var(--rd)')+'">'+( r.type==='income'?'+':'-')+cur+r.amount.toLocaleString()+'</div>'
+            +'</div>';
+        }).join('')+'</div>':'')
+      +'</div>';
+  },
+
+  // 😴 睡眠記録
+  sleep: function(w){
+    var data=w.data||{};
+    var records=data.records||{};
+    var cfg=w.config||{};
+    var targetH=cfg.targetHours||7;
+    var today=tday();
+    var todayRec=records[today]||{};
+    // 計算
+    function calcH(r){
+      if(!r||!r.bedtime||!r.waketime)return 0;
+      var b=r.bedtime.split(':').map(Number);var wk=r.waketime.split(':').map(Number);
+      var bm=b[0]*60+b[1];var wm=wk[0]*60+wk[1];
+      if(wm<bm)wm+=1440;
+      return (wm-bm)/60;
+    }
+    var todayH=calcH(todayRec);
+    // 7日棒グラフ
+    var keys=[];for(var di=6;di>=0;di--){var d2=new Date();d2.setDate(d2.getDate()-di);keys.push(d2.toISOString().slice(0,10));}
+    var bars=keys.map(function(k){
+      var h=calcH(records[k]);
+      var pct=Math.min(100,h/12*100);
+      var col=h>=targetH?'var(--gn)':h>=targetH*0.75?'var(--yl)':'var(--rd)';
+      var isToday=k===today;
+      return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">'
+        +'<div style="font-size:9px;color:var(--t2)">'+(h?h.toFixed(1):'-')+'</div>'
+        +'<div style="width:100%;background:var(--wm);border-radius:4px;height:40px;position:relative;overflow:hidden">'
+        +'<div style="position:absolute;bottom:0;width:100%;height:'+pct+'%;background:'+col+';border-radius:4px 4px 0 0;transition:height .5s"></div>'
+        +(isToday?'<div style="position:absolute;top:0;left:0;right:0;bottom:0;border:2px solid var(--ac);border-radius:4px"></div>':'')
+        +'</div>'
+        +'<div style="font-size:9px;color:'+(isToday?'var(--ac)':'var(--t3)')+';font-weight:'+(isToday?'700':'400')+'">'+k.slice(8)+'</div>'
+        +'</div>';
+    }).join('');
+    // 平均
+    var validH=keys.map(function(k){return calcH(records[k]);}).filter(function(h){return h>0;});
+    var avgH=validH.length?(validH.reduce(function(s,v){return s+v;},0)/validH.length).toFixed(1):0;
+    return '<div class="widget-card" id="wgt_'+w.id+'">'
+      +'<div class="widget-hdr"><span class="widget-icon">😴</span><span class="widget-title">睡眠記録</span>'
+      +'<button onclick="openSleepConfig(\''+w.id+'\')" class="widget-cfg-btn">⚙️</button>'
+      +'<button onclick="removeWidget(\''+w.id+'\')" class="widget-del-btn">×</button>'
+      +'</div>'
+      // 今日の入力
+      +'<div style="background:var(--wm);border-radius:12px;padding:10px 12px;margin-bottom:10px">'
+      +'<div style="font-size:11px;font-weight:700;color:var(--t2);margin-bottom:8px">📅 今日の睡眠を記録</div>'
+      +'<div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:8px">'
+      +'<div style="flex:1"><label style="font-size:10px;color:var(--t2);display:block;margin-bottom:3px">🌙 就寝</label>'
+      +'<input type="time" id="sbed_'+w.id+'" value="'+(todayRec.bedtime||'')+'" class="fi" style="font-size:15px;font-weight:700;padding:8px" onchange="recordSleepToday(\''+w.id+'\',\'bedtime\',this.value)"></div>'
+      +'<div style="flex:1"><label style="font-size:10px;color:var(--t2);display:block;margin-bottom:3px">☀️ 起床</label>'
+      +'<input type="time" id="swake_'+w.id+'" value="'+(todayRec.waketime||'')+'" class="fi" style="font-size:15px;font-weight:700;padding:8px" onchange="recordSleepToday(\''+w.id+'\',\'waketime\',this.value)"></div>'
+      +(todayH>0?'<div style="text-align:center;padding:0 4px"><div style="font-size:20px;font-weight:800;color:'+(todayH>=targetH?'var(--gn)':'var(--rd)')+'">'+todayH.toFixed(1)+'h</div><div style="font-size:9px;color:var(--t2)">今日</div></div>':'')
+      +'</div>'
+      +'<button onclick="saveSleepToday(\''+w.id+'\')" style="width:100%;padding:8px;background:var(--ac);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation">💾 保存</button>'
+      +'</div>'
+      // 7日グラフ
+      +'<div style="display:flex;gap:4px;align-items:flex-end;height:68px">'+bars+'</div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t2);margin-top:6px">'
+      +'<span>目標 <strong>'+targetH+'h</strong></span>'
+      +'<span>7日平均 <strong style="color:'+(avgH>=targetH?'var(--gn)':'var(--ac)')+'">'+( avgH||'--')+'h</strong></span>'
+      +'</div>'
+      +'</div>';
+  },
+
+  // 🌸 一言日記
+  diary: function(w){
+    var data=w.data||{};
+    var records=data.records||{};
+    var today=tday();
+    var todayRec=records[today]||{};
+    var MOODS=['😊','😄','😐','😢','😤','😴','🤒','🎉'];
+    var recent=Object.keys(records).sort().slice(-4).reverse().filter(function(k){return k!==today;}).slice(0,3);
+    return '<div class="widget-card" id="wgt_'+w.id+'">'
+      +'<div class="widget-hdr"><span class="widget-icon">🌸</span><span class="widget-title">一言日記</span>'
+      +'<button onclick="removeWidget(\''+w.id+'\')" class="widget-del-btn">×</button>'
+      +'</div>'
+      +'<div style="font-size:11px;font-weight:700;color:var(--t2);margin-bottom:8px">今日の気分を選択</div>'
+      +'<div style="display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap">'
+      +MOODS.map(function(m){
+        return '<button onclick="recordDiary(\''+w.id+'\',\'mood\',\''+m+'\')" style="font-size:22px;background:'+(todayRec.mood===m?'var(--ac)20':'transparent')+';border:2px solid '+(todayRec.mood===m?'var(--ac)':'transparent')+';border-radius:10px;padding:4px 6px;cursor:pointer;touch-action:manipulation">'+m+'</button>';
+      }).join('')
+      +'</div>'
+      +'<textarea id="diary_'+w.id+'" style="width:100%;background:var(--wm);border:none;border-radius:10px;padding:10px;font-family:inherit;font-size:13px;color:var(--tx);resize:none;height:64px;box-sizing:border-box;line-height:1.5" placeholder="今日の一言を書いてください..." onblur="recordDiary(\''+w.id+'\',\'text\',this.value)">'+(todayRec.text||'')+'</textarea>'
+      +'<button onclick="saveDiaryToday(\''+w.id+'\')" style="width:100%;padding:8px;background:var(--ac);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;touch-action:manipulation;margin-top:8px">💾 保存</button>'
+      +(recent.length?'<div style="margin-top:10px;border-top:1px solid var(--wm);padding-top:8px">'
+        +recent.map(function(k){
+          var r=records[k];
+          return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--wm)">'
+            +'<span style="font-size:11px;color:var(--t3);flex-shrink:0">'+k.slice(5)+'</span>'
+            +'<span style="font-size:18px">'+(r.mood||'📝')+'</span>'
+            +'<span style="font-size:11px;color:var(--t2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(r.text||'（記録なし）')+'</span>'
+            +'</div>';
+        }).join('')+'</div>':'')
+      +'</div>';
+  },
+
+  // 🎯 目標管理
+  goal: function(w){
+    var data=w.data||{};
+    var tasks=data.tasks||[];
+    var cfg=w.config||{};
+    var done=tasks.filter(function(t){return t.done;}).length;
+    var pct=tasks.length?Math.round(done/tasks.length*100):0;
+    var col=cfg.color||'var(--gn)';
+    return '<div class="widget-card" id="wgt_'+w.id+'">'
+      +'<div class="widget-hdr"><span class="widget-icon">🎯</span><span class="widget-title">'+(cfg.goalTitle||'目標管理')+'</span>'
+      +'<button onclick="openGoalConfig(\''+w.id+'\')" class="widget-cfg-btn">⚙️</button>'
+      +'<button onclick="removeWidget(\''+w.id+'\')" class="widget-del-btn">×</button>'
+      +'</div>'
+      // 進捗
+      +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'
+      +'<div style="flex:1;background:var(--wm);border-radius:6px;height:10px"><div style="width:'+pct+'%;height:10px;border-radius:6px;background:'+col+';transition:width .5s"></div></div>'
+      +'<span style="font-size:14px;font-weight:800;color:'+col+'">'+pct+'%</span>'
+      +(tasks.length?'<span style="font-size:11px;color:var(--t2)">'+done+'/'+tasks.length+'</span>':'')
+      +'</div>'
+      // タスクリスト
+      +'<div>'
+      +tasks.map(function(t,i){
+        return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--wm)">'
+          +'<input type="checkbox" '+(t.done?'checked':'')+' onchange="toggleGoalTask(\''+w.id+'\','+i+',this.checked)" style="width:20px;height:20px;accent-color:'+col+';cursor:pointer;flex-shrink:0">'
+          +'<span style="font-size:13px;color:var(--tx);flex:1;'+(t.done?'text-decoration:line-through;color:var(--t3)':'')+'">'+(t.text||'')+'</span>'
+          +'<button onclick="deleteGoalTask(\''+w.id+'\','+i+')" style="background:none;border:none;color:var(--t3);font-size:16px;cursor:pointer;touch-action:manipulation;padding:0 4px">×</button>'
+          +'</div>';
+      }).join('')
+      +'</div>'
+      // 追加
+      +'<div style="display:flex;gap:6px;margin-top:10px">'
+      +'<input type="text" id="gtask_'+w.id+'" class="fi" placeholder="タスクを追加..." style="flex:1;font-size:13px;padding:8px" onkeydown="if(event.key===\'Enter\')addGoalTask(\''+w.id+'\')">'
+      +'<button onclick="addGoalTask(\''+w.id+'\')" class="btn btn-o" style="font-size:13px;padding:8px 14px">追加</button>'
+      +'</div>'
+      +'</div>';
   }
-};
+};;
 
 // ─── ウィジェット操作関数 ───
 
-function recordWeight(wid, val) {
-  var v = parseFloat(val);
-  if (isNaN(v) || v < 20 || v > 300) { showToast('⚠️ 正しい体重を入力してください'); return; }
-  var w = _myWidgets.find(function(x) { return x.id === wid; }); if (!w) return;
-  var data = w.data || {}; var records = data.records || {};
-  records[tday()] = v;
-  _saveWidgetData(wid, { records: records });
-  showToast('✅ ' + v + 'kg を記録しました');
+function recordWeight(wid) {
+  var el=document.getElementById('wi_'+wid);
+  var v=el?parseFloat(el.value):NaN;
+  if(isNaN(v)||v<20||v>300){showToast('⚠️ 正しい体重を入力してください');return;}
+  var w=_myWidgets.find(function(x){return x.id===wid;});if(!w)return;
+  var data=w.data||{};var records=data.records||{};
+  records[tday()]=v;
+  _saveWidgetData(wid,{records:records});
+  if(el){el.style.border='2px solid var(--gn)';setTimeout(function(){if(el)el.style.border='2px solid var(--ac)';},1000);}
+  showToast('✅ '+v+'kg を記録しました');
 }
 
 function openWeightConfig(wid) {
@@ -3982,31 +4006,60 @@ function saveWeightConfig(wid) {
   showToast('✅ 設定を保存しました');
 }
 
-function toggleHabit(wid) {
-  var w = _myWidgets.find(function(x) { return x.id === wid; }); if (!w) return;
-  var data = w.data || {}; var records = data.records || {};
-  var today = tday();
-  records[today] = !records[today];
-  if (!records[today]) delete records[today];
-  _saveWidgetData(wid, { records: records });
+
+function toggleHabitItem(wid,hi){
+  var w=_myWidgets.find(function(x){return x.id===wid;});if(!w)return;
+  var data=w.data||{};var allRecs=data.allRecords||{};
+  if(!allRecs[hi])allRecs[hi]={};
+  var today=tday();
+  allRecs[hi][today]=!allRecs[hi][today];
+  if(!allRecs[hi][today])delete allRecs[hi][today];
+  _saveWidgetData(wid,{allRecords:allRecs});
 }
 
-function openHabitConfig(wid) {
-  var w = _myWidgets.find(function(x) { return x.id === wid; }); if (!w) return;
-  var cfg = w.config || {};
-  var mc = document.getElementById('mc'); if (!mc) return;
-  var EMOJIS2 = ['🔥','💪','📚','🏃','🧘','💊','🌱','✍️','🎸','🍎','🚰','😴'];
-  var h = '<div class="m-title">🔥 習慣の設定</div>';
-  h += '<div style="margin-bottom:10px"><div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:4px">習慣の名前</div><input type="text" id="hname_' + wid + '" value="' + (cfg.habitName || '') + '" class="fi" placeholder="例: 毎日運動"></div>';
-  h += '<div style="margin-bottom:10px"><div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">アイコン</div><div style="display:flex;flex-wrap:wrap;gap:6px">';
-  EMOJIS2.forEach(function(e) {
-    h += '<button onclick="document.getElementById(\'hemo_' + wid + '\').value=\'' + e + '\';document.querySelectorAll(\'.hemo-btn\').forEach(function(b){b.style.background=\'transparent\'});this.style.background=\'var(--ac)20\'" class="hemo-btn" style="font-size:24px;background:' + (cfg.emoji === e ? 'var(--ac)20' : 'transparent') + ';border:none;border-radius:8px;padding:4px;cursor:pointer">' + e + '</button>';
-  });
-  h += '</div><input type="hidden" id="hemo_' + wid + '" value="' + (cfg.emoji || '🔥') + '"></div>';
-  h += '<div style="display:flex;gap:8px;margin-top:4px"><button class="btn btn-ghost" style="flex:1" onclick="closeModal()">キャンセル</button>';
-  h += '<button class="btn btn-o" style="flex:2" onclick="saveHabitConfig(\'' + wid + '\')">保存</button></div>';
-  mc.innerHTML = h; openOv();
+
+function openHabitConfig(wid){
+  var w=_myWidgets.find(function(x){return x.id===wid;});if(!w)return;
+  var cfg=w.config||{};
+  var habits=cfg.habits||(cfg.habitName?[{name:cfg.habitName,emoji:cfg.emoji||'🔥',color:cfg.color||'#D4663E'}]:[]);
+  var mc=document.getElementById('mc');if(!mc)return;
+  window._editHabits=JSON.parse(JSON.stringify(habits));
+  function renderHabitEdit(){
+    var EMOJIS=['🔥','💪','📚','🏃','🧘','💊','🌱','✍️','🎸','🍎','🚰','😴','🏋️','🧹','💰','🎯'];
+    var h='<div class="m-title">🔥 習慣トラッカー設定</div>';
+    h+='<div id="habit-list" style="max-height:280px;overflow-y:auto;margin-bottom:12px">';
+    window._editHabits.forEach(function(hb,i){
+      h+='<div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--wm);border-radius:10px;margin-bottom:6px">';
+      h+='<span style="font-size:20px">'+hb.emoji+'</span>';
+      h+='<input type="text" value="'+hb.name+'" onchange="window._editHabits['+i+'].name=this.value" class="fi" style="flex:1;font-size:13px;padding:6px">';
+      h+='<button onclick="window._editHabits.splice('+i+',1);renderHabitEdit&&renderHabitEdit()" style="background:none;border:none;color:var(--rd);font-size:18px;cursor:pointer">×</button>';
+      h+='</div>';
+    });
+    h+='</div>';
+    h+='<div style="margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">➕ 新しい習慣を追加</div>';
+    h+='<div style="display:flex;gap:6px">';
+    EMOJIS.slice(0,8).forEach(function(e){
+      h+='<button onclick="window._newHabitEmoji=\''+e+'\'" style="font-size:20px;background:transparent;border:none;border-radius:8px;padding:3px;cursor:pointer">'+e+'</button>';
+    });
+    h+='</div>';
+    h+='<div style="display:flex;gap:6px;margin-top:6px">';
+    h+='<input type="text" id="new-habit-name" class="fi" placeholder="習慣の名前（例: 毎日運動）" style="flex:1;font-size:13px;padding:8px">';
+    h+='<button onclick="var n=document.getElementById(\'new-habit-name\').value.trim();if(n){window._editHabits.push({name:n,emoji:window._newHabitEmoji||\' 🔥\',color:\'#D4663E\'});renderHabitEdit&&renderHabitEdit();}" class="btn btn-o" style="font-size:13px;padding:8px 12px">追加</button>';
+    h+='</div></div>';
+    h+='<div style="display:flex;gap:8px"><button class="btn btn-ghost" style="flex:1" onclick="closeModal()">キャンセル</button>';
+    h+='<button class="btn btn-o" style="flex:2" onclick="saveHabitConfigNew(\''+wid+'\')" >保存</button></div>';
+    if(mc)mc.innerHTML=h;
+  }
+  window.renderHabitEdit=renderHabitEdit;
+  renderHabitEdit();
+  openOv();
 }
+function saveHabitConfigNew(wid){
+  var w=_myWidgets.find(function(x){return x.id===wid;});if(!w)return;
+  w.config.habits=window._editHabits||[];
+  _saveMyWidgets();closeModal();showToast('✅ 保存しました');
+}
+
 
 function saveHabitConfig(wid) {
   var w = _myWidgets.find(function(x) { return x.id === wid; }); if (!w) return;
@@ -4046,25 +4099,103 @@ function saveCountdownConfig(wid) {
   _saveMyWidgets(); closeModal();
 }
 
-function addExpense(wid) {
-  var cat = document.getElementById('ecat_' + wid)?.value;
-  var amt = parseInt(document.getElementById('eamt_' + wid)?.value);
-  if (!amt || isNaN(amt) || amt <= 0) { showToast('⚠️ 金額を入力してください'); return; }
-  var w = _myWidgets.find(function(x) { return x.id === wid; }); if (!w) return;
-  var data = w.data || {}; var records = data.records || [];
-  records.push({ date: tday(), amount: amt, category: cat, note: '' });
-  _saveWidgetData(wid, { records: records });
-  document.getElementById('eamt_' + wid).value = '';
-  showToast('✅ ' + (w.config.currency || '¥') + amt.toLocaleString() + ' を記録');
+
+function addExpenseRecord(wid){
+  var nameEl=document.getElementById('ename_'+wid);
+  var amtEl=document.getElementById('eamt_'+wid);
+  var catEl=document.getElementById('ecat_'+wid);
+  var typeEl=document.getElementById('et_'+wid);
+  var name=nameEl?nameEl.value.trim():'';
+  var amt=amtEl?parseInt(amtEl.value):0;
+  var cat=catEl?catEl.value:'📦 その他';
+  var type=typeEl?typeEl.dataset.t:'expense';
+  if(!amt||isNaN(amt)||amt<=0){showToast('⚠️ 金額を入力してください');return;}
+  var w=_myWidgets.find(function(x){return x.id===wid;});if(!w)return;
+  var data=w.data||{};var records=data.records||[];
+  records.push({date:tday(),name:name||cat,amount:amt,category:cat,type:type});
+  _saveWidgetData(wid,{records:records});
+  if(nameEl)nameEl.value='';
+  if(amtEl)amtEl.value='';
+  var cur=w.config&&w.config.currency?w.config.currency:'¥';
+  showToast('✅ '+(type==='income'?'収入':'支出')+' '+cur+amt.toLocaleString()+' を記録');
+}
+function openExpenseCat(wid,cat){
+  var w=_myWidgets.find(function(x){return x.id===wid;});if(!w)return;
+  var records=(w.data&&w.data.records)||[];
+  var thisMonth=tday().slice(0,7);
+  var catRecs=records.filter(function(r){return r.category===cat&&r.date.startsWith(thisMonth);});
+  var mc=document.getElementById('mc');if(!mc)return;
+  var cur=w.config&&w.config.currency?w.config.currency:'¥';
+  var total=catRecs.reduce(function(s,r){return s+r.amount;},0);
+  var h='<div class="m-title">'+cat+'</div>';
+  h+='<div style="font-size:13px;font-weight:700;margin-bottom:12px">今月合計: <span style="color:var(--rd)">'+cur+total.toLocaleString()+'</span></div>';
+  h+=catRecs.reverse().map(function(r){
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--wm)">'
+      +'<div><div style="font-size:13px;font-weight:700">'+r.name+'</div>'
+      +'<div style="font-size:11px;color:var(--t3)">'+r.date+'</div></div>'
+      +'<div style="font-weight:700;color:'+(r.type==='income'?'var(--gn)':'var(--rd)')+'">'+cur+r.amount.toLocaleString()+'</div>'
+      +'</div>';
+  }).join('');
+  h+='<button class="btn btn-ghost btn-full" style="margin-top:10px" onclick="closeModal()">閉じる</button>';
+  mc.innerHTML=h;openOv();
+}
+function openExpenseConfig(wid){
+  var w=_myWidgets.find(function(x){return x.id===wid;});if(!w)return;
+  var cfg=w.config||{};
+  var mc=document.getElementById('mc');if(!mc)return;
+  var h='<div class="m-title">📒 家計簿の設定</div>';
+  h+='<div style="margin-bottom:10px"><div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:4px">💰 月の支出予算 (0=未設定)</div>';
+  h+='<input type="number" id="exp_budget_'+wid+'" value="'+(cfg.budget||0)+'" class="fi" placeholder="例: 100000"></div>';
+  h+='<div style="display:flex;gap:8px;margin-top:4px"><button class="btn btn-ghost" style="flex:1" onclick="closeModal()">キャンセル</button>';
+  h+='<button class="btn btn-o" style="flex:2" onclick="saveExpenseConfig(\''+wid+'\')" >保存</button></div>';
+  mc.innerHTML=h;openOv();
+}
+function saveExpenseConfig(wid){
+  var w=_myWidgets.find(function(x){return x.id===wid;});if(!w)return;
+  var budget=parseInt(document.getElementById('exp_budget_'+wid)?.value)||0;
+  w.config.budget=budget;
+  _saveMyWidgets();closeModal();showToast('✅ 保存しました');
 }
 
-function recordSleep(wid, field, val) {
-  var w = _myWidgets.find(function(x) { return x.id === wid; }); if (!w) return;
-  var data = w.data || {}; var records = data.records || {};
-  if (!records[tday()]) records[tday()] = {};
-  records[tday()][field] = val;
-  _saveWidgetData(wid, { records: records });
+
+
+function recordSleepToday(wid,field,val){
+  var w=_myWidgets.find(function(x){return x.id===wid;});if(!w)return;
+  var data=w.data||{};var records=data.records||{};
+  if(!records[tday()])records[tday()]={};
+  records[tday()][field]=val;
+  // 自動保存（両方入力済みの場合）
+  var r=records[tday()];
+  if(r.bedtime&&r.waketime){_saveWidgetData(wid,{records:records});}
 }
+function saveSleepToday(wid){
+  var w=_myWidgets.find(function(x){return x.id===wid;});if(!w)return;
+  var bedEl=document.getElementById('sbed_'+wid);
+  var wakeEl=document.getElementById('swake_'+wid);
+  if(!bedEl||!wakeEl){showToast('⚠️ フォームが見つかりません');return;}
+  if(!bedEl.value||!wakeEl.value){showToast('⚠️ 就寝・起床時間を入力してください');return;}
+  var data=w.data||{};var records=data.records||{};
+  records[tday()]={bedtime:bedEl.value,waketime:wakeEl.value};
+  _saveWidgetData(wid,{records:records});
+  showToast('😴 睡眠を記録しました');
+}
+function openSleepConfig(wid){
+  var w=_myWidgets.find(function(x){return x.id===wid;});if(!w)return;
+  var cfg=w.config||{};
+  var mc=document.getElementById('mc');if(!mc)return;
+  var h='<div class="m-title">😴 睡眠記録の設定</div>';
+  h+='<div style="margin-bottom:10px"><div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:4px">⏰ 目標睡眠時間 (h)</div>';
+  h+='<input type="number" step="0.5" min="4" max="12" id="slh_'+wid+'" value="'+(cfg.targetHours||7)+'" class="fi"></div>';
+  h+='<div style="display:flex;gap:8px"><button class="btn btn-ghost" style="flex:1" onclick="closeModal()">キャンセル</button>';
+  h+='<button class="btn btn-o" style="flex:2" onclick="saveSleepConfig(\''+wid+'\')" >保存</button></div>';
+  mc.innerHTML=h;openOv();
+}
+function saveSleepConfig(wid){
+  var w=_myWidgets.find(function(x){return x.id===wid;});if(!w)return;
+  w.config.targetHours=parseFloat(document.getElementById('slh_'+wid)?.value)||7;
+  _saveMyWidgets();closeModal();showToast('✅ 保存しました');
+}
+
 
 function recordDiary(wid, field, val) {
   var w = _myWidgets.find(function(x) { return x.id === wid; }); if (!w) return;
@@ -4169,6 +4300,16 @@ function _scheduleWidgetNotifs(){
       }else{showToast('🔔 '+(nc.message||'記録しましょう！'));}
     });
   },60000);
+}
+
+function saveDiaryToday(wid){
+  var w=_myWidgets.find(function(x){return x.id===wid;});if(!w)return;
+  var el=document.getElementById('diary_'+wid);
+  var data=w.data||{};var records=data.records||{};
+  if(!records[tday()])records[tday()]={};
+  if(el)records[tday()].text=el.value;
+  _saveWidgetData(wid,{records:records});
+  showToast('🌸 日記を保存しました');
 }
 </script>
 <!-- ══ チュートリアル ══ -->
